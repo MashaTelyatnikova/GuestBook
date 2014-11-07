@@ -1,0 +1,686 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<TITLE>LiveConnect. Обзор.</TITLE></HEAD>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="partlc.htm">Назад</a>
+| <a href="glossary.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5>
+<HR><h1>Глава 14<BR><A NAME="1008305"></a>LiveConnect. Обзор.</h1>
+<p><A NAME="1021579"></a>В этой главе рассматривается использование технологии LiveConnect 
+для взаимодействия кодов, написанных на Java и
+JavaScript. Предполагается, что Вы уже знакомы с программированием на Java.</p>
+<p><A NAME="1015012"></a>В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1043715"></a><a href="#1043729">Что Такое LiveConnect?</a></LI><LI><A NAME="1039521"></a><A HREF="#1013074">
+Работа с Оболочками</A><LI><A NAME="1015024"></a><A HREF="#1014290">
+Взаимодействие JavaScript с Java</A><LI><A NAME="1015028"></a><A HREF="#1008480">
+Взаимодействие Java с JavaScript</A><LI><A NAME="1037588"></a><A HREF="#1037078">Конвертация Типов Данных</A></LI></ul>
+<p><A NAME="1021561"></a>Дополнительно об использовании LiveConnect см.
+<A HREF="http://developer.netscape.com/docs/technote/index.html" TARGET="_top">JavaScript technical notes</A> 
+на сайте DevEdge, а также ищите соответствующую информацию на сайтах mozilla.org 
+и developer.netscape.com.</p>
+<H2><A NAME="What Is LiveConnect?"></A><A NAME="1043729"></a>
+Что Такое LiveConnect?</H2><hr>
+<p><A NAME="1047463"></a>LiveConnect даёт возможность подключать приложения 
+серверного JavaScript к Java-компонентам и классам на сервере.</p>
+<p><A NAME="1047465"></a>
+Вашему приложению JavaScript может понадобиться соединиться с кодом, написанным 
+на других языках, таких как Java
+или C. Для подключения к Java-коду Вы используете функциональность LiveConnect. 
+Для взаимодействия с кодом, написанным на других языках, у Вас есть несколько 
+вариантов:</p>
+<ul><LI><A NAME="1047466"></a>
+Вы можете обернуть/wrap Ваш код как Java-объект и использовать LiveConnect 
+непосредственно.</LI><LI><A NAME="1047467"></a>Вы можете обернуть Ваш код как 
+распределённый объект CORBA и использовать
+LiveConnect совместно с object request broker (ORB).</LI><LI><A NAME="1047468"></a>
+Вы можете напрямую включать внешние библиотеки в Ваше приложение.</LI></ul><p><A NAME="1047469"></a>
+В этой главе обсуждается использование LiveConnect для доступа к не-JavaScript 
+коду из приложений JavaScript.</p><p>
+<A NAME="1047470"></a>Наконец, LiveConnect даёт возможность объектам JavaScript 
+Вашего приложения взаимодействовать с Java-объектами. Эти Java-объекты являются экземплярами классов в серверном
+<CODE>CLASSPATH</CODE>. Об установке <CODE>CLASSPATH</CODE> см. книгу <A HREF="http://home.netscape.com/eng/server/webserver/4.0/servlets/contents.htm" TARGET="_top">
+<i>Programmer's Guide to Servlets</i></A>. LiveConnect работает и с клиентским, 
+и серверным JavaScript, но имеет для каждой среды разные возможности.</p>
+<p><A NAME="1047491"></a>Предполагается, что Вы уже знакомы с программированием на Java. Об использовании Java 
+с Netscape-серверами см. <A HREF="http://developer.netscape.com/docs/manuals/enterprise/javanote/index.html"
+TARGET="_blank">Enterprise Server 3.5.1/3.6: Notes for Java Programmers</A><A HREF="#1047485"><SUP><font color="#FF0000">1</font></SUP></a>.
+О LiveConnect см.
+<A HREF="http://developer.netscape.com/docs/manuals/index.html?content=javascript.html" TARGET="_top">
+DevEdge Library</A><A HREF="#1047490"><SUP>2</SUP></A>.</p>
+<p><A NAME="1047493"></a>Во всех доступных Java-классах Вы можете иметь доступ к статичным public-свойствам 
+или методам или создавать экземпляры класса и получать доступ к public-свойствам и методам этих экземпляров.
+В отличие от клиентского, однако, Вы можете иметь доступ <i>только</i> к тем Java-объектам, 
+которые были созданы Вашим приложением или другим приложением JavaScript, а 
+затем сохранены как свойство объекта
+<CODE>server</CODE>.</p>
+<p><A NAME="1047495"></a>Если Java-объект был создан серверным приложением, 
+отличным от приложения на серверном JavaScript, Вы не можете иметь доступ к 
+этому Java-объекту.<br>
+Например, Вы не можете получить доступ к Java-объекту, созданному WAI plug-in, 
+расширением NSAPI или HTTP-аплетом.</p>
+<p><A NAME="1047496"></a>Когда Вы вызываете метод Java-объекта, Вы можете передать 
+объекты JavaScript в этот метод. Код Java может установить свойства и вызвать 
+методы этих объектов JavaScript. Таким образом, Вы можете иметь и код JavaScript, 
+вызывающий код Java, и код Java, вызывающий код JavaScript.</p>
+<p><A NAME="1047497"></a>Код Java может иметь доступ к приложению JavaScript <i>
+только</i> таким способом. То есть Java-объект не может вызывать приложение JavaScript, 
+если это приложение JavaScript 
+(или другое приложение JavaScript) не имеет само доступа к соответствующему Java-объекту 
+и не вызывает один из его методов.</p>
+<H2><A NAME="Working with Wrappers"></A><A NAME="1013074"></a>Работа с 
+Оболочками</H2><hr>
+<p><A NAME="1036886"></a>
+В JavaScript <I>wrapper\оболочка</I> это объект типа данных целевого языка, 
+который содержит в себе объект исходного языка. На стороне JavaScript Вы можете 
+использовать объект-оболочку для доступа к методам и полям Java-объекта; вызывая 
+метод или получая доступ к свойству в оболочке даёт в результате вызов Java-объекта. 
+На стороне Java объекты JavaScript оборачиваются в экземпляры класса
+<CODE>netscape.javascript.JSObject</CODE> и передаются в Java.</p>
+<p><A NAME="1036887"></a>
+Когда JavaScript-объект высылается в Java, машина выполнения создаёт Java-оболочку типа
+<CODE>JSObject</CODE>; когда <CODE>JSObject</CODE> высылается из Java в JavaScript, 
+машина выполнения разворачивает его в объект оригинального типа JavaScript. 
+Класс <CODE>JSObject</CODE> предоставляет интерфейс для вызова методов JavaScript и проверки свойств JavaScript.</p>
+<H2><A NAME="JavaScript to Java Communication"></A><A NAME="1014290"></a>
+Взаимодействие JavaScript с Java</H2><hr>
+<p><A NAME="1028815"></a>Когда Вы обращаетесь к пакету или классу Java или 
+работаете с объектом или массивом Java,
+Вы используете один из специальных объектов LiveConnect. Доступ JavaScript к Java 
+имеет место в  объектах, резюме по которым дано в следующей таблице.</p>
+<A NAME="1040657"></a>
+<h5><A NAME="1040692"></a>Таблица 14.1 &nbsp;Объекты LiveConnect</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1040696"></a>
+Объект<TH VALIGN=baseline ALIGN=left><A NAME="1040698"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1040738"></a>
+<CODE>JavaArray</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1040740"></a>
+Обёрнутый/wrapped массив Java, доступ к которому выполняется в коде JavaScript.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1040743"></a>
+<CODE>JavaClass</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1040745"></a>
+Ссылка JavaScript на Java-класс.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1040748"></a>
+<CODE>JavaObject</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1040750"></a>
+Обёрнутый объект Java, доступ к которому выполняется в коде JavaScript.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1040753"></a>
+<CODE>JavaPackage</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1040755"></a>
+Ссылка JavaScript на Java-пакет.</P></TABLE>
+<BLOCKQUOTE>
+<p><B>ПРИМЕЧАНИЕ:</B></p>
+<p><A NAME="1037474"></a>
+Поскольку Java является строго типизированным, а JavaScript -слабо типизированным языком, машина выполнения 
+JavaScript конвертирует значения аргументов в соответствующие типы данных тех 
+языков, которые Вы используете с LiveConnect. См. <A HREF="#1037078">"Конвертация Типов Данных&quot;</A>.</p></BLOCKQUOTE>
+<p><A NAME="1037469"></a>Иногда существование объекта LiveConnect прозрачно,
+поскольку Вы работаете с Java интуитивно. Например, Вы можете создать в Java
+<CODE>String</CODE> -объект и присвоить его переменной JavaScript <CODE>myString</CODE> 
+с помощью оператора <CODE>new</CODE> в конструкторе Java таким образом:</p>
+<PRE><A NAME="1028973"></a>var myString = new java.lang.String("Hello world")</PRE>
+<p><A NAME="1028974"></a>
+В предыдущем примере переменная <CODE>myString</CODE> это <CODE>JavaObject</CODE>, 
+потому что она содержит экземпляр Java <CODE>String</CODE>-объекта. Как <CODE>JavaObject</CODE>,
+<CODE>myString</CODE> имеет доступ к методам public-экземпляра <CODE>java.lang.String</CODE> 
+и его суперкласса <CODE>java.lang.Object</CODE>. Эти методы Java доступны в JavaScript 
+как методы <CODE>JavaObject</CODE>, и Вы можете вызывать их так:</p>
+<PRE><A NAME="1029015"></a>myString.length() // возвращает 11</PRE>
+<p><A NAME="1047502"></a>
+Вы имеете доступ к конструкторам, полям и методам класса через тот же синтаксис, 
+который используете в Java.
+Например, следующий код JavaScript использует свойства объекта <CODE>request</CODE> 
+для создания нового экземпляра класса <CODE>Bug</CODE> и присвоения затем этого 
+нового экземпляра переменной JavaScript <CODE>bug</CODE>. Поскольку Java-класс 
+требует целочисленного значения для первого поля, этот код конвертирует 
+строковое свойство объекта <CODE>request</CODE> к целому числу, перед тем как 
+передать его конструктору.</p>
+<PRE><A NAME="1047503"></a>var bug = new Packages.bugbase.Bug(<br>&nbsp;&nbsp;&nbsp;parseInt(request.bugId),
+<br>&nbsp;&nbsp;&nbsp;request.bugPriority,<br>&nbsp;&nbsp;&nbsp;request);</PRE>
+<h4><A NAME="Head2;"></A><A NAME="1029016"></a>Объект Packages</h4><hr>
+<p><A NAME="1029407"></a>
+Если класс Java не является частью пакетов <CODE>java</CODE>, <CODE>sun</CODE> 
+или <CODE>netscape</CODE>,
+Вы имеете к нему доступ через объект <CODE>Packages</CODE>. Например, корпорация Redwood 
+использует пакет Java под названием <CODE>redwood </CODE>как контейнер различных Java-классов, 
+которые ею реализованы. Для создания экземпляра класса <CODE>HelloWorld</CODE> в <CODE>redwood</CODE> 
+Вы вводите конструктор класса:</p>
+<PRE><A NAME="1029053"></a>var red = new Packages.redwood.HelloWorld()</PRE>
+<p><A NAME="1029400"></a>
+Вы можете также получить доступ к классам в пакете по умолчанию (то есть классам, 
+которые не указывают пакет явно).
+Например, если класс HelloWorld находится непосредственно в <CODE>CLASSPATH</CODE>, 
+а не в пакете,
+Вы можете получить к нему доступ так:</p>
+<PRE><A NAME="1029401"></a>var red = new Packages.HelloWorld()</PRE>
+<p><A NAME="1034409"></a>
+Объекты LiveConnect <CODE>java</CODE>, <CODE>sun</CODE> и <CODE>netscape</CODE> 
+являются сокращениями для обычно используемых пакетов Java. Например, можно 
+записать так:</p>
+<PRE><A NAME="1034421"></a>var myString = new java.lang.String("Hello world")</PRE>
+<p><A NAME="1034419"></a>
+вместо более длинной версии:</p>
+<PRE><A NAME="1034430"></a>var myString = new Packages.java.lang.String("Hello world")</PRE>
+<p><A NAME="1047509"></a>
+По умолчанию директория <CODE>$NSHOME\js\samples</CODE>, где <CODE>$NSHOME</CODE> 
+это директория, в которой установлен сервер, находится в <CODE>CLASSPATH</CODE> 
+сервера. Вы можете поместить Ваш пакет в эту директорию. Альтернативно Вы можете 
+поместить Ваши пакеты и классы Java в другую директорию.
+Если Вы это  делаете, убедитесь, что директория находится в Вашем <CODE>CLASSPATH</CODE>.</p>
+<h4><A NAME="Head2;"></A>
+<A NAME="1029099"></a>Работа с Массивами Java</h4><hr>
+<p><A NAME="1029044"></a>
+Если какой-нибудь метод Java создаёт массив и Вы обращаетесь к этому массиву в JavaScript, 
+Вы работаете с <CODE>JavaArray</CODE>. Например, следующий код создаёт
+<CODE>JavaArray</CODE> <CODE>x</CODE> из 10 элементов типа int:</p>
+<PRE><A NAME="1029457"></a>theInt = java.lang.Class.forName("java.lang.Integer")<br>
+x = java.lang.reflect.Array.newInstance(theInt, 10)</PRE>
+<p><A NAME="1029463"></a>
+Подобно объекту JavaScript <CODE>Array</CODE>, <CODE>JavaArray</CODE> имеет 
+свойство <CODE>length</CODE>, возвращающее количество элементов массива. В 
+отличие от <CODE>Array.length</CODE>,
+<CODE>JavaArray.length</CODE> является свойством только для чтения/read-only, 
+поскольку количество элементов в Java-массиве фиксируется в момент создания.</p>
+<h4><A NAME="Head2;"></a><A NAME="1029045"></a>
+Ссылки на Пакеты и Классы</h4><hr>
+<p><A NAME="1029104"></a>
+Простые ссылки на пакеты и классы Java из JavaScript создают объекты <CODE>JavaPackage</CODE> 
+и <CODE>JavaClass</CODE>. В одном из предыдущих примеров о корпорации Redwood, 
+например, обращение <CODE>Packages.redwood</CODE> это <CODE>JavaPackage</CODE> 
+-объект. Аналогично обращение <CODE>java.lang.String</CODE> это <CODE>JavaClass</CODE> 
+-объект.</p>
+<p>
+<A NAME="1029184"></a>В большинстве случаев Вам не нужно беспокоиться об 
+объектах <CODE>JavaPackage</CODE> и <CODE>JavaClass</CODE>: Вы просто 
+работаете с пакетами и классами Java, а LiveConnect прозрачно создаёт эти 
+объекты.</p>
+<p><A NAME="1034541"></a>
+<CODE>JavaClass</CODE> -объекты не конвертируются автоматически в экземпляры
+<CODE>java.lang.Class</CODE> при передаче их в качестве параметров Java-методам -- 
+Вы обязаны создать оболочку/wrapper вокруг экземпляра <CODE>java.lang.Class</CODE>. 
+В следующем примере метод
+<CODE>forName</CODE> создаёт объект-оболочку<CODE> theClass</CODE>, который затем 
+передаётся методу <CODE>newInstance</CODE> для создания нового массива.</p>
+<PRE><A NAME="1029248"></a>theClass = java.lang.Class.forName("java.lang.String")<br>
+theArray = java.lang.reflect.Array.newInstance(theClass, 5)</PRE><h4><A NAME="Head2;"></A>
+<A NAME="1029446"></a>Аргументы Типа char</h4><hr>
+<p><A NAME="1044261"></a>
+Вы не можете передать односимвольную строку Java-методу, требующему аргумента 
+типа
+<CODE>char</CODE>. Вы обязаны передать таким методам целое число, 
+соответствующее значению Unicode для данного символа. Например, следующий код 
+присваивает значение "H" переменной <CODE>c</CODE>:</p>
+<PRE><A NAME="1044258"></a>c = new java.lang.Character(72)</PRE><h4><A NAME="Head2;"></A>
+<A NAME="1047517"></a>Пример JavaScript-Вызова Java</h4><hr>
+<p><A NAME="1047518"></a>
+Директория <CODE>$NSHOME\js\samples\bugbase</CODE> содержит простое приложение, 
+иллюстрирующее использование LiveConnect. В этом разделе описан код JavaScript 
+этого приложения-образца. См. в разделе
+<A HREF="#1047598">"Пример Вызывающего JavaScript&quot;</A> описание кода Java этого 
+приложения.</p>
+<p><A NAME="1047522"></a>
+Приложение <CODE>bugbase</CODE> представляет собой простую БД &quot;жучков&quot;. Вы 
+вводите bug, заполняя клиентскую форму номером жучка, приоритетом, продуктом, в 
+котором он обнаружен, и кратким описанием. Другая форма позволяет просмотреть 
+существующий bug.</p>
+<p><A NAME="1047523"></a>
+Следующий JavaScript обрабатывает акцию входа:</p>
+<PRE><A NAME="1047527"></a>// <A HREF="#1047544">Шаг 1</A>. проверить, что ID был введён.<br>
+if (request.bugId != "") {
+<br>&nbsp;&nbsp;&nbsp;// <A HREF="#1047546">Шаг 2</A>. Создаётся Bug-экземпляр и присваивается переменной.
+<br>&nbsp;&nbsp;&nbsp;var bug = new Packages.bugbase.Bug(parseInt(request.bugId),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;request.bugPriority, request);</PRE><PRE><A NAME="1047534"></a>
+&nbsp;&nbsp;&nbsp;// <A HREF="#1047551">Шаг 3</A>. Получить доступ к массиву и сохранить экземпляр в нём.<br>
+&nbsp;&nbsp;&nbsp;project.bugsLock.lock();<br>&nbsp;&nbsp;&nbsp;project.bugs[parseInt(request.bugId)] = bug;
+<br>&nbsp;&nbsp;&nbsp;project.bugsLock.unlock();</PRE><PRE><A NAME="1047538"></a>
+&nbsp;&nbsp;&nbsp;// <A HREF="#1047556">Шаг 4</A>. Отобразить информацию.<br>
+&nbsp;&nbsp;&nbsp;write("&lt;P&gt;&lt;b&gt;&lt;I&gt;====&gt;Committed bug: &lt;/I&gt;&lt;/b&gt;");<br>
+&nbsp;&nbsp;&nbsp;write(bug, "&lt;BR&gt;");<br>}
+<br>// <A HREF="#1047558">Шаг 5</A>. Если ID не был введён, предупредить пользователя.
+<br>else {<br>&nbsp;&nbsp;&nbsp;write("&lt;P&gt;&lt;b&gt;&lt;I&gt;====&gt;Couldn't
+commit bug: please complete <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all fields.&lt;/I&gt;&lt;/b&gt;");<br>}</PRE>
+<p><A NAME="1047542"></a>
+Шаги в этом коде:</p>
+<OL><LI><A NAME="1047544"></a>Проверить, что пользователь ввёл ID для bug. 
+Только в этом случае выполняется вход в bug.</LI><LI><A NAME="1047546"></a>
+Создать экземпляр Java-класса <CODE>Bug</CODE> и присвоить его переменной <CODE>bug</CODE>. 
+Конструктор класса <CODE>Bug</CODE> принимает три параметра: два из них 
+являются свойствами объекта <CODE>request</CODE>; третий это сам объект
+JavaScript <CODE>request</CODE>. Поскольку они являются элементами формы, эти свойства объекта
+<CODE>request</CODE> являются строками JavaScript. Код изменяет ID на целое 
+число перед передачей его Java-конструктору. После передачи <CODE>request</CODE> 
+-объекта Java-конструктору этот конструктор может затем вызывать его методы. 
+Этот процесс обсуждается в разделе <A HREF="#1047598">"Пример Вызывающего 
+Серверного JavaScript&quot;</A>.</LI><LI><A NAME="1047551"></a>Использовать <CODE>project.bugsLock</CODE> 
+для получения исключительного доступа к массиву <CODE>project.bugs</CODE> и 
+сохранить затем новый <CODE>Bug</CODE> -экземпляр в этом массиве,
+индексированным по номеру bug'а, специфицированному 
+в форме. Заметьте, что этот код сохраняет ссылку на Java-объект как значение 
+свойства JavaScript-объекта. О блокировке см. <A HREF="sessmgmt.htm#1012796">"Безопасное 
+Совместное Использование Объектов с Блокировкой&quot;</A></LI>.<LI><A NAME="1047556"></a>
+Отобразить клиенту информацию о bug'е, который Вы 
+только что сохранили.</LI><LI><A NAME="1047558"></a>Если bug ID не введён, 
+вывести сообщение о том, что bug не может быть найден в БД.</LI></OL><H2><A NAME="Java to JavaScript Communication"></A>
+<A NAME="1008480"></a>Взаимодействие Java с JavaScript</H2><hr>
+<p><A NAME="1030429"></a>
+Если Вам нужно использовать объекты JavaScript в Java, Вы обязаны импортировать 
+пакет <CODE>netscape.javascript</CODE> в Ваш Java-файл. Этот пакет определяет 
+следующие классы:</p>
+<ul><LI><A NAME="1030342"></a>
+<CODE>netscape.javascript.JSObject</CODE> даёт Java-коду доступ к методам и 
+свойствам JavaScript.</LI><LI><A NAME="1030343"></a>
+<CODE>netscape.javascript.JSException</CODE> позволяет Java-коду обрабатывать ошибки JavaScript.</LI></ul>
+<p><A NAME="1030345"></a>Эти классы поставляются в .jar или .zip-файле.
+См. в книге <I><a href="../servref12/default.htm">Серверный JavaScript. Справочник.</a></I> дополнительную 
+информацию об этих классах.</p>
+<p><A NAME="1030364"></a>Например, в Navigator 4. 0 для Windows NT классы 
+поставляются в файле <CODE>java40.jar</CODE> в директории <CODE>Program\Java\Classes</CODE> 
+ниже директории Navigator'а. Вы можете специфицировать 
+переменную окружения Windows NT, войдя в Control Panel и создав пользовательскую 
+переменную окружения с названием <CODE>CLASSPATH</CODE> со значением типа такого:</p>
+<PRE><A NAME="1049290"></a>D:\Navigator\Program\Java\Classes\java40.jar</PRE>
+<p><A NAME="1049303"></a>Дополнительно о <CODE>CLASSPATH</CODE> см.
+<A HREF="http://home.netscape.com/eng/server/webserver/4.0/ag/contents.htm"
+TARGET="_top"><i>Administrator's Guide</i></A>.</p>
+<p><A NAME="1049305"></a>
+Поскольку Java является строго типизированным языком, а JavaScript - слабо 
+типизированным, машина выполнения 
+JavaScript конвертирует значения аргументов в подходящие типы данных другого 
+языка, при использовании LiveConnect. См. <A HREF="#1037078">"Конвертация Типов 
+Данных&quot;</A>.</p>
+<h4><A NAME="Head2;"></A><A NAME="1030717"></a>Использование Классов LiveConnect</h4>
+<hr>
+<p><A NAME="1030718"></a>
+Все объекты JavaScript появляются в коде Java как экземпляры <CODE>netscape.javascript.JSObject</CODE>.
+Когда Вы вызываете метод в Вашем Java-коде, Вы можете передать ему JavaScript-объект 
+как один из аргументов.
+Чтобы сделать это, Вы обязаны определить соответствующий формальный параметр 
+метода как имеющий тип
+<CODE>JSObject</CODE>.</p>
+<p><A NAME="1032274"></a>Таким образом, всегда, когда Вы используете JavaScript-объекты 
+в коде Java, Вы должны помещать вызов JavaScript-объекта внутри блока <CODE>try...catch</CODE>, 
+который обрабатывает исключения <CODE>netscape.javascript.JSException</CODE>. 
+Это позволяет Вашему Java-коду обрабатывать ошибки при выполнении кода JavaScript, 
+которые появляются в Java как исключения типа <CODE>JSException</CODE>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1032291"></a>Доступ к JavaScript с Помощью JSObject</H4>
+<hr>
+<p><A NAME="1031091"></a>
+Предположим, к примеру, что вы работаете с Java-классом <CODE>JavaDog</CODE>. 
+Как показано в следующем коде, конструктор <CODE>JavaDog</CODE> constructor 
+принимает JavaScript-объект <CODE>jsDog</CODE>,
+который определён как имеющий тип <CODE>JSObject</CODE>, в качестве аргумента:</p>
+<PRE><A NAME="1031092"></a>import netscape.javascript.*;<br><br>public class JavaDog<br>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public String dogBreed;<br>&nbsp;&nbsp;&nbsp;&nbsp;public String dogColor;<br>&nbsp;&nbsp;&nbsp;&nbsp;public String dogSex;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;// определить конструктор класса<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public JavaDog(JSObject jsDog)<br>&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// использовать try...catch для обработки JSExceptions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.dogBreed = (String)jsDog.getMember("breed");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.dogColor = (String)jsDog.getMember("color");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.dogSex = (String)jsDog.getMember("sex");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1031093"></a>
+Обратите внимание, что метод <CODE>getMember</CODE> объекта <CODE>JSObject</CODE> 
+используется для доступа к свойствам объекта JavaScript. Предыдущий пример 
+использует <CODE>getMember</CODE> для присвоения значения JavaScript-свойства <CODE>jsDog.breed</CODE> 
+члену данных Java <CODE>JavaDog.dogBreed</CODE>.</p>
+<BLOCKQUOTE>
+<p><B>ПРИМЕЧАНИЕ: </B><A NAME="1034585"></a>
+Более жизненный пример помещает вызов <CODE>getMember</CODE> в блок 
+<CODE>try...catch</CODE> для обработки ошибок типа <CODE>JSException</CODE>. См. 
+<A HREF="#1032268">"Обработка Ошибок JavaScript в Java&quot;</A>.</p></BLOCKQUOTE>
+<p><A NAME="1030728"></a>Чтобы лучше понять, как работает <CODE>getMember</CODE>, 
+посмотрим на определение специального JavaScript-объекта <CODE>Dog</CODE>:</p>
+<PRE><A NAME="1030740"></a>function Dog(breed,color,sex) {<br>&nbsp;&nbsp;&nbsp;this.breed = breed<br>&nbsp;&nbsp;&nbsp;this.color = color<br>&nbsp;&nbsp;&nbsp;this.sex = sex<br>}</PRE>
+<p><A NAME="1030731"></a>
+Вы можете создать JavaScript-экземпляр <CODE>Dog</CODE> под названием <CODE>gabby</CODE>:</p>
+<PRE><A NAME="1030787"></a>gabby = new Dog("lab","chocolate","female")</PRE>
+<p><A NAME="1030729"></a>
+Если Вы вычислите свойство <CODE>gabby.color</CODE>, Вы увидите, что оно имеет 
+значение "chocolate". Теперь предположим, что Вы создаёте экземпляр <CODE>JavaDog</CODE> 
+в вашем JavaScript-коде, передавая объект
+<CODE>gabby</CODE> -конструктору:</p>
+<PRE><A NAME="1031134"></a>javaDog = new Packages.JavaDog(gabby)</PRE>
+<p><A NAME="1030809"></a>
+Если Вы вычислите <CODE>javaDog.dogColor</CODE>, Вы увидите, что оно также имеет 
+значение "chocolate", поскольку метод <CODE>getMember</CODE> в Java-конструкторе 
+присваивает <CODE>dogColor</CODE> значение <CODE>gabby.color</CODE>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1032268"></a>
+Обработка Исключений JavaScript в Java</H4><hr>
+<p><A NAME="1035833"></a>
+Если JavaScript-код, вызванный из Java, потерпел неудачу на этапе 
+прогона/выполнения, он вызывает исключение. Если Вы вызываете
+JavaScript-код из Java, Вы можете отловить/catch это исключение в блоке 
+операторов <CODE>try...catch</CODE>.
+Исключение JavaScript доступно коду Java как экземпляр
+<CODE>netscape.javascript</CODE>.<CODE>JSException.</CODE> <CODE>JSException</CODE> 
+это Java-оболочка вокруг исключения любого типа, вызываемого в JavaScript, так 
+же как и экземпляры
+<CODE>JSObject</CODE> являются оболочками для JavaScript-объектов.</p>
+<p><A NAME="1044400"></a>
+Используйте <CODE>JSException</CODE> при вычислении JavaScript-кода в Java. Если JavaScript-код 
+не вычисляется из-за ошибки компиляции JavaScript или из-за какой-то другой 
+ошибки времени прогона, интерпретатор JavaScript генерирует сообщение об ошибке, 
+которое конвертируется в экземпляр <CODE>JSException</CODE>.</p>
+<p><A NAME="1037664"></a>Например, можно использовать блок
+<CODE>try...catch</CODE> для обработки исключений LiveConnect:</p>
+<PRE><A NAME="1037674"></a>try {<br>&nbsp;&nbsp;&nbsp;global.eval("foo.bar = 999;");<br>
+} catch (Exception e) {<br>&nbsp;&nbsp;&nbsp;if (e instanceof JSException) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jsCodeFailed()";<br>&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherCodeFailed();<br>&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1037731"></a>
+В этом примере оператор <CODE>eval</CODE> терпит неудачу, если <CODE>foo</CODE> 
+не определён.
+Блок <CODE>catch</CODE> выполняет метод <CODE>jsCodeFailed</CODE>, если оператор <CODE>eval</CODE> 
+в блоке <CODE>try</CODE> вызывает <CODE>JSException</CODE>; метод
+<CODE>otherCodeFailed</CODE> выполняется, если блок <CODE>try</CODE> вызывает 
+какую-то иную ошибку.</p>
+<h4><A NAME="Head2;"></A><A NAME="1047583"></a>Доступ к Серверному JavaScript</h4>
+<hr>
+<p><A NAME="1047584"></a>
+Рассмотрим теперь использование Java для доступа к серверному JavaScript. Для 
+того чтобы метод Java получил доступ к объектам JavaScript, он обязан быть 
+вызван из приложения, написанном на серверном JavaScript.
+В клиентском JavaScript, Java может инициировать взаимодействие с JavaScript. На 
+сервере Java не может инициировать это взаимодействие.</p>
+<BLOCKQUOTE><p><B>ПРИМЕЧАНИЕ:</B></p><p><A NAME="1047586"></a>
+Когда Вы рекомпилируете Java-класс, который используется в приложении JavaScript, 
+новое определение может не иметь немедленного эффекта. Если любое приложение JavaScript, 
+запущенное на web-сервере, имеет &quot;живую&quot; ссылку на объект, созданный из 
+старого определения класса, все приложения продолжают использовать старое 
+определение. Поэтому при рекомпилировании Java-класса Вы должны рестартовать 
+любые приложения JavaScript, имеющие доступ к этому классу.</p>
+</BLOCKQUOTE><H4><A NAME="Head3;"></A><A NAME="1047588"></a>Потоки</H4><hr>
+<p><A NAME="1047589"></a>Java даёт вам возможность создавать раздельные потоки 
+выполнения. Вы должны осторожно использовать эту возможность, если Ваш Java-код взаимодействует с JavaScript-кодом.</p>
+<p><A NAME="1047591"></a>Каждый запрос серверного JavaScript обрабатывается в потоке, известном как
+<B>request thread/поток запроса</B>. Этот поток запроса ассоциируется с 
+информацией о статусе, такой как контекст JavaScript, используемый для 
+процессинга информации HTTP-запроса, и HTTP-буфер ответа.</p>
+<p><A NAME="1047594"></a>Когда Вы вызываете Java-код из приложения JavaScript, этот 
+код Java работает в том же самом потоке запроса, что и оригинальное приложение JavaScript. Java-код 
+в этом потоке может взаимодействовать с приложением JavaScript и иметь гарантию, 
+что оно является таким, как он ожидает. Точнее, он может полагаться на ассоциированную информацию статуса.</p>
+<p><A NAME="1047595"></a>Однако Вы можете создать новый поток из Java-кода. Если Вы это сделаете, этот 
+новый поток <i>не сможет</i> взаимодействовать с приложением JavaScript и <i>не 
+сможет</i> опираться на информацию о статусе, ассоциированную с оригинальным 
+потоком запроса. Если он попытается это сделать, поведение будет неопределённым. 
+Например, создаваемый Вами Java-поток не может ни инициировать выполнение JavaScript-кода 
+через использование <CODE>JSObject</CODE>, ни использовать <CODE>writeHttpOutput</CODE>, 
+поскольку этот метод требует доступа к HTTP-буферу ответа.</p>
+<H4><A NAME="Head3;"></A><A NAME="1047598"></a>Пример Вызывающего Серверного JavaScript</H4><hr><p>
+<A NAME="1047599"></a>В директории <CODE>$NSHOME\js\samples\bugbase</CODE> 
+содержится простое приложение, которое иллюстрирует использование LiveConnect. В 
+это разделе описывается приложение-образец Java-кода.
+См. в разделе <A HREF="#1047517">"Пример JavaScript, Вызывающего Java&quot;</A> 
+описание основ работы этого приложения и его JavaScript-кода.</p>
+<PRE><A NAME="1047606"></a>// <A HREF="#1047621">Шаг 1</A>. Импортировать необходимые Java-объекты.
+<br>package Bugbase;<br>import netscape.javascript.*;<br>import netscape.server.serverenv.*;</PRE>
+<PRE><A NAME="1047610"></a>// <a href="#1047623">Шаг 2</a>. Создать класс Bug.
+<br>public class Bug {<br>
+&nbsp;&nbsp;&nbsp;int id;<br>&nbsp;&nbsp;&nbsp;String priority;<br>&nbsp;&nbsp;&nbsp;String product;<br>
+&nbsp;&nbsp;&nbsp;String description; <br>&nbsp;&nbsp;&nbsp;String submitter;</PRE>
+<PRE><A NAME="1047614"></a>&nbsp;&nbsp;&nbsp;// <A HREF="#1047625">Шаг 3</A>. Определить конструктор класса.<br>
+&nbsp;&nbsp;&nbsp;public Bug(int id, String priority, JSObject req) <br>
+&nbsp;&nbsp;&nbsp;throws java.io.IOException<br>&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Записать часть http-ответа.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NetscapeServerEnv.writeHttpOutput("Java constructor: Creating <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a new bug.&lt;br&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.id = id;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.priority = priority;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.product = (String)req.getMember("bugProduct");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.description = (String)req.getMember("bugDesc");<br>
+&nbsp;&nbsp;&nbsp;}</PRE><PRE><A NAME="1047618"></a>&nbsp;&nbsp;&nbsp;// <A HREF="#1047627">Шаг 4</A>. Возвратить строковое представление объекта.
+<br>&nbsp;&nbsp;&nbsp;public String toString()<br>
+&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;StringBuffer result = new StringBuffer();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result.append("\r\nId = " + this.id <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ "; \r\nPriority = " + this.priority <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ "; \r\nProduct = " + this.product<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ "; \r\nDescription = " + this.description);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result.toString();<br>
+&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;}</PRE>
+<p><A NAME="1047619"></a>
+Многие шаги в этом коде не являются специфичными для взаимодействия с JavaScript. 
+Только шаги 1 и 3 имеют отношение к JavaScript.</p>
+<OL><LI><A NAME="1047621"></a>Специфицировать пакет, используемый в файле, и 
+импортировать пакеты <CODE>netscape.javascript</CODE> и <CODE>netscape.server.serverenv</CODE>. 
+Если Вы пропустите этот шаг, Вы не сможете использовать объекты JavaScript.</LI><LI><A NAME="1047623"></a>
+Создать Java-класс <CODE>Bug</CODE>, специфицировать его поля.</LI><LI><A NAME="1047625"></a>
+Определить конструктор для этого класса. Этот конструктор принимает три 
+параметра: целое число, строку и объект типа <CODE>JSObject</CODE>. Этот 
+последний параметр является представлением JavaScript-объекта в Java. Через 
+методы этого объекта конструктор может получить доступ к свойствам и вызвать 
+методы объекта JavaScript. В этом случае он использует метод
+<CODE>getMember</CODE> объекта <CODE>JSObject</CODE> для получения значений свойств JavaScript-объекта.
+Также этот метод использует метод <CODE>writeHttpOutput</CODE> предопределённого объекта
+<CODE>NetscapeServerEnv</CODE> (из пакета <CODE>netscape.server.serverenv</CODE>) 
+для вывода информации в процессе конструирования объекта. Этот метод 
+записывает массив байтов в тот же поток вывода, который используется JavaScript-функцией <CODE>write</CODE>.</LI><LI><A NAME="1047627"></a>
+Определить метод <CODE>toString</CODE>. Это стандартный метод для Java-объекта, 
+возвращающий строковое представление полей объекта.</LI></OL><H2><A NAME="Data Type Conversions"></A>
+<A NAME="1037078"></a>Конвертация Типов Данных</H2><hr>
+<p><A NAME="1037079"></a>
+Поскольку Java является строго типизированным, а JavaScript - слабо 
+типизированным языком, машина выполнения JavaScript конвертирует значения 
+аргументов в подходящие типы данных других языков, если Вы пользуетесь
+LiveConnect. Эта конвертация описана в следующих разделах:</p>
+<ul><LI><A NAME="1037083"></a><A HREF="#1037090">Конвертация из JavaScript в Java</A></LI><LI><A NAME="1037087"></a><A HREF="#1037422">
+Конвертация из Java в JavaScript</A></LI></ul>
+<h4><A NAME="Head2;"></A><A NAME="1037090"></a>Конвертация из JavaScript в Java</h4><hr><p><A NAME="1037091"></a>
+Если Вы вызываете Java-метод и передаёте ему параметры из JavaScript, типы 
+данных передаваемых параметров конвертируются в соответствии с правилами, 
+описанными в следующих разделах:</p>
+<ul><LI><A NAME="1037095"></a><a href="#1037125">Числовые Значения</a></LI><LI><A NAME="1037099"></a>
+<a href="#1037169">Булевы Значения</a></LI><LI><A NAME="1037103"></a>
+<a href="#1037205">Строковые Значения</a></LI><LI><A NAME="1037111"></a>
+<A HREF="#1037281">Null-Значения</A></LI><LI><A NAME="1037115"></a><A HREF="#1037309">
+Объекты JavaArray и JavaObject</A></LI><LI><A NAME="1037119"></a><A HREF="#1037349">
+Объекты JavaClass</A></LI><LI><A NAME="1037123"></a><A HREF="#1037380">Другие 
+Объекты JavaScript</A></LI></ul>
+<p><A NAME="1037595"></a>Return-значения методов <CODE>netscape.javascript.JSObject</CODE> 
+всегда конвертируются в экземпляры <CODE>java.lang.Object</CODE>. Правила 
+конвертации этих return-значений также описаны в этих разделах.</p>
+<p><A NAME="1037627"></a>
+Например, если <CODE>JSObject.eval</CODE> возвращает число JavaScript, Вы можете 
+найти правило конвертации этого числа в экземпляр <CODE>java.lang.Object</CODE> 
+в разделе
+<A HREF="#1037125">"Числовые Значения&quot;</A>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1037125"></a>
+Числовые Значения</H4><hr>
+<p><A NAME="1037126"></a>Если Вы передаёте числовые типы JavaScript в качестве 
+параметров Java-методам, Java конвертирует эти значения в соответствии с 
+правилами из данной таблицы:</p>
+<A NAME="1037166"></a><TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1037129"></a>Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037131"></a>
+Правила конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037133"></a>
+double</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037135"></a>
+Точное значение переносится в Java без округления и без потери точности или знака.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037137"></a>
+<CODE>lava.lang.Double<br>java.lang.Object</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037140"></a>
+Создаётся новый экземпляр <CODE>java.lang.Double</CODE>, и точное значение 
+переносится в Java без округления и без потери точности или знака.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037142"></a>
+float</P><TD VALIGN=baseline ALIGN=left><ul><LI><A NAME="1037144"></a>
+Значения округляются до точности float.<LI><A NAME="1037145"></a>
+Значения, которые слишком велики либо малы, округляются до +бесконечности<br>или -бесконечности.</ul>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037147"></a>
+byte<br>char<br>int<br>long<br>short</P><TD VALIGN=baseline ALIGN=left><ul><LI><A NAME="1037153"></a>
+Значения округляются с использованием режима &quot;округление до 
+минус-бесконечности&quot;/round-to-negative-infinity.<LI><A NAME="1037154"></a>
+Значения, которые слишком велики либо малы, дают ошибку времени выполнения.<LI><A NAME="1037155"></a>
+<CODE>NaN</CODE> -значения конвертируются до нуля.</ul>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037157"></a>
+<CODE>java.lang.String</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037159"></a>
+Значения конвертируются в строки. Например,</P><ul><LI><A NAME="1037160"></a>
+237 становится "237"</ul><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037162"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><ul><LI><A NAME="1037164"></a>
+0 и <CODE>NaN</CODE> -значения конвертируются в false.<LI><A NAME="1037165"></a>
+Другие значения конвертируются в true.</ul></TABLE>
+<p><A NAME="1037167"></a>Когда число JavaScript передаётся как параметр в Java-метод, 
+ожидающий экземпляр <CODE>java.lang.String</CODE>, это число конвертируется в 
+строку. Используйте операцию == для сравнения результата этой конвертации с другими строковыми значениями.</p>
+<H4><A NAME="Head3;"></A><A NAME="1037169"></a>Булевы Значения</H4><hr>
+<p><A NAME="1037170"></a>
+Когда Вы передаёте Булев тип JavaScript в качестве параметра Java-методам, Java 
+конвертирует эти значения в соответствии с правилами, описанными в таблице:</p>
+<A NAME="1037202"></a>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1037173"></a>
+Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037175"></a>Правила 
+конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037177"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037179"></a>
+Все значения конвертируются непосредственно в Java-эквиваленты.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037181"></a>
+<CODE>lava.lang.Boolean<br>java.lang.Object</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037184"></a>
+Создаётся новый экземпляр <CODE>java.lang.Boolean</CODE>. Каждый параметр 
+создаёт новый экземпляр, а не экземпляр с тем же примитивным значением.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037525"></a>
+<CODE>java.lang.String</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037527"></a>
+Значения конвертируются в строки. Например:</P><ul><LI><A NAME="1037528"></a>
+true становится "true"<LI><A NAME="1037529"></a>false становится "false"</ul>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037186"></a>
+byte<br>char<br>double<br>float<br>int<br>long<br>short</P><TD VALIGN=baseline ALIGN=left><ul>
+<LI><A NAME="1037194"></a>true становится 1<LI><A NAME="1037195"></a>false становится 0</ul></TABLE>
+<p><A NAME="1037203"></a>Когда JavaScript Boolean передаётся в качестве параметра Java-методу, 
+ожидающему экземпляр <CODE>java.lang.String</CODE>, Boolean конвертируется в строку.
+Используйте операцию == для сравнения результата конвертации с другими строковыми значениями.</p>
+<H4><A NAME="Head3;"></A><A NAME="1037205"></a>Строковые Значения</H4><hr>
+<p>Когда Вы передаёте строковые типы JavaScript в качестве параметра Java-методам, Java 
+конвертирует эти значения в соответствии с правилами, описанными в таблице:</p>
+<A NAME="1037246"></a>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1037209"></a>
+Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037211"></a>
+Правила конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037534"></a>
+<CODE>lava.lang.String<br>java.lang.Object</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037540"></a>
+Строка JavaScript конвертируется в экземпляр <CODE>java.lang.String</CODE> с ASCII-значением.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037546"></a>
+byte<br>double<br>float<br>int<br>long<br>short</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037553"></a>
+Все значения конвертируются в числа, как описано в
+<A HREF="http://developer.netscape.com/docs/javascript/e262-pdf.pdf" TARGET="_top">ECMA-262</A>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037559"></a>
+char</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037565"></a>Все значения конвертируются в числа.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037213"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><ul><LI><A NAME="1037215"></a>
+Пустая строка становится false.<LI><A NAME="1037216"></a>все другие значения становятся true.</ul></TABLE>
+<H4><A NAME="Head3;"></A><A NAME="1037281"></a>Null-Значения</H4><hr><p><A NAME="1037282"></a>
+Когда Вы передаёте null JavaScript в качестве параметра Java-методам, Java 
+конвертирует это значение в соответствии с правилами, описанными в таблице:</p>
+<A NAME="1037307"></a><TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1037285"></a>
+Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037287"></a>Правила 
+конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037568"></a>
+Любой класс<br>Любой тип интерфейса</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037571"></a>
+Значение становится null.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1042434"></a>
+byte<br>char<br>double<br>float<br>int<br>long<br>short</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037581"></a>
+Значение становится 0.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037289"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037291"></a>Значение становится false.</P></TABLE>
+<H4><A NAME="Head3;"></A><A NAME="1037309"></a>Объекты JavaArray и JavaObject</H4><hr><p><A NAME="1037310"></a>
+В большинстве случаев, когда Вы передаёте объект JavaScript <CODE>JavaArray</CODE> 
+или <CODE>JavaObject</CODE> как параметр Java-методу, Java просто разворачивает 
+этот объект (снимает оболочку); иногда объект переводится в другой тип данных по 
+правилам из таблицы:</p>
+<A NAME="1037345"></a><TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1037313"></a>
+Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037315"></a>Правила 
+конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037317"></a>
+Любой интерфейс или класс, который совместим в операции присвоения с развёрнутым объектом.</P>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1037319"></a>Оболочка с объекта снимается.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037321"></a>
+<CODE>java.lang.String</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037323"></a>
+Оболочка с объекта снимается, вызывается метод <CODE>toString</CODE>развёрнутого Java-объекта,
+а результат возвращается как новый экземпляр <CODE>java.lang.String</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037325"></a>
+byte<br>char<br>double<br>float<br>int<br>long<br>short</P><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1037333"></a>Оболочка с объекта снимается, и возникает одна из 
+следующих ситуаций:</P><ul><LI><A NAME="1037334"></a>
+Если развёрнутый Java-объект имеет метод <CODE>doubleValue</CODE>, <CODE>JavaArray</CODE> 
+или <CODE>JavaObject</CODE> конвертируется в значение, возвращаемой этим методом.<LI><A NAME="1037335"></a>
+Если развёрнутый Java-объект не имеет метода<CODE> doubleValue</CODE>, возникает ошибка.</ul>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037337"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1047751"></a>
+Оболочка с объекта снимается, и возникает одна из следующих ситуаций:</P><ul><LI><A NAME="1047756"></a>
+Если развёрнутый объект имеет метод booleanValue, объект-источник 
+конвертируется в это return-значение.<LI><A NAME="1037344"></a>
+Если развёрнутый объект не имеет метода booleanValue, конвертация терпит неудачу.</ul></TABLE>
+<p><A NAME="1037346"></a>Интерфейс или класс совместимы для присвоения с 
+развёрнутым объектом, если развёрнутый объект является экземпляром типа Java-параметра. 
+То есть, следующий оператор обязан возвращать true:</p>
+<PRE><A NAME="1037347"></a><i>развёрнутыйОбъект</i> instanceof <i>типПараметра</i></PRE>
+<H4><A NAME="Head3;"></A><A NAME="1037349"></a>Объекты JavaClass</H4><hr>
+<p><A NAME="1037350"></a>
+Если вы передаёте JavaScript-объект <CODE>JavaClass</CODE> в качестве параметра Java-методу, Java 
+конвертирует объект в соответствии с правилами из таблицы:</p>
+<A NAME="1037378"></a>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1037353"></a>
+Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037355"></a>Правила 
+конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037357"></a>
+<CODE>java.lang.Class</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037359"></a>
+Оболочка с объекта снимается.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037361"></a>
+<CODE>java.lang.JSObject<br>java.lang.Object</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037364"></a>
+Объект <CODE>JavaClass</CODE> оборачивается в новый экземпляр <CODE>java.lang.JSObject</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037366"></a>
+<CODE>java.lang.String</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037368"></a>
+Оболочка с объекта снимается, вызывается метод <CODE>toString</CODE> развёрнутого Java-объекта,
+а результат возвращается как новый экземпляр <CODE>java.lang.String</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037370"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037372"></a>
+Оболочка с объекта снимается, и возникает одна из следующих ситуаций:</P><ul><LI><A NAME="1037376"></a>
+Если развёрнутый объект имеет метод booleanValue, исходный объект 
+конвертируется в return-значение.<LI><A NAME="1037377"></a>
+Если объект не имеет метода booleanValue, конвертация терпит неудачу.</ul></TABLE>
+<H4><A NAME="Head3;"></A><A NAME="1037380"></a>Другие Объекты JavaScript</H4><hr><p><A NAME="1037381"></a>
+Если вы передаёте любой другой объект JavaScript в качестве параметра Java-методу, Java 
+конвертирует объект в соответствии с правилами из таблицы:</p>
+<A NAME="1037419"></a><P><TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1037384"></a>
+Тип Java-параметра<TH VALIGN=baseline ALIGN=left><A NAME="1037386"></a>Правила 
+конвертации<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037388"></a>
+<CODE>java.lang.JSObject<br>java.lang.Object</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037391"></a>
+Объект оборачивается в новый экземпляр <CODE>java.lang.JSObject</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037393"></a>
+<CODE>java.lang.String</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037395"></a>
+Оболочка с объекта снимается, вызывается метод <CODE>toString</CODE> развёрнутого Java-объекта,
+а результат возвращается как новый экземпляр<CODE> java.lang.String</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037397"></a>
+byte<br>char<br>double<br>float<br>int<br>long<br>short</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037405"></a>
+Объект конвертируется в значение с использованием логики оператора <CODE>ToPrimitive</CODE>, 
+описанного в <A HREF="http://developer.netscape.com/docs/javascript/e262-pdf.pdf" TARGET="_top">ECMA-262</A>.
+Подсказка <I>PreferredType</I>, используемая с этим оператором, это Number.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1037411"></a>
+boolean</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1037413"></a>
+Оболочка с объекта снимается, и возникает одна из следующих ситуаций:</P><ul><LI><A NAME="1037417"></a>
+Если развёрнутый объект имеет метод booleanValue, исходный объект 
+конвертируется в return-значение.<LI><A NAME="1037418"></a>
+<A NAME="1037377"></a>Если объект не имеет метода booleanValue, конвертация терпит неудачу.</ul></TABLE>
+<h4><A NAME="Head2;"></A><A NAME="1037422"></a>Конвертация из Java в JavaScript</h4><hr><p><A NAME="1037423"></a>
+Значения, переданные из Java в JavaScript конвертируются так:</p>
+<ul><LI><A NAME="1037424"></a>
+Java byte, char, short, int, long, float и double конвертируются в числа JavaScript.</LI><LI><A NAME="1037425"></a>Java boolean 
+конвертируется в JavaScript boolean.</LI><LI><A NAME="1037426"></a>Объект 
+класса <CODE>netscape.javascript.JSObject</CODE> конвертируется в оригинальный JavaScript-объект.</LI><LI><A NAME="1037427"></a>
+Java-массивы конвертируются в объект JavaScript pseudo-Array; этот объект ведёт 
+себя так же, как объект JavaScript <CODE>Array</CODE>: Вы можете иметь к нему доступ с синтаксисом
+<CODE>arrayName[index]</CODE> (где <CODE>index</CODE> это целое число) и 
+определять его размер с помощью <CODE>arrayName.length</CODE>.</LI><LI><A NAME="1037428"></a>
+Java-объект любого иного класса конвертируется в JavaScript-оболочку, которая 
+может использоваться для доступа к методам и полям Java-объекта:</LI><ul><LI><A NAME="1037430"></a>
+Конвертация оболочки в строку вызывает метод <CODE>toString</CODE> 
+объекта-оригинала.</LI><LI><A NAME="1037432"></a>Конвертация в число вызывает метод
+<CODE>doubleValue</CODE>, если возможно, иначе - терпит неудачу.</LI><LI><A NAME="1037434"></a>
+Конвертация в boolean вызывает метод <CODE>booleanValue</CODE>, если 
+возможно, иначе - терпит неудачу.</LI><P><A NAME="1037436"></a>Обратите 
+внимание, что экземпляры java.lang.Double и java.lang.Integer конвертируются 
+в объекты JavaScript, а не в числа JavaScript. Аналогично, экземпляры 
+java.lang.String также конвертируются в JavaScript-объекты, а не в строки JavaScript.</P></ul></ul>
+<p><A NAME="1037437"></a>Java <CODE>String</CODE> -объекты также соответствуют 
+оболочкам JavaScript. Если Вы вызываете JavaScript-метод, который требует строки JavaScript, 
+и передаёте его данной оболочке, Вы получите ошибку. Вместо этого конвертируйте 
+оболочку в строку JavaScript, присоединяя к ней пустую строку, как показано 
+здесь:</p>
+<PRE><A NAME="1037438"></a>var JavaString = JavaObj.methodThatReturnsAString();
+var JavaScriptString = JavaString + "";</PRE><HR>
+<p><SUP><font size="1">1</font></SUP><font size="1"></A><A NAME="1047485"></a>
+<a href="http://developer.netscape.com/docs/manuals/enterprise/javanote/index35.html">http://developer.netscape.com/docs/manuals/enterprise/javanote/index35.html</a></font></p>
+<P><SUP><font size="1">2</font></SUP><font size="1"><A NAME="1047490"></a>
+<a href="http://developer.netscape.com/docs/manuals/index.html?content=javascript.html">http://developer.netscape.com/docs/manuals/index.html?content=javascript.html</a></font><h5>
+<a href="contents.htm">Оглавление</a> | <a href="partlc.htm">Назад</a>
+ | <a href="glossary.htm">Вперёд</a>
+ | <a href="bklast.htm">Индекс</a></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT>
+<P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT>
+</BODY></HTML>

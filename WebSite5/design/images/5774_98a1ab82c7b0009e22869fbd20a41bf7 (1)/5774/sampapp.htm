@@ -1,0 +1,488 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<TITLE>Быстрое Начало с Примерами Приложений.</TITLE></HEAD>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="partfeat.htm">Назад</a>
+| <a href="jsserv.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5>
+<HR>
+<A NAME="1019057"></A><h1>Глава 4<BR><A NAME="997386"></A>Быстрое Начало с 
+Примерами Приложений</h1>
+<p>
+<A NAME="1021364"></A>В этой главе рассматриваются образцы приложений серверного JavaScript, 
+поставляемые вместе с Netscape web-сервером. Это начало работы с JavaScript с 
+использованием двух простейших приложений.</p>
+<p><A NAME="1023391"></A>В данной главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1023392"></A><A HREF="#1021374">О Приложениях-Образцах 
+  Серверного JavaScript</A><LI><A NAME="1023853"></A><A HREF="#1012740">Hello World</A></LI><LI><A NAME="1023393"></A>
+<A HREF="#999150">Hangman</A></LI></ul>
+<H2><A NAME="About Server-Side JavaScript Sample Applications"></A><A NAME="1021374"></A>
+О Приложениях-Образцах Серверного JavaScript</H2><hr>
+<p><A NAME="1023838"></A>
+Если вы устанавливаете Netscape web-сервер, несколько примеров приложений JavaScript 
+устанавливаются одновременно.
+Для получения представления о возможностях приложений JavaScript запустите их и 
+просмотрите исходный код. Вы можете также изменять эти приложения по мере 
+изучения возможностей JavaScript. Исходные и исполняемые файлы этих приложений 
+установлены в директории
+<CODE>$NSHOME\js\samples</CODE>, где <CODE>$NSHOME</CODE> это директория, в 
+которой Вы установили сервер.</p>
+<p><A NAME="1023717"></A>
+В таблице перечислены приложения-образцы.</p>
+<h5><A NAME="1022886"></A><A NAME="1021384"></A>Таблица 4.1&nbsp; Примеры 
+Приложений JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR>
+  <th VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1><A NAME="1021390"></A>
+<p style="text-align: left">Базовые понятия<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021396"></A>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1021399"></A>
+<CODE>world</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021401"></A>
+    Приложение "Hello World".</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021403"></A><TD VALIGN=baseline ALIGN=left><P><A NAME="1021406"></A>
+<CODE>hangman</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021408"></A>
+  &quot;Виселица&quot;.</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021410"></A><TD VALIGN=baseline ALIGN=left><P><A NAME="1021413"></A>
+<CODE>cipher</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021415"></A>
+  Угадай цифру.</P>
+<TR><th VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1>
+  <p style="text-align: left"><A NAME="1021426"></A>
+LiveWire Database Service<A HREF="#1021419"><SUP><font color="#FF0000">1</font></SUP><TR><TD VALIGN=baseline ALIGN=left><A NAME="1021432"></A><TD VALIGN=baseline ALIGN=left><P><A NAME="1021435"></A>
+<CODE>dbadmin</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021437"></A>
+    Простой интерактивный SQL-доступ с использованием LiveWire.</P><P><A NAME="1021438"></A>
+    Если Вы имеете ограниченный доступ к Application Manager, это приложение 
+    также защищено именем и паролем администратора сервера.</P><TR><TD VALIGN=baseline ALIGN=left><A NAME="1021440"></A>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1021443"></A>
+<CODE>videoapp</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021445"></A>
+    Приложение видео-магазин, использующее реляционную БД видеоклипов.</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021447"></A><TD VALIGN=baseline ALIGN=left><P><A NAME="1021450"></A>
+<CODE>oldvideo</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021452"></A>
+  Альтернативная версия видео-магазина.</P>
+<TR><th VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1>
+  <p style="text-align: left"><A NAME="1021460"></A>LiveConnect<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021466"></A><TD VALIGN=baseline ALIGN=left><P><A NAME="1021469"></A>
+<CODE>bugbase</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021471"></A>
+  Пример БД &quot;жучков&quot; с использованием LiveConnect.</P>
+<TR><th VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1><A NAME="1021487"></A>
+<p style="text-align: left">Другие приложения<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021493"></A>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1021496"></A>
+<CODE>sendmail</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021498"></A>
+    Демонстрирует способность отправлять e-mail из вашего приложения JavaScript.</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1021500"></A>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1021503"></A>
+<CODE>viewer</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021505"></A>
+  Даёт возможность просматривать файлы на сервере, используя класс JavaScript <CODE>File</CODE>.</P><P><A NAME="1021506"></A>
+  Из соображений безопасности это приложение не устанавливается автоматически 
+  вместе с Netscape-сервером. Если Вы его устанавливаете, ограничьте к нему 
+  доступ. Иначе неавторизованный пользователь сможет читать и записывать файлы 
+  на Вашем сервере. Об ограничении доступа к приложению см. руководство 
+  администратора Вашего web-сервера.</P><TR><TD VALIGN=baseline ALIGN=left><A NAME="1021508"></A>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1021511"></A>
+<CODE>jsaccall</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1021513"></A>
+Пример использования внешних библиотек и предоставления доступа к CGI-переменным.</P></TABLE>
+<TABLE><TR><TD><p><SUP>1</SUP></A>
+<A NAME="1021419"></A>Эти приложения работают только при наличии поддерживаемого 
+  сервера БД, установленного в сети, и корректно сконфигурированного клиентского 
+  программного обеспечения. См. <A HREF="dbconfig.htm#1055577">Главу 10, "Конфигурирование 
+  Базы Данных&quot;. Эти приложения обсуждаются в <A HREF="video.htm#1032862">
+  Главе 13, "Приложения-Образцы Videoapp и Oldvideo&quot;</A>. Перед началом 
+  использования <CODE>videoapp</CODE> или <CODE>oldvideo</CODE> выполните 
+  указания по их установке.</TABLE>
+<BLOCKQUOTE>
+  <p><B>ПРИМЕЧАНИЕ:</B></p>
+  <p><A NAME="1019078"></A>
+  Помимо указанных, в директории <CODE>$NSHOME\js\samples</CODE> имеется также 
+  приложение <CODE>metadata</CODE>. Оно используется Visual 
+JavaScript. Когда Вы будете просматривать исходный код, не изменяйте исполняемый 
+  файл.</p>
+</BLOCKQUOTE>
+<p>
+<A NAME="1012739"></A>Остаток этой главы посвящён двум простым приложениям,
+которые дадут Вам возможность поработать с приложениями JavaScript. Не 
+беспокойтесь о деталях. Это обсуждение предназначается только для того, чтобы 
+показать Вам возможности приложений JavaScript. Детали обсуждаются далее в этой 
+главе.</p>
+<p><A NAME="1018693"></A>
+В
+<A HREF="video.htm#1032862">Главе 13, "Приложения-Образцы Videoapp и Oldvideo&quot;</A>, 
+приложение <CODE>videoapp</CODE> рассматривается детально. Вы должны прочесть 
+эту главу перед началом работы с LiveWire Database Service.</p>
+<H2><A NAME="Hello World"></A><A NAME="1012740"></A>Hello World</H2><hr>
+<p><A NAME="1012743"></A>
+В этом разделе Вы запустите приложение Hello World, пример простейшего 
+приложения, и получите представление о следующих процедурах:</p>
+<ul><LI><A NAME="1003374"></A>Чтение исходных файлов JavaScript<LI><A NAME="999201"></A>
+  Внедрение JavaScript в HTML</LI><LI><A NAME="999200"></A>
+  Построение/Building и рестарт приложения</LI></ul>
+<p><A NAME="1012755"></A>
+Чтобы начать работу с образцами приложений, Вам необходим доступ к JavaScript Application Manager.
+Вы можете получить этот доступ, введя следующий URL в Navigator:</p>
+<PRE><A NAME="1012756"></A>http://<I><CODE>server.domain</CODE></I>/appmgr</PRE>
+<p><A NAME="1012753"></A>
+В этом и других URL в данном учебнике <I>server</I> это имя сервера, на котором 
+Вы запускаете Ваше приложение, как, например <CODE>research1</CODE> или <CODE>www</CODE>, <I>domain</I> 
+это имя домена Internet, такое как <CODE>netscape.com</CODE> или <CODE>uiuc.edu</CODE>.
+Если Ваш сервер имеет Secure Sockets Layer (SSL), используйте&nbsp; <CODE>https</CODE> 
+вместо
+<CODE>http</CODE> в URL.</p>
+<p><A NAME="1015018"></A>
+В Application Manager'е выберите <CODE>world</CODE> в 
+левом фрэйме и щёлкните кнопку Run.
+Вы можете также ввести URL приложения в поле Location Navigator'а:</p>
+<PRE><A NAME="997999"></A>http://<I><CODE>server.domain</CODE></I>/world</PRE>
+<p><A NAME="1000194"></A>
+Application Manager выведет страницу, показанную на <A HREF="#1016094">Рисунке 4.1</A>.</p>
+<h6><A NAME="1016094"></A>Рисунок 4.1&nbsp;&nbsp;&nbsp;Hello World</h6>
+<p>
+<IMG SRC="graphics/world.gif" width="299" height="433"></p>
+<P>
+<A NAME="1018694"></A>Об Application Manager см.
+<A HREF="appdev.htm#1042057">"Технология Разработки Приложений JavaScript&quot;</A>.</P>
+<h4><A NAME="Head2;"></A><A NAME="1000198"></A>Как Работает Hello World?</h4>
+<hr>
+<p>
+<A NAME="1002000"></A>Это приложение демонстрирует две важные вещи: обслуживание 
+различных клиентских статусов&nbsp; нескольких клиентов и обслуживание 
+существующего статуса приложения. Оно выполняет следующие функции:</p>
+<ul><LI><A NAME="998217"></A>
+  Выводит IP-адрес клиента, выполнившего запрос.<LI><A NAME="998227"></A>Выводит 
+  имена, введённые ранее, и форму для ввода имени пользователя.<LI><A NAME="998228"></A>
+  Выводит число - количество предыдущих запросов пользователя к странице и общее 
+  количество посещений страницы всеми клиентами.</LI></ul>
+<p><A NAME="998212"></A>
+При первом посещении страницы пользователем значения обоих имён не определены. 
+Количество предыдущих посещений пользователя равно 0; общее количество посещений 
+также равно 0.</p>
+<p>
+<A NAME="1022213"></A>Введите своё имя и нажмите Enter. Страница теперь 
+показывает введённое имя и текст "This time you are." Оба числа посещений 
+увеличиваются на 1. Эта акция иллюстрирует простейшую обработку данных формы. 
+Введите другое имя и нажмите Enter. Страница теперь показывает новое имя и текст "This time you are", 
+а предыдущее имя с - текстом "Last time you were." И вновь оба числа посещений 
+увеличиваются.</p>
+<p><A NAME="998263"></A>Если Вы выполните доступ к приложению из другого 
+экземпляра Navigator'а (или с другого компьютера), 
+страница покажет общее число посещений и количество посещений каждого экземпляра Navigator'а, 
+а не только одного данного экземпляра.</p>
+<h4><A NAME="Head2;"></A><A NAME="1022221"></A>Взгляд на Исходный Скрипт</h4>
+<hr>
+<p><A NAME="1022223"></A>
+Теперь посмотрим на исходный код JavaScript для данного приложения. Используйте 
+для этого ваш привычный текстовый редактор,
+откройте файл <CODE>$NSHOME\js\samples\world\hello.html</CODE>, где <CODE>$NSHOME</CODE> 
+это директория, в которой установлен ваш Netscape-сервер. Файл начинается 
+обычным HTML:</p>
+<PRE><A NAME="998276"></A>&lt;html&gt;<br>&lt;head&gt; <br>&lt;title&gt; Hello World &lt;/title&gt;
+<A NAME="1016164"></A>&lt;/head&gt;<br>
+&lt;body&gt;<br>&lt;h1&gt; Hello World &lt;/h1&gt;<br>
+&lt;p&gt;Your IP address is &lt;server&gt;write(request.ip);&lt;/server&gt;</PRE>
+<p><A NAME="1012840"></A>
+Тэги <CODE>SERVER</CODE> в нижней строчке содержат код JavaScript, который 
+выполняется на сервере.
+В данном случае оператор <CODE>write(request.ip)</CODE> выводит свойство <CODE>ip</CODE> 
+объекта <CODE>request</CODE> (IP-адрес клиента, выполнившего доступ к странице). 
+Функция
+<CODE>write</CODE> очень важна в приложениях JavaScript, поскольку используется 
+для  дополнения значений выражений JavaScript в HTML-страницу, отправляемую 
+клиенту.</p>
+<p><A NAME="1018721"></A>
+Объект <CODE>request</CODE> является частью службы JavaScript Session Management Service. 
+Полное его описание см. в <A HREF="sessmgmt.htm#1036383">Главе 6, "Session Management Service&quot;</A>. 
+Функция
+<CODE>write</CODE> это одна из функций JavaScript, которые не ассоциированы со 
+специфическим объектом. О функции <CODE>write</CODE> см. раздел
+<A HREF="jsserv.htm#1031015">"Конструирование HTML-Страницы&quot;</A>.</p>
+<p><A NAME="998441"></A>
+Далее идут операторы, пока не представляющие для нас интереса. Затем - оператор:</p>
+<PRE><A NAME="998308"></A><CODE>&lt;server&gt; </CODE>client.oldname = request.newname;
+<CODE>&lt;/server&gt;</CODE></PRE>
+<p><A NAME="1012848"></A>
+Этот оператор присваивает значение свойства <CODE>newname</CODE> объекта <CODE>request</CODE> 
+свойству <CODE>oldname</CODE> объекта <CODE>client</CODE>. Объект
+<CODE>client</CODE> также является частью JavaScript Session Management Service. 
+Его полное описание см. в <A HREF="sessmgmt.htm#1036383">Главе 6, "Session Management Service&quot;</A>. 
+Пока просто отметьте, что <CODE>client</CODE> может содержать информацию о 
+приложении, специфичную для определённого браузера, запускающего это приложение.</p>
+<p><A NAME="1011426"></A>Значение свойства <CODE>request.newname</CODE> 
+устанавливается, когда пользователь вводит значение в форме. Далее в файле можно 
+найти такие операторы:</p>
+<PRE><A NAME="1015924"></A>&lt;form method="post" action="hello.html"&gt;<br>
+&lt;input type="text" name="newname" size="20"&gt;</PRE>
+<p><A NAME="1015927"></A>
+Значением атрибута <CODE>ACTION</CODE> формы является <CODE>hello.html</CODE> (имя 
+текущего файла).
+Это означает, что, когда пользователь отправляет форму, щёлкая кнопку Enter или 
+нажимая клавишу Enter, Navigator перезагружает текущую страницу. Вообще, <CODE>ACTION</CODE> 
+может быть любая страница приложения JavaScript.</p>
+<p>
+<A NAME="1003596"></A>Значением атрибута <CODE>NAME</CODE> текстового поля 
+является
+<CODE>newname</CODE>. Когда страница отсылается, этот оператор присваивает то, 
+что  пользователь ввёл в текстовом поле, свойству <CODE>newname</CODE> объекта <CODE>request</CODE>, 
+к которому в JavaScript можно обратиться <CODE>request.newname.</CODE> Значения 
+элементов формы всегда соответствуют свойствам объекта <CODE>request</CODE>. 
+Свойства объекта <CODE>request</CODE> сохраняются только в течение одного 
+(текущего) клиентского запроса.</p>
+<p><A NAME="1003597"></A>Несколькими строками ниже находится другой тэг
+<CODE>SERVER</CODE>, указывающий, что следующие строки являются операторами 
+серверного JavaScript.
+Вот первая группа операторов:</p>
+<PRE><A NAME="998818"></A>if (client.number == null)<br>
+&nbsp;&nbsp;&nbsp;client.number = 0<br>else<br>&nbsp;&nbsp;&nbsp;client.number = 1 + parseInt
+(client.number, 10)</PRE>
+<p><A NAME="1012876"></A>
+Данный условный оператор проверяет, инициализировано ли свойство <CODE>number</CODE> 
+объекта <CODE>client</CODE>. Если нет, код инициализирует его в 0; иначе
+<CODE>number</CODE> увеличивается на 1 с использованием функции JavaScript <CODE>parseInt</CODE>, 
+которая конвертирует строковое значение в число. Поскольку предопределённый 
+объект <CODE>client</CODE> конвертирует все значения свойств в строки, Вы 
+обязаны использовать <CODE>parseInt</CODE> или <CODE>parseFloat</CODE> для 
+конвертации этих значений в числа.</p>
+<p>
+<A NAME="1012877"></A>Так как <CODE>number</CODE> это свойство объекта <CODE>client</CODE>,
+оно отличается для каждого клиента, выполняющего доступ к приложению. Это 
+значение указывает количество раз, когда "you have been here/Вы здесь были."</p>
+<p><A NAME="998825"></A>
+Для отслеживания общего количества посещений Вы используете объект <CODE>project</CODE>, 
+поскольку он совместно используется всеми клиентами, выполняющими доступ к 
+приложению. Свойства объекта <CODE>project</CODE> существуют, пока приложение не 
+будет остановлено. Следующая группа операторов отслеживает посещения:</p>
+<PRE><A NAME="998826"></A>project.lock() <br>if (project.number == null)<br>
+&nbsp;&nbsp;&nbsp;project.number = 0<br>else<br>&nbsp;&nbsp;&nbsp;project.number = 1 + project.number<br>
+project.unlock()</PRE>
+<p><A NAME="1008831"></A>Первый оператор использует метод <CODE>lock</CODE> 
+объекта <CODE>project</CODE>. Это даёт клиенту временный исключительный доступ к 
+объекту
+<CODE>project</CODE>. Оператор <CODE>if</CODE> проверяет, было ли определено 
+свойство <CODE>project.number</CODE>. Если нет, код инициализирует его в 0; 
+иначе код увеличивает его на 1.
+Наконец, метод <CODE>unlock</CODE> освобождает объект <CODE>project</CODE>, и 
+другие клиенты могут получить к нему доступ.</p>
+<p><A NAME="999027"></A>Последние операторы файла выводят значения свойств
+<CODE>client.number</CODE> и <CODE>project.number</CODE>.</p>
+<PRE><A NAME="999030"></A>&lt;p&gt;You have been here &lt;server&gt;write(client.number);&lt;/server&gt;
+times.<br>&lt;br&gt;This page has been accessed &lt;server&gt;write(project.number);<br>
+&lt;/server&gt; times.</PRE><h4><A NAME="Head2;"></A><A NAME="998997"></A>
+Модифицирование Приложения Hello World</h4>
+<hr>
+<p>
+<A NAME="998998"></A>В этом разделе Вы модифицируете, рекомпилируете и 
+рестартуете приложение-образец. Для редактирования исходного файла Вы сначала 
+должны найти его. Как Вы помните, Application
+Manager показывает путь к исполняемому файлу приложения (файлу с расширением<CODE> .web</CODE>). 
+Исходный файл <CODE>hello.html</CODE> должен находиться в той же директории. 
+Отредактируйте файл. HTML-файл начинается такими операторами:</p>
+<PRE><A NAME="1013929"></A>&lt;html&gt;<br>&lt;head&gt; &lt;title&gt; Hello World &lt;/title&gt;
+&lt;/head&gt;</PRE><PRE><A NAME="1013974"></A>&lt;body&gt;<br>&lt;h1&gt; Hello World &lt;/h1&gt;<br>
+&lt;p&gt;Your IP address is &lt;server&gt;write(request.ip);&lt;/server&gt;</PRE><PRE><A NAME="1013947"></A>
+&lt;server&gt;<br>write ("&lt;P&gt;Last time you were " + client.oldname + ".");<br>&lt;/server&gt;<br>
+&lt;p&gt;This time you are &lt;server&gt;write(request.newname);&lt;/server&gt;</PRE><PRE><A NAME="1016176"></A>
+&lt;server&gt;client.oldname = request.newname; &lt;/server&gt;</PRE>
+<p><A NAME="999109"></A>
+Добавьте строку, выводящую тип пользовательского браузера:</p>
+<PRE><A NAME="999112"></A>&lt;p&gt;You are using &lt;server&gt;write(request.agent)&lt;/server&gt;</PRE>
+<p>
+<A NAME="999006"></A>Если Вам нужно, можете также персонализировать шапку/head 
+страницы; например, можете сделать такой заголовок: "Fred's Hello World."</p>
+<p><A NAME="1014049"></A>
+Когда вы закончите изменение файла, запустите компилятор приложений JavaScript. 
+В командной строке перейдите в директорию,
+содержащую исходный файл. Введите такую строку для компиляции приложения:</p>
+<PRE><A NAME="1014052"></A>jsac -v -o hello.web hello.html</PRE>
+<p><A NAME="1016442"></A>
+Альтернативно Вы можете из этой директории запустить скрипт <CODE>build</CODE> (в Unix) 
+или
+<CODE>build.bat</CODE> (в NT). В этом случае компилятор стартует и выводит 
+сообщения.
+Последнее сообщение должно быть "Compiled and linked successfully/Откомпилировано 
+и скомпоновано успешно&quot;.</p>
+<p><A NAME="1016443"></A>
+Опубликуйте файлы на Вашем сервере разработки. Для рестарта войдите в Application Manager,
+выберите Hello World, затем выберите Restart. Эта операция загрузит на сервер 
+новую откомпилированную версию приложения. Затем Вы можете запустить приложение, 
+выбрав Run. Открывается окно с Hello World. Вы увидите внесённые Вами изменения 
+в приложении.</p>
+<H2><A NAME="Hangman"></A><A NAME="999150"></A>Hangman</H2><hr>
+<p><A NAME="1016182"></A>
+В этом разделе Вы запустите и модифицируете приложение-образец Hangman и 
+получите представление о том, как:</p>
+<ul><LI><A NAME="1016183"></A>Использовать исходные файлы на чистом JavaScript.</LI><LI><A NAME="1016184"></A>
+  Исправлять ошибки времени компиляции/compile-time errors.</LI><LI><A NAME="1013358"></A>
+  Использовать утилиту трассировки для отладки.</LI></ul>
+<p><A NAME="1013359"></A>Hangman это классическая игра, в которой игроки 
+пытаются угадать слово. Неизвестные буквы отображаются на экране звёздочками; 
+звёздочка заменяется на букву, если игрок угадывает её. Если введённая буква 
+некорректна, прорисовывается часть повешенного. Игра показывает также 
+некорректные буквы, введённые Вами.</p>
+<p><A NAME="1005705"></A>
+Если повешенный прорисуется полностью, игрок проиграл. Игрок выигрывает, угадав 
+все буквы слова до окончания прорисовки повешенного. В этой упрощённой версии 
+игры есть только три слова для угадывания. После окончания игры можно снова 
+начать её снова (и использовать следующее слово)
+или закончить игру.</p>
+<p><A NAME="1006501"></A>Запустите приложение Hangman, выбрав Hangman в Application
+Manager и щёлкнув Run. Можно также загрузить приложение в Navigator:</p>
+<PRE><A NAME="1006502"></A>http://<I><CODE>server.domain</CODE></I>/hangman</PRE>
+<p><A NAME="1016225"></A>
+В ответ Application Manager выведет страницу, показанную на следующем рисунке.</p>
+<h6><A NAME="1006503"></A>Рисунок 4.2&nbsp;&nbsp;&nbsp;Hangman </h6>
+<P>
+<IMG SRC="graphics/hangman.gif" width="340" height="514"></P> <P>
+<A NAME="1008154"></A>&nbsp;Поиграйте в игру, чтобы получить представление о 
+работе программы.</P><h4><A NAME="Head2;"></A><A NAME="1022913"></A>
+Взгляд на Исходные Файлы</h4><hr>
+<p><A NAME="1022946"></A>
+В следующей таблице перечислены исходные файлы приложения Hangman.</p>
+<A NAME="1022948"></A>
+<h5><A NAME="1022923"></A>Таблица 4.2&nbsp; Исходные файлы приложения Hangman</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1022927"></A>hangman.html</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1022929"></A>
+  Главная страница приложения. Она устанавливается как страница по умолчанию 
+  приложения Hangman в
+Application Manager'е. Она выводится, если 
+  пользователь введёт просто <CODE>hangman</CODE> в URL без специфицирования 
+  страницы.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1022931"></A>hangman.js</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1022933"></A>Файл, содержащий только функции серверного JavaScript, 
+используемые в
+<CODE>hangman.html</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1022935"></A>youwon.html<br>youlost.html<br>thanks.html</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1022937"></A>
+Страницы, выводимые, если пользователь победил, проиграл или закончил игру, 
+соответственно.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1022939"></A>директория images</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1022941"></A>
+Изображения программы , <CODE>hang0.gif</CODE>, <CODE>hang1.gif</CODE>, и т.д.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1022943"></A>rules.html</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1022945"></A>Содержит текст с 
+пояснениями об игре. Этот файл не компилируется вместе с приложением; он включён 
+как пример неоткомпилированной страницы приложения, являющейся частью того сайта.</P></TABLE>
+<p><A NAME="1022947"></A>
+Основная логика приложения содержится в файле <CODE>hangman.html</CODE>. Базовая 
+логика проста, как три рубля:</p>
+<OL><LI><A NAME="1008263"></A>
+Для новой игры: инициализируется угадываемое слово и другие переменные.</LI><LI><A NAME="1008264"></A>
+  Если игрок угадал букву, она замещается в вопросе.</LI><LI><A NAME="1008265"></A>
+  Если игрок не угадал, увеличивается число неудачных попыток.</LI><LI><A NAME="1008790"></A>
+  Проверяется, победил пользователь или проиграл.</LI><LI><A NAME="1008266"></A>
+  Прорисовывается текущий вариант изображения с использованием GIF-изображения с 
+  учётом неугаданных букв.</LI></OL>
+<p><A NAME="1008262"></A>
+Тело/body HTML-файла <CODE>hangman.html</CODE> начинается кодом JavaScript в 
+тэге
+<CODE>SERVER</CODE>. Сначала идёт код для инициализации новой игры:</p>
+<PRE><A NAME="1011899"></A>if (client.gameno == null) {<br>&nbsp;&nbsp;&nbsp;client.gameno = 1;<br>
+&nbsp;&nbsp;&nbsp;client.newgame = "true";<br>}</PRE><PRE><A NAME="1016293"></A>if (client.newgame == "true")
+{<br>&nbsp;&nbsp;&nbsp;if (client.gameno % 3 == 1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client.word = "LIVEWIRE";<br>
+&nbsp;&nbsp;&nbsp;if (client.gameno % 3 == 2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client.word = "NETSCAPE";<br>
+&nbsp;&nbsp;&nbsp;if (client.gameno % 3 == 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client.word = "JAVASCRIPT";<br>
+&nbsp;&nbsp;&nbsp;client.answer = InitAnswer(client.word);<br>&nbsp;&nbsp;&nbsp;client.used = "";<br>
+&nbsp;&nbsp;&nbsp;client.num_misses = 0;<br>}</PRE>
+<PRE><A NAME="1016294"></A>client.newgame = "false";</PRE>
+<p><A NAME="1012531"></A>
+Этот код использует объект <CODE>client</CODE> для сохранения информации об 
+игроке. Поскольку нет необходимости сохранять статус игры между вызовами разных 
+клиентов, этот код не использует объекты <CODE>project</CODE> или <CODE>server</CODE>.</p>
+<p>
+<A NAME="1012815"></A>Первый оператор определяет, играл игрок до этого, или нет, 
+проверяя существование <CODE>client.gameno</CODE>; если нет, код 
+инициализируется в 1 и <CODE>client.newgame</CODE> устанавливается в <CODE>true</CODE>. 
+Затем некоторая простая логика присваивает
+"секретное слово" свойству <CODE>client.word;</CODE> имеются только три 
+секретных слов, по которым игра проходит по циклу. Свойство <CODE>client.gameno</CODE> 
+хранит количество игр, сыгранных конкретным пользователем. Финальная часть 
+инициализации использует <CODE>InitAnswer</CODE>, функцию, определённую в файле <CODE>hangman.js</CODE>, 
+для инициализации свойства <CODE>client.answer</CODE> строкой звёздочек.</p>
+<p>
+<A NAME="1008697"></A>Затем идёт блок операторов обработки действий игрока по 
+угадыванию:</p>
+<PRE><A NAME="1008854"></A>if (request.guess != null) {<br>
+&nbsp;&nbsp;&nbsp;request.guess = request.guess.toUpperCase().substring(0,1);<br>
+&nbsp;&nbsp;&nbsp;client.used = client.used + request.guess + " ";<br>
+&nbsp;&nbsp;&nbsp;request.old_answer = client.answer;<br>&nbsp;&nbsp;&nbsp;client.answer = Substitute
+(request.guess, client.word,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client.answer);<br>
+&nbsp;&nbsp;&nbsp;if (request.old_answer == client.answer)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client.num_misses = parseInt(client.num_misses) + 1;<br>}</PRE>
+<p><A NAME="1015128"></A>
+Оператор <CODE>if</CODE> определяет, угадал ли игрок (введя букву в форму). Если 
+да, код вызывает <CODE>Substitute</CODE> (другую функцию, определённую в файле
+<CODE>hangman.js</CODE>) для замены угаданной буквы в <CODE>client.answer</CODE>. 
+Это постепенно прорисовывает слово в <CODE>client.answer</CODE> (например, "N*T**AP*").</p>
+<p><A NAME="1008880"></A>
+Второй оператор <CODE>if</CODE> проверяет, было ли изменено свойство <CODE>client.answer</CODE> 
+после последнего угадывания; если нет, код увеличивает <CODE>client.num_misses</CODE> 
+для отслеживания количества некорректных ответов. Вы обязаны всегда использовать <CODE>parseInt</CODE> 
+при работе с целочисленными значениями свойств предопределённого объекта <CODE>client</CODE>.</p>
+<p><A NAME="1008794"></A>
+Как видно из следующего кода, последний оператор <CODE>if</CODE> в коде JavaScript 
+проверяет, победил игрок или проиграл, и перенаправляет клиента соответственно. 
+Функция <CODE>redirect</CODE> открывает специфицированный HTML-файл и передаёт 
+управление в него.</p>
+<PRE><A NAME="1016686"></A>
+if (client.answer == client.word)<br>&nbsp;&nbsp;&nbsp;redirect(addClient("youwon.html")); <br>
+else if (client.num_misses &gt; 6)<br>&nbsp;&nbsp;&nbsp;redirect(addClient("youlost.html"));</PRE>
+<p>
+<A NAME="1008821"></A>Это конец начального тэга <CODE>SERVER</CODE>. Начинается HTML, 
+дополненный выражениями JavaScript. Человек прорисовывается с использованием 
+закавыченных выражений JavaScript внутри HTML-тэга <CODE>IMG</CODE>:</p>
+<PRE><A NAME="1008824"></A>&lt;IMG SRC=`"images\hang" + client.num_misses + ".gif"`&gt;</PRE>
+<p><A NAME="1008822"></A>
+Всё выражение между двумя обратными кавычками (<CODE>`</CODE>) это строка JavaScript. 
+Она состоит из строкового литерала<CODE> "images\hang</CODE>", соединяемого со 
+значением
+<CODE>client.num_misses</CODE> (которое является целым числом, но хранится как 
+строка), соединяемого со строковым литералом <CODE>".gif"</CODE>. Имеются шесть GIF-файлов 
+с изображениями повешенного человечка в различных стадиях: <CODE>image0.gif</CODE>, <CODE>image1.gif</CODE> 
+и так далее. Выражение JavaScript
+в кавычках генерирует HTML вида:</p>
+<PRE><A NAME="1008888"></A>&lt;IMG SRC="images\hang0.gif"&gt;</PRE>
+<p><A NAME="1008825"></A>Затем идут строки:</p>
+<PRE><A NAME="1008895"></A>&lt;PRE&gt;&lt;SERVER&gt;write(client.answer)&lt;/SERVER&gt;&lt;/PRE&gt;<br>
+You have used the following letters so far: <br>&lt;SERVER&gt;write(client.used)&lt;/SERVER&gt;</PRE>
+<p>
+<A NAME="1008889"></A>Они выводят значение <CODE>client.answer</CODE> (слово, 
+содержащее все правильно угаданные буквы) и все угаданные буквы.</p>
+<p><A NAME="1008907"></A>
+Оставшаяся часть файла это стандартный HTML. Важно отметить, что атрибут
+<CODE>ACTION</CODE> тэга <CODE>FORM</CODE> специфицирует файл <CODE>hangman.html</CODE> 
+как URL, по которому отправляется форма. Это значит, что при отправке формы 
+страница перезагружается с новыми (специфицированными) значениями формы.</p>
+<p><A NAME="1012528"></A>Посмотрим на <CODE>hangman.js</CODE>, пример исходного 
+файла, написанного с использование только серверного JavaScript. В нём 
+определены две функции, <CODE>InitAnswer</CODE> и
+<CODE>Substitute</CODE>, используемые приложением. Заметьте, что в файлах с 
+серверным JavaScript тэги <CODE>SERVER</CODE> не используются.</p>
+<h4><A NAME="Head2;"></A><A NAME="998042"></A>Отладка Приложения Hangman</h4>
+<hr>
+<p>
+<A NAME="1017033"></A>Вы можете поэкспериментировать с JavaScript, чтобы 
+получить представление о разработке приложений. Одна из важнейших задач - 
+отладка. Выберите в Application Manager приложение Hangman и Debug/Отладить.
+Application Manager открывает окно с приложением в одном фрэйме и с отладочной 
+информацией - в другом, слева, как показано на <A HREF="#1017041">Рисунке 4.3</A>.</p>
+<h6><A NAME="1017041"></A>Рисунок 4.3&nbsp;&nbsp;&nbsp;Отладка приложения Hangman
+</h6>
+<P>
+<IMG SRC="graphics/debug.gif" width="514" height="560"></P>
+<p>
+<A NAME="1017042"></A>Заметьте, что URL будет теперь</p>
+<PRE><A NAME="1009007"></A>http://<I><CODE>server.domain</CODE></I>/appmgr/debug.html?name=hangman</PRE>
+<p><A NAME="1009004"></A>Вы можете сделать закладку на этот URL для удобства 
+работы с Hangman. После этого не нужно будет выходить в Application Manager.</A></p>
+<p>
+<A NAME="1022282"></A>Попытайтесь добавить в Hangman функцию, проверяющую, 
+является ли введённый пользователем символ буквой
+(а не числом или знаком пунктуации). Можете использовать функцию <CODE>InitAnswer</CODE> 
+из <CODE>hangman.js</CODE> для старта. После компиляции и рестарта приложения 
+используйте закладку для запуска приложения в режиме отладки.</p>
+<h5><a href="contents.htm">
+Оглавление</a> | <a href="partfeat.htm">Назад</a>
+| <a href="jsserv.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT></BODY></HTML>

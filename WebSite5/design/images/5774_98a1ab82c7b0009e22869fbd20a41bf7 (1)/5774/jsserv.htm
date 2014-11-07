@@ -1,0 +1,1532 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<TITLE>Основы Серверного JavaScript.</TITLE></HEAD>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="sampapp.htm">Назад</a>
+| <a href="sessmgmt.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a><BR></h5><HR><h1>Глава 5<BR><A NAME="997386"></a>Основы Серверного JavaScript</h1>
+<p><A NAME="1042343"></a>В этой главе даются основы серверной функциональности и 
+различия между клиентским и серверным JavaScript. Здесь показано, как внедрять 
+серверный JavaScript в HTML-файлы. Обсуждается, что происходит во время прогона 
+программы на клиенте и на сервере, чтобы Вы могли разобраться во всём этом. В 
+главе описано, как использовать JavaScript для изменения HTML-страницы, 
+отправляемой клиенту, и, наконец, как распределить информацию между серверными и 
+клиентскими процессами.</p><p><A NAME="1053684"></a>
+В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1052215"></a><a href="#1028568">Что Делать и Где</a></LI><LI><A NAME="1052219"></a>
+<A HREF="#1028696">Обзор Процессов Времени Прогона/Runtime</a></LI><LI><A NAME="1052223"></a>
+<a href="#1031068">Серверный Язык. Обзор.</a></LI><LI><A NAME="1052227"></a>
+<A HREF="#1022266">Внедрение JavaScript в HTML</a></LI><LI><A NAME="1052231"></a>
+<A HREF="#1024580">Процессинг Времени Прогона на Сервере</a></LI><LI><A NAME="1052235"></a>
+<A HREF="#1031015">Конструирование HTML-Страницы</a></LI><LI><A NAME="1052239"></a>
+<A HREF="#1037612">Доступ к Переменным CGI</a></LI><LI><A NAME="1052243"></a>
+<a href="#1035757">Сообщение Между Сервером и Клиентом</a></LI><LI><A NAME="1053976"></a>
+<a href="#1049215">Сбор Мусора</a></LI><LI><A NAME="1055124"></a>
+<a href="#1055133">Обработка Ошибок в Серверном JavaScript</a></LI></ul>
+<p><A NAME="1020965"></a>Серверный JavaScript имеет то же ядро языка, что и клиентский
+JavaScript, с которым Вы, возможно, уже знакомы. Задачи, выполняемые Вами при 
+запуске JavaScript на сервере, несколько отличаются от задач, выполняемых при 
+работе JavaScript на клиенте. Разные окружения и задачи обращаются к различным объектам.</p>
+<H2><A NAME="What to Do Where"></A><A NAME="1028568"></a>Что Делать и Где</H2><hr>
+<p><A NAME="1028680"></a>
+Клиентская среда (браузер) является передним краем работы приложения. В этой среде, к примеру,
+Вы отображаете HTML-страницы в окне и обслуживаете истории сессий HTML-страниц, 
+отображаемых в браузере в течение сессии. Объекты этой среды, следовательно, 
+обязаны иметь возможность манипулировать страницами, окнами и историей.</p>
+<p><A NAME="1028681"></a>По контрасту, в серверной среде Вы работаете с 
+ресурсами сервера. Например, Вы можете установить соединение с реляционной базой 
+данных, распределить информацию между пользователями приложения или 
+манипулировать файловой системой сервера. Объекты этой среды обязаны иметь 
+возможность манипулировать реляционной БД и файловой системой сервера.</p>
+<p><A NAME="1028682"></a>Кроме того,
+HTML-страница не отображается на сервере. Она запрашивается на сервере для 
+отображения на клиенте.
+Запрошенная страница может содержать клиентский JavaScript. Если запрошенная 
+страница является частью приложения JavaScript, сервер может генерировать эту 
+страницу &quot;на лету&quot;.</p>
+<p><A NAME="1028569"></a>
+При разработке приложения JavaScript помните о разнице между клиентской и 
+серверной платформами.
+Различия показаны в следующей таблице.</p>
+<A NAME="1053530"></a><h5><A NAME="1028579"></a>
+Таблица 5.1&nbsp;Сравнение Клиента и Сервера</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><B><A NAME="1028583"></a>
+  Серверы<TH VALIGN=baseline ALIGN=left><A NAME="1028585"></a>Клиенты<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1028587"></a>
+    Серверы обычно (хотя и не всегда) являются высокопроизводительными рабочими 
+    станциями с быстрыми процессорами и возможностью хранения больших объемов 
+    информации.</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1028590"></a>
+    Клиенты часто (хотя и не всегда) являются настольными системами с 
+    маломощными процессорами и относительно небольшим объемом хранимых данных.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1028592"></a>
+  Серверы могут быть перегружены при одновременном доступе тысяч клиентов.</P><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1028594"></a>Клиенты часто - машины одного пользователя, поэтому 
+можно передать часть нагрузки процессинга клиенту.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1028596"></a>
+</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1028599"></a>
+    Предварительная обработка данных на клиенте также может уменьшить требования 
+    к пропускной способности сети, если клиентское приложение может компоновать 
+    данные.</P></TABLE>
+<p>
+<A NAME="1028601"></a>Обычно имеются разные пути распределения приложения между 
+сервером и клиентом. Некоторые задачи могут выполняться только на клиенте или 
+только на сервере; другие могут выполняться на любом из них. Хотя нет какого-то 
+определённого способа определить, что и где делать, Вы может следовать следующим 
+общим правилам:</p>
+<p><A NAME="1028603"></a>
+Основное правило - использовать клиентский процессинг (тэг <CODE>SCRIPT</CODE>) 
+для следующих задач:</p>
+<ul><LI><A NAME="1028605"></a>
+  Проверка ввода пользователя; то есть проверка верности введённых в форму 
+  значений<LI><A NAME="1028606"></a>
+  Запрос подтверждения пользователя и отображение диалоговых окон или 
+  информационных боксов<LI><A NAME="1028608"></a>
+  Выполнение агрегатных расчётов (таких как суммирование или вычисление среднего 
+  числа) или иной процессинг данных, запрошенных на сервере<LI><A NAME="1028610"></a>
+  &quot;Обусловливание&quot; (условная обработка) HTML</LI><LI><A NAME="1028611"></a>Выполнение других функций, 
+  не требующих информации с сервера</LI>
+</ul>
+<p><A NAME="1028613"></a>Использовать серверный процессинг (тэг <CODE>SERVER</CODE>) 
+для следующих задач:</p>
+<ul><LI><A NAME="1028614"></a>Обслуживание серий клиентских запросов<LI><A NAME="1028615"></a>
+  Работа с данными, распределёнными по нескольким клиентам или приложениям<LI><A NAME="1028617"></a>
+  Доступ к БД или файлам на сервере<LI><A NAME="1028619"></a>Вызов внешних 
+  библиотек на сервере<LI><A NAME="1028621"></a>Динамическая специализация Java-аплетов; 
+  например, визуализация данных через использование Java-аплета</LI>
+</ul>
+<p><A NAME="1028622"></a>Служба JavaScript Session Management Service 
+предоставляет объекты для сохранения информации, а клиентский JavaScript 
+преходящ. Клиентские объекты существуют, пока пользователь имеет доступ к 
+странице. Серверы могут объединять информацию от многих клиентов и многих 
+приложений и могут сохранять большие объёмы данных в базе данных. Важно помнить 
+обо всех этих характеристиках при распределении функциональности между клиентом 
+и сервером.</p>
+<H2><A NAME="Overview of Runtime Processing"></A><A NAME="1028696"></a>Обзор 
+Процессов Времени Прогона (Выполнения)</H2><hr>
+<p><A NAME="1028697"></a>
+После того как Вы установили и стартовали приложение JavaScript, пользователь 
+может получить к нему доступ.<br>
+Базовые процедуры таковы:</p>
+<OL><LI><A NAME="1028698"></a>Пользователь выполняет доступ к приложению по его URL 
+  в web-браузере, таком как Netscape
+Communicator. Браузер отправляет клиентский запрос страницы приложения на сервер.</LI><LI><A NAME="1028699"></a>
+  Если это запрос к странице с URL приложения, машина выполнения JavaScript, 
+  запущенная на сервере, находит информацию в web-файле, соответствующем этому URL.
+  О деталях этого процесса и о том, что происходит на этом и на последующих двух 
+  этапах, см. в разделе
+<A HREF="#1024580">"Процессинг Времени Прогона на Сервере"</A>.</LI><LI><A NAME="1036570"></a>
+  Машина времени выполнения конструирует HTML-страницу для отправки клиенту.
+  Она выполняет байт-коды, ассоциированные с тэгами <CODE>SERVER</CODE>, из 
+  исходного кода HTML,
+  создавая HTML-страницу на основе этих байт-кодов и иного HTML, имеющегося в 
+  оригинале. О том, как влиять на процесс конструирования страницы,
+  см. в разделе <A HREF="#1031015">"Конструирование HTML-Страницы"</A>.</LI><LI><A NAME="1036571"></a>
+  Машина выполнения высылает новую HTML-страницу (которая может содержать 
+  операторы клиентского
+JavaScript) клиенту.</LI><LI><A NAME="1028706"></a>
+  Машина выполнения JavaScript внутри web-браузера интерпретирует любые 
+  операторы клиентского JavaScript,
+  форматирует вывод HTML и выводит результат пользователю.</LI></OL>
+<p><A NAME="1028710"></a>
+<A HREF="#1028716">Рисунок 5.1</A> иллюстрирует это процесс.</p>
+<h6><A NAME="1028716"></a>Рисунок 5.1&nbsp;&nbsp;&nbsp;Процессинг запроса JavaScript-страницы</h6>
+<P>
+<IMG SRC="graphics/proc.gif" width="482" height="227"></P>
+<p>
+<A NAME="1028717"></a>Конечно, пользователь обязан иметь Netscape Navigator (или 
+иной браузер с возможностью выполнения JavaScript), чтобы клиент мог 
+интерпретировать операторы клиентского JavaScript. Аналогично, если Вы создаёте 
+страницу, содержащую серверный JavaScript, он должен быть установлен на Netscape-сервере, 
+чтобы нормально функционировать.</p>
+<p><A NAME="1028718"></a>Например, предположим, клиент запрашивает страницу с 
+таким исходным кодом:</p>
+<PRE><A NAME="1028719"></a>&lt;html&gt;<br>&lt;head&gt; &lt;title&gt; Add New
+Customer &lt;/title&gt; &lt;/head&gt;</PRE>
+<PRE><A NAME="1028720"></a>&lt;body text="#FFFF00" bgcolor="#C0C0C0" background="blue_marble.gif"&gt;<br>
+&lt;img src="billlog2.gif"&gt;<br>&lt;br&gt;</A></PRE><PRE><A NAME="1028721"></a><B>&lt;server&gt;<br>
+if ( project.lock() ) {<br>&nbsp;&nbsp;&nbsp;project.lastID = 1 + project.lastID;<br>
+&nbsp;&nbsp;&nbsp;client.customerID = project.lastID;<br>&nbsp;&nbsp;&nbsp;project.unlock();<br>}<br>
+&lt;/server&gt;</B></PRE><PRE><A NAME="1028722"></a>&lt;h1&gt;Add a New Customer &lt;/h1&gt;<br>
+&lt;p&gt;Note: &lt;b&gt;All&lt;/b&gt; fields are required for the new customer<br>&lt;form
+method="post" action="add.htm"&gt;&lt;/p&gt;<br>&lt;p&gt;ID:<br>&lt;br&gt;
+<B>&lt;server&gt;write("&lt;STRONG&gt;&lt;FONT COLOR=\"#00FF00\"&gt;" + <br>
+&nbsp;&nbsp;&nbsp;project.lastID + "&lt;/FONT&gt;&lt;/STRONG&gt;");&lt;/server&gt;</B></PRE>
+<PRE><A NAME="1028723"></a>&lt;!-- другие операторы html --&gt;</PRE><PRE><A NAME="1028724"></a>&lt;/body&gt;
+<br>&lt;/html&gt;</PRE>
+<p><A NAME="1028725"></a>При доступе к этой странице машина выполнения выполняет 
+на сервере код, ассоциированный с тэгами <CODE>SERVER</CODE>. (Этот код выделен 
+жирным шрифтом.) Если ID нового потребителя 42, сервер высылает клиенту для 
+отображения такую HTML-страницу:</p>
+<PRE><A NAME="1028726"></a>&lt;html&gt;<br>&lt;head&gt; &lt;title&gt; Add New
+Customer &lt;/title&gt; &lt;/head&gt;</PRE><PRE><A NAME="1028727"></a>
+&lt;body text="#FFFF00" bgcolor="#C0C0C0" background="blue_marble.gif"&gt;<br>
+&lt;img src="billlog2.gif"&gt;<br>&lt;br&gt;</PRE><PRE><A NAME="1028728"></a>&lt;h1&gt;Add a New Customer
+&lt;/h1&gt;<br>&lt;p&gt;Note: &lt;b&gt;All&lt;/b&gt; fields are required for the new customer<br>
+&lt;form method="post" action="add.htm"&gt;&lt;/p&gt;<br>&lt;p&gt;ID:<br>
+&lt;br&gt;<B>&lt;STRONG&gt;&lt;FONT COLOR="#00FF00"&gt;42&lt;/FONT&gt;&lt;/STRONG&gt;</B></PRE>
+<PRE><A NAME="1028729"></a>&lt;!-- другие операторы html --&gt;</PRE><PRE><A NAME="1031066"></a>
+&lt;/body&gt;<br>&lt;/html&gt;</PRE><H2><A NAME="Server-Side Language Overview"></A>
+<A NAME="1031068"></a>Серверный Язык. Обзор.</H2><hr>
+<p><A NAME="1031069"></a>
+И клиентский, и серверный JavaScript реализуют язык JavaScript. Но каждый при 
+этом добавляет специфические объекты и функции для работы в клиентской или 
+серверной среде. Например, клиентский
+JavaScript включает объект <CODE>form</CODE> для представления формы на HTML-странице, 
+а серверный
+JavaScript включает объект <CODE>database</CODE> для соединения с внешней 
+реляционной БД.</p>
+<p>
+<A NAME="1041787"></a>В книге <I>
+<a TARGET="_top" href="../clientguide13/index.htm">Клиентский JavaScript. Руководство</a>.</I> детально рассматривается ядро языка JavaScript
+и дополнительная специфика клиентского JavaScript.</p>
+<p><A NAME="1055386"></a>
+ECMA, Европейская организация стандартизации систем информации и коммуникаций, 
+выпустила стандарт ECMA-262 языка JavaScript. Вы можете загрузить эту 
+спецификацию с сайта ECMA по адресу <A HREF="http://www.ecma.ch" TARGET="_blank"><CODE>http://www.ecma.ch</CODE></A>.</p>
+<h4><A NAME="Head2;"></A><A NAME="1055409"></a>Прототипы</h4><hr>
+<p><A NAME="1031435"></a>
+Как указано в книге <I><a href="../servref12/index.htm">Серверный JavaScript. Справочник.</a></I>, Вы можете 
+использовать свойство <CODE>prototype</CODE> многих классов, чтобы добавлять 
+новые свойства в класс и во все его экземпляры. Как описано в разделе <A HREF="#1037294">"Классы 
+и Объекты"</A>, серверный JavaScript добавляет несколько классов и 
+предопределённых объектов. В новых классах, имеющих свойство <CODE>prototype</CODE>, 
+оно работает в серверном JavaScript точно так же, как и в клиентском JavaScript.</p>
+<p><A NAME="1033873"></a>
+Вы можете использовать свойство <CODE>prototype</CODE> для добавления новых 
+свойств в классы <CODE>Blob</CODE>,
+<CODE>Connection</CODE>, <CODE>Cursor</CODE>, <CODE>DbPool</CODE>, <CODE>File</CODE>, <CODE>Lock</CODE>,
+<CODE>Resultset</CODE>, <CODE>SendMail</CODE> и <CODE>Stproc</CODE>. Кроме того, 
+Вы можете использовать свойство <CODE>prototype</CODE> класса <CODE>DbBuiltin</CODE> 
+для добавления свойств в предопределённый объект <CODE>database</CODE>. Обратите 
+внимание, что Вы не можете создать экземпляр класса
+<CODE>DbBuiltin</CODE>; вместо этого Вы используете объект <CODE>database</CODE>, 
+предоставляемый машиной выполнения JavaScript.</p>
+<p><A NAME="1033897"></a>Вы не можете использовать <CODE>prototype</CODE> с 
+объектами <CODE>client</CODE>,
+<CODE>project</CODE>, <CODE>request</CODE> и <CODE>server</CODE>.</p>
+<p><A NAME="1031878"></a>
+Так же, как и в клиентском JavaScript, Вы можете использовать свойство <CODE>prototype</CODE> 
+для любого класса, который Вы определяете в своём приложении.</p>
+<p><A NAME="1031971"></a>Помните, что все приложения JavaScript на сервере 
+работают в одной среде. Вот почему Вы можете распределять информацию между 
+клиентами и приложениями.
+Следствием этого, однако, является то, что при использовании свойства <CODE>prototype</CODE> 
+для добавления нового свойства в любой серверный класс, добавленный языком JavaScript, 
+новое свойство доступно всем приложениям, работающим на сервере, а не только 
+приложению, в котором это свойство было добавлено. Это даёт возможность легко 
+добавлять функциональность всем приложениям JavaScript
+на Вашем сервере.</p>
+<p><A NAME="1033919"></a>В противоположность этому, если Вы добавляете свойство 
+в класс, который Вы определили в своём приложении, это свойство доступно только 
+в том приложении, где оно было создано.</p>
+<h4><A NAME="Head2;"></A><A NAME="1031248"></a>Использование</h4><hr>
+<p><A NAME="1031326"></a>
+Вам необходимо знать, как компилятор приложений JavaScript распознаёт клиентский 
+и серверный
+JavaScript в HTML-файле.</p>
+<p><A NAME="1031327"></a>
+Операторы клиентского JavaScript могут появляться в следующих ситуациях:</p>
+<ul><LI><A NAME="1031328"></a>Как операторы и функции внутри тэга <CODE>SCRIPT</CODE><LI><A NAME="1031329"></a>
+  При специфицировании файла как JavaScript-исходника для тэга <CODE>SCRIPT</CODE><LI><A NAME="1031330"></a>
+  При специфицировании выражения JavaScript как значения HTML-атрибута<LI><A NAME="1031331"></a>
+  При включении операторов как обработчиков событий в некоторых тэгах HTML</LI>
+</ul>
+<p><A NAME="1031337"></a>О деталях см. книгу <I>
+<a TARGET="_top" href="../clientguide13/index.htm">Клиентский JavaScript. </a> </I>
+<i><a href="../clientguide13/index.htm">Руководство</a></i>.</p>
+<p>
+<A NAME="1031338"></a>Операторы серверного JavaScript могут появляться в 
+следующих ситуациях:</p>
+<ul><LI><A NAME="1031339"></a>
+  Как операторы и функции внутри тэга <CODE>SERVER</CODE><LI><A NAME="1031340"></a>
+  При специфицировании файла как JavaScript-исходника для компилятора приложений JavaScript<LI><A NAME="1031341"></a>
+  При специфицировании выражения JavaScript как значения или имени HTML-атрибута</LI>
+</ul>
+<p><A NAME="1031342"></a>
+Заметьте, что Вы не можете специфицировать оператор серверного JavaScript как 
+обработчик события. Дополнительно см. <A HREF="#1022266">"Внедрение JavaScript в HTML"</A>.</p>
+<h4><A NAME="Head2;"></A><A NAME="1033064"></a>Окружение (Рабочая Среда)</h4>
+<hr>
+<p><A NAME="1033065"></a>
+Возможности LiveConnect ядра языка JavaScript работают на сервере иначе, чем на 
+клиенте. См. дополнительно <A HREF="lc.htm#1008305">Главу 14, "LiveConnect. 
+Обзор."</A>.</p>
+<p>
+<A NAME="1033069"></a>JavaScript предоставляет дополнительную функциональность 
+без использования объектов. Вы получаете доступ к этой функциональности через 
+функции, не ассоциированные с каким-либо объектом (глобальные функции). Ядро 
+языка
+JavaScript имеет глобальные функции, описанные в следующей таблице (также как и 
+другие функции, описанные в документации Ядра JavaScript).</p>
+<A NAME="1052590"></a>
+<h5><A NAME="1033109"></a>Таблица 5.2&nbsp; Глобальные Функции Ядра JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><B><A NAME="1033113"></a>
+  Функция<TH VALIGN=baseline ALIGN=left><A NAME="1033115"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033117"></a>escape</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033119"></a>
+    Возвращает 16-ричный код аргумента - символа из набора символов ISO Latin-1; 
+    используется при создании строк для добавления в URL.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033950"></a>unescape</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033952"></a>
+  Возвращает ASCII-строку для специфицированного значения; используется при 
+  разборе строки, добавленной в URL.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033121"></a>isNaN</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033123"></a>
+  Вычисляет аргумент для определения не является ли он &quot;неЧислом&quot;.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033153"></a>parseFloat</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033721"></a>
+  Разбирает аргумент-строку и возвращает число с плавающей точкой.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033157"></a>parseInt</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033725"></a>
+  Разбирает аргумент-строку и возвращает целое число.</P></TABLE>
+<p>
+<A NAME="1033072"></a>
+Серверный JavaScript добавляет глобальные функции, описанные в следующей таблице.</p>
+<A NAME="1053549"></a><h5><A NAME="1033433"></a>Таблица 5.3&nbsp; Глобальные 
+Функции Серверного JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><B><A NAME="1033437"></a>
+  Функция<TH VALIGN=baseline ALIGN=left><A NAME="1033439"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033441"></a>write</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033443"></a>
+    Добавляет операторы к генерируемой клиентской HTML-странице.
+(См. <A HREF="#1036009">"Генерация HTML"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033448"></a>flush</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033452"></a>
+  Очищает буфер вывода. (См. <A HREF="#1035796">"Очистка Буфера Вывода"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033455"></a>redirect</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033459"></a>
+  Перенаправляет клиента по специфицированному URL. (См. <A HREF="#1035816">"Переход 
+  к Новому Клиентскому Запросу"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033462"></a>getOptionValue</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033464"></a>
+  Получает значения отдельных опций в элементе HTML-формы <CODE>SELECT</CODE>. (См. <A HREF="#1035663">"Использование 
+  Списков Выбора"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033469"></a>getOptionValueCount</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033471"></a>
+  Получает количество опций в элементе HTML-формы <CODE>SELECT</CODE>. (См. <A HREF="#1035663">"Использование 
+  Списков Выбора"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033476"></a>debug</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033478"></a>
+  Выводит значения выражений в окне (фрэйме) трассировки. (См. <A HREF="appdev.htm#1048797">"Использование 
+  Функции debug"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033483"></a>addClient</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033485"></a>
+  Присоединяет клиентскую информацию к URL. (См. <A HREF="sessmgmt.htm#1063729">"Присоединение client-Свойств 
+  к URL Вручную"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033490"></a>registerCFunction</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033492"></a>
+  Регистрирует внешнюю функцию для использования в серверном JavaScript. (См. <A HREF="misc.htm#1026789">"Регистрация 
+  Внешних Функций/Native Functions"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033497"></a>callC</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033501"></a>
+  Вызывает внешнюю функцию. (См. <A HREF="misc.htm#1026801">"Использование 
+  Внешних Функций в JavaScript"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033504"></a>deleteResponseHeader</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033506"></a>
+  Удаляет информацию из &quot;шапки&quot; ответа, высылаемого клиенту. (См. <A HREF="misc.htm#1020125">"Манипуляции 
+  с Запросом и Ответом"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033511"></a>addResponseHeader</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033513"></a>
+  Добавляет новую информацию в &quot;шапку&quot; ответа, высылаемого клиенту. (См. <A HREF="misc.htm#1020125">"Манипуляции 
+  с Запросом и Ответом"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033615"></a>ssjs_getClientID</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033617"></a>
+  Возвращает идентификатор для <CODE>client</CODE> -объекта, используемый при 
+  некоторых видах клиентской техники JavaScript. (См. <A HREF="sessmgmt.htm#1046600">"Уникальное 
+  Обращение к Объекту client"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033619"></a>ssjs_generateClientID</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033665"></a>
+  Возвращает идентификатор, который Вы можете использовать для уникального 
+  специфицирования объекта <CODE>client</CODE>. (См. <A HREF="sessmgmt.htm#1046600">"Уникальное 
+  Обращение к Объекту client"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033623"></a>ssjs_getCGIVariable</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1033659"></a>
+  Возвращает значение специфицированной переменной окружения CGI. (См. <A HREF="#1037612">"Доступ 
+  к Переменным CGI"</A>.)</P></TABLE>
+<h4><A NAME="Head2;"></A><A NAME="1037294"></a>Классы и Объекты</h4><hr>
+<p><A NAME="1021176"></a>
+Для поддержания различных задач, выполняемых на каждой стороне, JavaScript имеет 
+классы и предопределённые объекты, которые работают на клиенте, но не на 
+сервере, и другие классы и предопределённые объекты, которые работают на 
+сервере, но не на клиенте.</p>
+<BLOCKQUOTE><A NAME="1051064"></a><b>Важно!</b><p>
+<A NAME="1051067"></a>Названия этих объектов зарезервированы для JavaScript. Не 
+  создавайте Ваши собственные объекты, используя эти имена.</p>
+</BLOCKQUOTE>
+<p>
+<A NAME="1025964"></a>Ядро языка JavaScript предоставляет классы, описанные в 
+следующей таблице.
+Детальную информацию обо всех этих объектах см. в книге <I>
+<a href="../servref12/index.htm">Серверный JavaScript. Справочник</a></I>.</p>
+<A NAME="1053558"></a><h5><A NAME="1032078"></a>Таблица 5.4&nbsp; Классы Ядра JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><B><A NAME="1032082"></a>
+  Класс<TH VALIGN=baseline ALIGN=left><B><A NAME="1032084"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032086"></a>Array</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032088"></a>Массив.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032090"></a>Boolean</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032092"></a>Булево значение.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032128"></a>Date</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032130"></a>Дата.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032140"></a>Function</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1033955"></a>Специфицирует строку кода JavaScript, компилируемую как 
+функция.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032156"></a>Math</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032158"></a>Предоставляет основные математические константы и 
+функции; например, свойство
+<CODE>PI</CODE> содержит значение pi.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032168"></a>Number</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032170"></a>Примитивные числовые значения.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032196"></a>Object</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032198"></a>Базовая функциональность всех объектов JavaScript.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032200"></a>Packages</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032449"></a>Пакет Java в JavaScript. используется вместе с LiveConnect.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032207"></a>String</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032209"></a>Строка JavaScript.</P></TABLE>
+<p>
+<A NAME="1021334"></a>Серверный JavaScript включает классы ядра, но не классы 
+клиентского JavaScript. Серверный JavaScript имеет свой набор дополнительных 
+классов для поддержки необходимой функциональности, как показано в следующей 
+таблице.</p>
+<A NAME="1053566"></a>
+<h5><A NAME="1032232"></a>Таблица 5.5&nbsp; Классы Серверного JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1032236"></a>
+  Класс<TH VALIGN=baseline ALIGN=left><B><A NAME="1032238"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032240"></a>Connection</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1032670"></a>
+Одиночное соединение с БД из пула соединений. (См.
+<A HREF="db1.htm#1044987">"Отдельные Соединения с БД"</A>).</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032244"></a>Cursor</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032639"></a>Курсор БД. (См. <A HREF="db2.htm#1030418">&quot;Манипуляции 
+с Результатами Выполнения Запроса с Помощью Курсоров"</A>).</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032264"></a>DbPool</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032646"></a>Пул соединений с базами данных. (См.
+<A HREF="db1.htm#1030030">"Пулы Соединений с Базами Данных"</A>).</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1034003"></a>Stproc</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1034007"></a>Хранимая процедура БД. (См. <A HREF="db2.htm#1030702">"Вызов 
+Хранимых Процедур"</A>).</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1033965"></a>Resultset</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1033967"></a>Представляет информацию, возвращаемую хранимой 
+процедурой БД. (См.
+<A HREF="db2.htm#1030702">"Вызов Хранимых Процедур"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032268"></a>File</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032631"></a>Предоставляет доступ к файловой системе сервера. (См.
+<A HREF="misc.htm#1017481">"Служба Файловой Системы"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032272"></a>Lock</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032274"></a>Предоставляет функциональность для безопасного 
+совместного использования/sharing данных запросами, клиентами и приложениями. (См. <A HREF="sessmgmt.htm#1012796">"Безопасное 
+Совместное Использование Объектов с Блокировкой"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032293"></a>SendMail</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032621"></a>Предоставляет функциональность для отправки электронной 
+почты из вашего приложения JavaScript.
+(См. <A HREF="misc.htm#1022979">"Почтовая Служба"</A>.)</P></TABLE>
+<p>
+<A NAME="1025299"></a>Кроме того, серверный JavaScript имеет предопределённые 
+объекты, описанные в следующей таблице. Эти объекты доступны для каждого HTTP-запроса. 
+Вы не можете создать дополнительные экземпляры какого-либо из этих объектов.</p>
+<A NAME="1053582"></a>
+<h5><A NAME="1032335"></a>Таблица 5.6&nbsp; Объекты Серверного JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1032339"></a>
+  Объект<TH VALIGN=baseline ALIGN=left><B><A NAME="1032341"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032343"></a>database</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032345"></a>Соединение с базой данных. (См. <A HREF="db1.htm#1036334">"Соединение. 
+Подходы."</A>)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032347"></a>client</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032349"></a>Инкапсулирует информацию о паре клиент/приложение, 
+позволяя хранить эту информацию дольше, чем в течение одного HTTP-запроса. (См. <A HREF="sessmgmt.htm#1036712">"Объект client."</A>)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032358"></a>project</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032717"></a>Инкапсулирует информацию о приложении, которая 
+хранится, пока приложение не прекратит работу на сервере. (См. <A HREF="sessmgmt.htm#1050512">"Объект project"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032362"></a>request</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032724"></a>Инкапсулирует информацию об отдельном HTTP-запросе. (См.
+<A HREF="sessmgmt.htm#1036535">"Объект request"</A>.)</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1032366"></a>server</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1032734"></a>Инкапсулирует глобальную информацию о сервере, которая 
+хранится, пока сервер не остановится. (См. <A HREF="sessmgmt.htm#1036812">"Объект server"</A>.)</P></TABLE>
+<H2><A NAME="Embedding JavaScript in HTML"></A><A NAME="1022266"></a>Внедрение JavaScript 
+в HTML</H2>
+<hr>
+<p>
+<A NAME="1022268"></a>Есть два способа встроить операторы серверного JavaScript 
+в HTML-страницу:</p>
+<ul><LI><A NAME="1027252"></a>Тэгом <CODE>SERVER</CODE>.<p><A NAME="1027253"></a>
+  Используйте этот тэг для  размещения в нём одиночного оператора JavaScript 
+  или нескольких операторов. Оператор расположен между тэгами <CODE>&lt;SERVER&gt;</CODE> 
+  и <CODE>&lt;/SERVER&gt;</CODE>.<br><A NAME="1027442"></a>Вы можете перемежать 
+  тэги <CODE>SERVER</CODE> полными операторами HTML.
+  Никогда не помещайте тэг <CODE>SERVER</CODE> между открывающей (<CODE>&lt;</CODE>) 
+  и закрывающей
+(<CODE>&gt;</CODE>) угловыми скобками тэга HTML. (См. <A HREF="#1018256">"Тэг SERVER"</A>). 
+  Также не используйте тэг <CODE>&lt;SCRIPT&gt;</CODE> между тэгами <CODE>&lt;SERVER&gt;</CODE> 
+  и <CODE>&lt;/SERVER&gt;</CODE>.<LI><A NAME="1014931"></a>
+  С помощью обратной кавычки (`), известной также как тик/tick</LI>.<p><A NAME="1018324"></a>
+  Используйте этот символ для включения выражений JavaScript внутрь тэгов HTML, 
+  обычно для генерирования атрибута или значения атрибута
+HTML на базе значений JavaScript. Эта техника используется внутри таких тэгов, 
+  как якоря, изображения или тэги элементов формы, например, для предоставления 
+  значения атрибута <CODE>HREF</CODE> якоря.</p>
+  <A NAME="1018313"></a>
+  Не используйте обратные кавычки для включения выражений JavaScript вне тэгов HTML.
+(См. <A HREF="#1014943">"Обратные Кавычки"</A>).</ul>
+<p><A NAME="1018278"></a>
+Если Вы внедряете серверный JavaScript в HTML-страницу, машина выполнения JavaScript 
+на сервере выполняет обнаруженные ею операторы при процессинге (обработке) 
+страницы. Большинство операторов выполняют какие-либо операции на сервере, такие 
+как открытие соединения с БД или блокировка совместно используемого объекта. 
+Однако,
+если Вы используете функцию <CODE>write</CODE> в тэге <CODE>SERVER</CODE> или 
+заключаете операторы в обратные кавычки, машина выполнения динамически 
+генерирует новый HTML для модифицирования страницы, высылаемой клиенту.</p>
+<h4><A NAME="Head2;"></A><A NAME="1018256"></a>Тэг SERVER</h4><hr>
+<p><A NAME="1014937"></a>
+Тэг <CODE>SERVER</CODE> это наиболее распространённый способ внедрения 
+серверного JavaScript в HTML-страницу.
+Вы можете использовать тэг <CODE>SERVER</CODE> в любой ситуации; обычно, однако, 
+вместо него используются обратные кавычки, если Вы генерируете имена или 
+значения атрибутов для HTML-страницы.</p>
+<p><A NAME="1018390"></a>
+Большая часть операторов между тэгами <CODE>&lt;SERVER&gt;</CODE> и <CODE>&lt;/SERVER&gt;</CODE> 
+не появляется на HTML-странице, высылаемой клиенту. Эти операторы выполняются на 
+сервере. Однако вывод вызовов функции <CODE>write</CODE> появляется в 
+результирующем HTML.</p>
+<p>
+<A NAME="1018368"></a>Следующая выдержка из приложения Hello World иллюстрирует 
+эти варианты:</p>
+<PRE><A NAME="1018483"></a>&lt;P&gt;This time you are <br>&lt;SERVER&gt;<br>write(request.newname);<br>
+client.oldname = request.newname;<br>&lt;/SERVER&gt;<br>&lt;h3&gt;Enter your name&lt;/h3&gt;</PRE>
+<p>
+<A NAME="1018441"></a>Получив данный участок кода, машина выполнения генерирует HTML 
+на базе значения <CODE>request.newname</CODE> в операторе <CODE>write</CODE>. Во 
+втором операторе она просто выполняет операцию JavaScript, присваивая значение <CODE>request.newname</CODE> 
+свойству <CODE>client.oldname</CODE>. Она не генерирует никакого HTML. Итак, 
+если <CODE>request.newname</CODE> будет "Mr. Ed," машина выполнения генерирует 
+из предыдущего отрывка следующий HTML:</p>
+<PRE><A NAME="1018574"></a>&lt;P&gt;This time you are<br>Mr. Ed<br>&lt;h3&gt;Enter your name&lt;/h3&gt;</PRE>
+<h4><A NAME="Head2;"></A><A NAME="1014943"></a>Обратные Кавычки</h4><hr>
+<p><A NAME="1018611"></a>
+Используйте обратные кавычки (<CODE>`</CODE>) для выделения выражений серверного JavaScript 
+как заместителей для имён атрибутов или значений атрибутов HTML. JavaScript, 
+внедрённый&nbsp; в HTML с помощью обратных кавычек, автоматически генерирует
+HTML; Вам не нужно использовать <CODE>write</CODE>.</p>
+<p><A NAME="1018657"></a>
+В целом тэги HTML имеют форму:</p>
+<PRE><A NAME="1014945"></a>&lt;<I>TAG</I> <I>ATTRIB</I>="<I>value</I>" [...<I>ATTRIB</I>="<I>value</I>"]&gt;</PRE>
+<p><A NAME="1014946"></a>
+где <I><CODE>ATTRIB</CODE></I>&nbsp; это атрибут, а <CODE>"</CODE><I><CODE>value</CODE></I>
+<CODE>"</CODE> это его значение. Значение в угловых скобках означает, что 
+допускается любое количество пар атрибут/значение.</p>
+<p><A NAME="1018727"></a>Если в обратные кавычки заключено выражение JavaScript, 
+используемое как значение атрибута, машина выполнения JavaScript автоматически 
+добавляет знак кавычки вокруг всего значения. Вы сами не вводите знаки кавычек, 
+хотя Вам это может понадобиться  для разграничения строковых литералов 
+выражения, как в следующем примере. Машина выполнения не делает это для имён 
+атрибутов, поскольку не предполагается заключение имён атрибутов в кавычки.</p>
+<p><A NAME="1014949"></a>
+Например, рассмотри следующую строку из образца-приложения Hangman:</p>
+<PRE><A NAME="1014950"></a>&lt;IMG SRC=`"images\hang" + client.num_misses + ".gif"`&gt;</PRE>
+<p>
+<A NAME="1014951"></a>Эта строка динамически генерирует имя изображения на 
+основе значения <CODE>client.num_misses</CODE>. Обратные кавычки обрамляют 
+выражение JavaScript, конкатенирующее строку <CODE>"images\hang"</CODE> и 
+целочисленное значение <CODE>client.num_misses</CODE> и строку <CODE>".gif"</CODE>, 
+давая строку типа <CODE>"images\hang0.gif"</CODE>. Результатом будет HTML, такой 
+как</p>
+<PRE><A NAME="1014953"></a>&lt;IMG SRC="images\hang0.gif"&gt;</PRE>
+<p><A NAME="1014955"></a>
+Порядок ввода кавычек является критичным. Сначала идёт обратная кавычка, 
+указывая, что следующее значение является выражением JavaScript, состоящим из 
+строки (<CODE>"images\hang"</CODE>), соединяемой с целым числом (<CODE>client.num_misses</CODE>) 
+и с другой строкой (<CODE>".gif"</CODE>).
+JavaScript конвертирует всё выражение до строки и добавляет необходимые знаки 
+кавычек вокруг значения атрибута.</p>
+<p><A NAME="1018813"></a>Вы должны внимательно использовать знаки двойных 
+кавычек внутри обратных кавычек, поскольку содержащееся внутри них значение 
+интерпретируется как литерал. Поэтому не окружайте выражения JavaScript, которые 
+необходимо вычислить, знаками кавычек. Например, если значение свойства <CODE>client.val</CODE> 
+будет NetHead, то данный оператор:</p>
+<PRE><A NAME="1014959"></a>&lt;A NAME=`client.val`&gt;</PRE>
+<p><A NAME="1018878"></a>генерирует такой HTML:</p>
+<PRE><A NAME="1018838"></a>&lt;A NAME="NetHead"&gt;</PRE>
+<p><A NAME="1018891"></a>но следующий оператор:</p>
+<PRE><A NAME="1018888"></a>&lt;A NAME=`"client.val"`&gt;</PRE>
+<p><A NAME="1018890"></a>генерирует HTML:</p>
+<PRE><A NAME="1018880"></a>&lt;A NAME="client.val"&gt;</PRE>
+<p><A NAME="1018832"></a>
+В качестве другого примера приведём два атрибута тэга <CODE>ANCHOR</CODE> - <CODE>HREF</CODE> 
+и
+<CODE>NAME</CODE>. <CODE>HREF</CODE> делает тэг гиперссылкой, а <CODE>NAME</CODE> 
+делает его именованным якорем. Следующие операторы используют переменную <CODE>choice</CODE> 
+для установки свойств
+<CODE>attrib</CODE> и <CODE>val</CODE> объекта <CODE>client</CODE> и создают 
+затем гиперссылку/hyperlink или цель/target, в зависимости от значений:</p>
+<PRE><A NAME="1023780"></a>&lt;SERVER&gt;<br>if (choice == "link") {<br>&nbsp;&nbsp;&nbsp;client.attrib
+= "HREF";<br>&nbsp;&nbsp;&nbsp;client.val = "http://www.netscape.com";<br>}<br>if (choice == "target") {<br>
+&nbsp;&nbsp;&nbsp;client.attrib = "NAME";<br>&nbsp;&nbsp;&nbsp;client.val = "NetHead";<br>}<br>
+&lt;/SERVER&gt;</A></PRE><PRE><A NAME="1014963"></A>&lt;A `client.attrib`=`client.val`&gt;Netscape
+Communications&lt;/A&gt;</PRE>
+<p><A NAME="1014966"></a>
+Если значением <CODE>choice</CODE> будет <CODE>"link"</CODE>, результат будет:</p>
+<PRE><A NAME="1014967"></a>&lt;A HREF="http://home.netscape.com"&gt;Netscape Communications&lt;/A&gt;</PRE>
+<p><A NAME="1014968"></a>
+Если значением <CODE>choice</CODE> будет <CODE>"target"</CODE>, результат будет:</p>
+<PRE><A NAME="1014969"></A>&lt;A NAME="NetHead"&gt;Netscape Communications&lt;/A&gt;</PRE>
+<h4><A NAME="Head2;"></A><A NAME="1014971"></a>Когда Использовать Эти Виды 
+Техники</h4>
+<hr>
+<p>
+<A NAME="1014973"></a>В большинстве случаев ясно, когда использовать тэг <CODE>SERVER</CODE>, 
+а когда - обратные кавычки. Иногда, однако можно достичь того же результата 
+другим путём (<i>&quot;Мы пойдём...&quot;</i>). В общем, лучше использовать обратные кавычки для 
+внедрения значений JavaScript в тэги HTML, а в других случаях - тэг <CODE>SERVER</CODE>.</p>
+<p><A NAME="1014975"></a>Например, в Hangman вместо</p>
+<PRE><A NAME="1014976"></a>&lt;IMG SRC=`"images\hang" + client.num_misses + ".gif"`&gt;</PRE>
+<p><A NAME="1014977"></a>
+можно записать</p>
+<PRE><A NAME="1014978"></a>&lt;SERVER&gt;<br>write("&lt;IMG SRC=\"images\hang");<br>
+write(client.num_misses);<br>write(".gif\"&gt;");<br>&lt;/SERVER&gt;</PRE>
+<p><A NAME="1014980"></a>
+Обратите внимание, что обратная наклонная черта (backslash) даёт возможность 
+ввести знак кавычки внутри литеральной строки. Хотя результирующий
+HTML - тот же самый, в этом случае обратные кавычки предпочтительнее, поскольку 
+исходник легче читать и редактировать.</p>
+<H2><A NAME="Runtime Processing on the Server"></A><A NAME="1024580"></a>
+Процессинг Времени Прогона на Сервере</H2><hr>
+<p><A NAME="1024584"></a>В разделе <A HREF="#1028696">"Обзор Процессинга Времени 
+Выполнения"</A> показано, что происходит на этапе прогона, если пользователь 
+выполняет доступ к странице приложения JavaScript. В данном разделе детально 
+рассматриваются этапы этого процесса со 2 по 4, чтобы Вы смогли лучше понять, 
+что происходит на каждом этапе. Это описание предоставляет контекст для 
+понимания того, что Вам нужно делать на клиенте и сервере.</p>
+<p><A NAME="1024585"></a>При работе с приложениями JavaScript важно помнить об 
+асинхронной природе процессов Web.
+Приложения JavaScript разрабатываются для использования многими пользователями 
+одновременно. Машина выполнения JavaScript
+на сервере обрабатывает запросы нескольких пользователей по мере их поступления 
+и выполняет их в порядке поступления.</p>
+<p><A NAME="1024586"></a>В отличие от традиционного приложения, которое 
+запускается отдельным пользователем на отдельной машине, Ваше приложение обязано 
+поддерживать одновременный доступ нескольких пользователей. Фактически, 
+поскольку каждый фрэйм (кадр) HTML-документа из нескольких фрэймов генерирует 
+свой собственный запрос/request,
+для машины выполнения может оказаться, что запрос одного пользователя является 
+множественным запросом.</p>
+<p>
+<A NAME="1024587"></a>HTTP (Hypertext Transfer Protocol) это протокол, по 
+которому HTML-страница пересылается клиенту. Этот протокол является <I>stateless\бесстатусным</I>, 
+то есть информация не сохраняется в период между запросами.
+В общем, любая информация, необходимая для обработки HTTP-запроса, должна 
+пересылаться вместе с этим запросом.
+Это создаёт проблемы для многих приложений. Как использовать информацию 
+одновременно различными пользователями приложения или даже различными запросами 
+одного пользователя? Служба JavaScript Session Management
+Service была разработана для того, чтобы помочь разрешить эту проблему. Детально 
+эта служба рассматривается в <A HREF="sessmgmt.htm#1036383">Главе 6, "Session Management Service."</A> 
+В данный момент просто помните, что машина выполнения автоматически обслуживает 
+объекты <CODE>client</CODE>, <CODE>server</CODE>,
+<CODE>project</CODE> и <CODE>request</CODE>.</p>
+<p><A NAME="1024591"></a>
+Если Netscape-сервер получает клиентский запрос на страницу приложения, он 
+сначала выполняет авторизацию (идентификацию).
+Этот шаг является частью базовых функций администрирования сервера. Если попытка 
+авторизации запроса не удалась,
+последующие шаги не выполняются. Если запрос получил авторизацию сервера, машина 
+выполнения JavaScript
+продолжает работу. Она выполняет следующие шаги, описанные в последующих 
+разделах:</p>
+<OL><LI><A NAME="1047543"></a>
+  Конструирует новый объект request и конструирует или восстанавливает объект client.</LI><LI><A NAME="1047560"></a>
+  Находит страницу для запроса и начинает создание HTML-страницы для отправки 
+  клиенту.</LI><LI><A NAME="1047565"></a>
+  Для каждого участка исходной HTML-страницы: добавляет его в буфер или 
+  исполняет код.</LI><LI><A NAME="1047572"></a>Сохраняет свойства объекта client.</LI><LI><A NAME="1047574"></a>
+  Высылает HTML клиенту.</LI><LI><A NAME="1047576"></a>Уничтожает объект request 
+  и сохраняет или уничтожает объект client.</LI></OL>
+<H4><A NAME="Head3;"></A><A NAME="1024593"></a>Шаг 1. Создание объекта request и 
+конструирование или восстановление объекта client</H4>
+<hr>
+<p>
+<A NAME="1024595"></a>Инициализируются встроенные свойства объекта <CODE>request</CODE>, 
+такие как IP-адрес и элементы формы, ассоциированные с данным request. Если URL 
+запроса специфицирует другие свойства, они инициализируются для объекта <CODE>request</CODE>, 
+как описано в разделе <A HREF="#1034871">"Кодирование Информации в URL"</A>.</p>
+<p>
+<A NAME="1024596"></a>Если объект <CODE>client</CODE> уже существует, машина 
+выполнения запрашивает его на основе специфицированной техники обслуживания 
+клиента. (См. <A HREF="sessmgmt.htm#1036896">"Техника Обслуживания Объекта client"</A>). 
+Если объект <CODE>client</CODE> не существует, машина выполнения конструирует 
+новый объект без свойств.</p>
+<p><A NAME="1024600"></a>
+Вы не можете предвидеть, в каком порядке эти объекты конструируются.</p>
+<H4><A NAME="Head3;"></A><A NAME="1047749"></a>Шаг 2. Поиск исходной страницы и 
+начало конструирования HTML-страницы</H4>
+<hr>
+<p>
+<A NAME="1047750"></a>Когда Вы компилировали исходный код JavaScript, исходник 
+включал HTML-страницы с операторами серверного JavaScript. Главной задачей 
+машины выполнения является конструирование из одной из этих исходных страниц HTML-страницы, 
+содержащей только HTML и операторы клиентского JavaScript. При создании этой HTML-страницы 
+машина выполнения сохраняет её части в области памяти, называемой буфером, пока 
+не придёт время отправки буферизованного содержимого клиенту.</p>
+<H4><A NAME="Head3;"></A><A NAME="1024603"></a>Шаг 3. Добавить в буфер вывода 
+или выполнить код</H4>
+<hr>
+<p>
+<A NAME="1024604"></a>Этот шаг выполняется для каждого участка кода исходной 
+страницы. Детали процесса выполнения различных серверных операторов 
+рассматриваются далее в этом учебнике.
+Дополнительно см. <A HREF="#1031015">"Конструирование HTML-Страницы"</A>.</p>
+<p>
+<A NAME="1024605"></a>Для данного запроса/request машина выполнения выполняет 
+этот шаг, пока не произойдёт одно из следующих событий:</p>
+<ul><LI><A NAME="1024606"></a>Буфер содержит 64KB HTML.</LI><p><A NAME="1024607"></a>
+  В этой ситуации машина выполняет шаги 4 и 5 и возвращается к выполнению шага 3 
+  с очищенным буфером, продолжая выполнение того же запроса. (Шаг 4 исполняется 
+  только один раз, даже если шаги 3 и 5 повторяются).<LI><A NAME="1024608"></a>
+  Сервер выполняет функцию <CODE>flush</CODE>.</LI><p><A NAME="1024609"></a>
+  В этой ситуации машина выполняет шаги 4 и 5 и возвращается к выполнению шага 3 
+  с очищенным буфером, продолжая выполнять тот же самый запрос. (Шаг 4 
+  исполняется только один раз, даже если шаги 3 и 5 повторяются).<LI><A NAME="1024610"></a>
+  Сервер выполняет функцию <CODE>redirect</CODE>.</LI><p><A NAME="1024611"></a>
+  В этой ситуации машина выполнения завершает данный запрос, выполняя шаги с 4 
+  по 6. Она игнорирует любые вхождения после функции <CODE>redirect</CODE> в 
+  исходном файле и стартует новый запрос для страницы, специфицированной в 
+  вызове <CODE>redirect</CODE>.<LI><A NAME="1024612"></a>
+  Доходит до конца страницы.</LI><p><A NAME="1024613"></a>
+  В этой ситуации машина завершает данный запрос, выполняя шаги с 4 по 6.</ul>
+<H4><A NAME="Head3;"></A><A NAME="1024614"></a>Шаг 4. Сохранение свойств объекта client</H4>
+<hr>
+<p>
+<A NAME="1047036"></a>Машина выполнения сохраняет свойства объекта <CODE>client</CODE> 
+непосредственно перед <i>первой</i> отправкой части HTML-страницы клиенту. Она 
+сохраняет эти свойства только один раз. Машина выполнения может повторять шаги 3 
+и 5, но не может повторить данный шаг.</p>
+<p>
+<A NAME="1047043"></a>Машина выполнения сохраняет свойства в этот момент, чтобы 
+поддерживать один из видов техники обслуживания объекта <CODE>client</CODE>. 
+Например, схема <I>кодирования клиентского URL</I> высылает свойства <CODE>client'</CODE>а 
+в шапке/header HTML-файла. Поскольку шапка высылается как первая часть файла, 
+свойства <CODE>client'</CODE>а обязаны быть затем 
+высланы.</p>
+<p>
+<A NAME="1024619"></a>Следовательно, Вы должны учитывать, где в Вашем 
+файле-источнике устанавливаются свойства <CODE>client'</CODE>а. 
+Вы всегда должны изменять свойства <CODE>client'</CODE>а 
+в файле до любого вызова <CODE>redirect</CODE> или <CODE>flush</CODE> и до 
+генерирования 64KB HTML-вывода.</p>
+<p><A NAME="1024620"></a>Если Вы изменяете значения свойств объекта <CODE>client</CODE> 
+в коде после того как HTML был выслан клиенту, эти изменения будут действовать 
+для оставшейся части клиентского запроса, но затем будут отменены. Отсюда: 
+следующий клиентский запрос не получит эти значения свойств; он получит 
+значения, действовавшие в тот момент, когда содержимое было в первый раз 
+отправлено клиенту. Например,
+ваш код содержит такие операторы:</p>
+<PRE><A NAME="1024621"></a>&lt;HTML&gt;<br>&lt;P&gt;The current customer is <br>&lt;SERVER&gt;<br>
+client.customerName = "Mr. Ed";<br>write(client.customerName);<br>client.customerName = "Mr. Bill";<br>
+&lt;/SERVER&gt;</A></PRE><PRE><A NAME="1024622"></a>&lt;P&gt;The current customer really is <br>&lt;SERVER&gt;<br>
+write(client.customerName);<br>&lt;/SERVER&gt;<br>&lt;/HTML&gt;</PRE>
+<p><A NAME="1024623"></a>
+Эта серия операторов даст в результате такой HTML, отправляемый клиенту:</p>
+<PRE><A NAME="1024624"></a>&lt;P&gt;The current customer is Mr. Ed<br>&lt;P&gt;The current customer really is
+Mr. Bill</PRE>
+<p><A NAME="1024625"></a>Теперь, когда появится следующий клиентский запрос, 
+значение свойства
+<CODE>client.customerName</CODE> будет "Mr. Bill". Этот очень похожий набор 
+операторов даст в результате тот же HTML:</p>
+<PRE><A NAME="1024626"></a>&lt;HTML&gt;<br>&lt;P&gt;The current customer is <br>
+&lt;SERVER&gt;<br>client.customerName = "Mr. Ed";<br>write(client.customerName);<br><B>flush();<br>
+</B>client.customerName = "Mr. Bill";<br>&lt;/SERVER&gt;<br>&lt;P&gt;The current customer really is <br>
+&lt;SERVER&gt;<br>write(client.customerName);<br>&lt;/SERVER&gt;<br>&lt;/HTML&gt;</PRE>
+<p><A NAME="1047874"></a>
+Однако при появлении следующего клиентского запроса значение <CODE>client.customerName</CODE> 
+будет "Mr. Ed"; а <i>не</i> "Mr. Bill".</p>
+<p><A NAME="1047878"></a>
+Дополнительно см. <A HREF="sessmgmt.htm#1036896">"Техника Обслуживания Объекта client"</A>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1047879"></a>Шаг 5. Отправка HTML клиенту</H4>
+<hr>
+<p>
+<A NAME="1024633"></a>Сервер отсылает содержимое страницы клиенту. Для страниц 
+без операторов серверного
+JavaScript сервер просто передаёт HTML клиенту. Для других страниц - машина 
+выполнения реализует логику приложения для конструирования HTML и затем высылает 
+сгенерированную страницу клиенту.</p>
+<H4><A NAME="Head3;"></A><A NAME="1024634"></a>Шаг 6. Уничтожение объекта request 
+и сохранение или уничтожение объекта client</H4><hr>
+<p><A NAME="1024635"></a>Машина выполнения разрушает объект <CODE>request</CODE>, 
+сконструированный для данного клиентского запроса. Она сохраняет значения 
+объекта <CODE>client</CODE> и разрушает физический объект
+JavaScript. Она не разрушает объекты <CODE>project</CODE> или <CODE>server</CODE>.</p>
+<H2><A NAME="Constructing the HTML Page"></A><A NAME="1031015"></a>
+Конструирование HTML-Страницы</H2><hr>
+<p><A NAME="1035898"></a>
+Когда Вы компилируете приложение JavaScript, исходники состоят из HTML-страниц, 
+содержащих операторы серверного
+JavaScript, и, возможно,  HTML-страницы, не содержащие операторов 
+серверного JavaScript.
+Если пользователь получает доступ к странице, которая не содержит серверных 
+операторов, сервер высылает страницу обратно, как и любую другую HTML-страницу. 
+Если пользователь получает доступ к странице, которая содержит серверные 
+операторы, машина выполнения на сервере конструирует HTML-страницу для отправки 
+в ответе, используя одну из исходных страниц Вашего приложения.</p>
+<p><A NAME="1036006"></a>
+Машина выполнения сканирует исходную страницу. При обнаружении операторов HTML 
+клиентского JavaScript
+она присоединяет их к создаваемой странице. При обнаружении операторов 
+серверного JavaScript она выполняет их. Хотя большинство операторов серверного JavaScript 
+выполняются на сервере,
+некоторые влияют на конструируемую страницу. В следующих разделах 
+рассматриваются три функции: <CODE>write</CODE>, <CODE>flush</CODE> и <CODE>redirect</CODE>, 
+которые влияют на обрабатываемую HTML-страницу.</p>
+<h4><A NAME="Head2;"></A><A NAME="1036009"></a>Генерирование HTML</h4><hr>
+<p><A NAME="1036008"></a>
+Как уже было сказано ранее в этой главе, функция <CODE>write</CODE> генерирует HTML 
+на основе значения выражения
+JavaScript, заданного в качестве аргумента. Например, рассмотрим оператор:</p>
+<PRE><A NAME="1035791"></a>write("&lt;P&gt;Customer Name is:" + project.custname + ".");</PRE>
+<p><A NAME="1035792"></a>
+В ответ на этот оператор JavaScript генерирует HTML, вставляя тэг параграфа и 
+некоторый текст,
+соединённый со значением свойства <CODE>custname</CODE> объекта <CODE>project</CODE>.
+Например, если свойство будет иметь значение "Fred's software company", клиент 
+получит следующий HTML:</p>
+<PRE><A NAME="1035793"></a>&lt;P&gt;Customer Name is: Fred's software company.</PRE>
+<p><A NAME="1035794"></a>
+Как кажется клиенту, это нормальный HTML. Однако он в действительности 
+динамически сгенерирован машиной выполнения JavaScript.</p>
+<h4><A NAME="Head2;"></A><A NAME="1035796"></a>
+Очистка Буфера Вывода</h4><hr>
+<p><A NAME="1035797"></a>Для повышения производительности, JavaScript буферизует 
+конструируемую им
+HTML-страницу. Функция <CODE>flush</CODE> сразу высылает данные из внутреннего 
+буфера клиенту. Если Вы явно не вызываете функцию <CODE>flush</CODE>, JavaScript 
+высылает данные клиенту после создания каждых 64KB содержимого конструируемой HTML-страницы.</p>
+<p><A NAME="1035800"></a>
+Не путайте функцию <CODE>flush</CODE> с методом <CODE>flush</CODE> класса <CODE>File</CODE>. (Об 
+использовании класса <CODE>File</CODE> для ввода и вывода в файл см. <A HREF="misc.htm#1017481">"Служба 
+Файловой Системы"</A>).</p>
+<p><A NAME="1035804"></a>
+Вы можете использовать <CODE>flush</CODE> для управления временем переноса 
+данных клиенту. Например, Вы можете очищать буфер до операции, создающей 
+задержку/delay, такой как запрос к базе данных.
+Также, если запрос к БД запрашивает большое количество рядов, очистка буфера 
+каждый раз после получения нескольких рядов предотвращает паузы при отображении 
+данных.</p>
+<BLOCKQUOTE>
+  <p><B>ПРИМЕЧАНИЕ: </B><A NAME="1035807"></a>
+  Если Вы используете клиентские куки для обслуживания свойств объекта <CODE>client</CODE>, 
+  Вы обязаны делать все изменения объекта <CODE>client</CODE> до очистки буфера. 
+  Дополнительно см. <A HREF="sessmgmt.htm#1036896">"Техника Обслуживания Объекта client"</A>.</p>
+</BLOCKQUOTE>
+<p>
+<A NAME="1035812"></a>Следующий фрагмент кода показывает, как используется <CODE>flush</CODE>. 
+Предположим, Ваше приложение должно выполнить некоторые действия с каждым 
+потребителем/customer в Вашей БД потребителей. Если потребителей много, процесс 
+может затянуться. Поэтому, для того чтобы пользователь не ждал у застывшего 
+экрана, Ваше приложение может высылать вывод клиенту до начала обработки и затем 
+вновь - после конца обработки каждого ряда. Для этого Вы должны использовать 
+примерно такой код:</p>
+<PRE><A NAME="1036081"></a>flush();<br>conn.beginTransaction();<br>
+cursor = conn.cursor ("SELECT * FROM CUSTOMER", true);<br>while ( cursor.next() ) {<br>
+&nbsp;&nbsp;&nbsp;// <I>... обработка ряда ...
+<br></I>&nbsp;&nbsp;&nbsp;flush();<br>}<br>
+conn.commitTransaction();<br>cursor.close();</PRE><h4><A NAME="Head2;"></A>
+<A NAME="1035816"></a>Переход к Новому Клиентскому Запросу</h4><hr>
+<p><A NAME="1035818"></a>
+Функция <CODE>redirect</CODE> прерывает текущий клиентский запрос и стартует 
+новый по специфицированному URL. Например, у вас имеется оператор:</p>
+<PRE><A NAME="1035819"></a>redirect("http://www.royalairways.com/apps/page2.html");</PRE>
+<p><A NAME="1035820"></a>
+Когда машина выполняет это оператор, она прерывает текущий запрос. Машина 
+выполнения не продолжает обработку страницы-оригинала. Следовательно любые 
+операторы HTML или JavaScript, идущие в оригинальной странице после вызова <CODE>redirect</CODE>, 
+будут утеряны. Клиент сразу загрузит указанную страницу, отбросив предыдущее 
+содержимое.</p>
+<p><A NAME="1035821"></a>
+Параметром для <CODE>redirect</CODE> может быть любой оператор серверного JavaScript, 
+вычисляемый до URL. Таким образом, Вы можете динамически генерировать URL, 
+используемый в <CODE>redirect</CODE>. Например,
+если страница определяет переменную <CODE>choice</CODE>, Вы можете перенаправить 
+клиента на страницу в зависимости от значения <CODE>choice</CODE> таким образом:</p>
+<PRE><A NAME="1035822"></a>redirect ("http://www.royalairways.com/apps/page" <br>
+&nbsp;&nbsp;&nbsp;+ choice + ".html");</PRE>
+<p><A NAME="1035823"></a>
+Если Вам нужно удостовериться, что текущие свойства <CODE>client'а</CODE> 
+доступны в новом запросе и что Вы используете один из видов техники обслуживания 
+объекта <CODE>client</CODE> на основе URL,
+Вы должны кодировать свойства в URL, передаваемом Вами в <CODE>redirect</CODE>. 
+О том, как это сделать, см. <A HREF="sessmgmt.htm#1063729">"Присоединение 
+Свойств client'а к URL Вручную"</A>.</p>
+<p><A NAME="1035827"></a>В целом свойства объекта <CODE>request</CODE> и 
+переменные верхнего уровня JavaScript существуют только в течение одиночного 
+клиентского запроса. Если Вы выполняете перенаправление на новую страницу, Вам 
+может понадобиться сохранить некоторую информацию для нескольких запросов. Вы 
+можете сделать это, присоединив имена и значения свойств к URL, как описано в 
+разделе
+<A HREF="#1034871">"Кодирование Информации в URL"</A>.</p>
+<H2><A NAME="Accessing CGI Variables"></A><A NAME="1037612"></a>Доступ к 
+Переменным CGI</H2><hr>
+<p><A NAME="1037761"></a>
+Как и большинство других web-серверов, серверы Netscape устанавливают значения 
+для определённого набора переменных окружения,
+называемых CGI-переменными, при установке контекста для запуска CGI-скрипта. 
+Предполагается, что создатели CGI-скриптов могут использовать эти переменные в 
+своих скриптах.</p>
+<p><A NAME="1043441"></a>
+По контрасту, Netscape web-серверы не устанавливают отдельного окружения для 
+приложений серверного JavaScript.
+Тем не менее, некоторая часть информации, обычно устанавливаемой в CGI-переменных, 
+может использоваться в приложениях JavaScript. Машина выполнения предоставляет 
+несколько механизмов для доступа к этой информации:</p>
+<ul><LI><A NAME="1043486"></a>Через доступ к свойствам предопределённого объекта <CODE>request</CODE><LI><A NAME="1043692"></a>
+  Через использование функции <CODE>ssjs_getCGIVariable</CODE> для доступа к 
+  некоторым CGI-переменным и другим переменным окружения<LI><A NAME="1043489"></a>
+  Через использование метода <CODE>httpHeader</CODE> объекта <CODE>request</CODE> 
+  для доступа к свойствам шапки клиентского запроса</LI></ul>
+<p><A NAME="1044295"></a>В следующей таблице перечислены свойства объекта
+<CODE>request</CODE>, соответствующие CGI-переменным. Дополнительно об этих 
+свойствах и об объекте <CODE>request</CODE> в целом см.
+<A HREF="sessmgmt.htm#1036535">"Объект request"</A>.</p>
+<A NAME="1053600"></a>
+<h5><B><A NAME="1044202"></a>
+</B>Таблица 5.7&nbsp; CGI-переменные, доступные как свойства объекта <CODE>request</CODE></h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1044234"></a>
+CGI-переменная<TH VALIGN=baseline ALIGN=left><A NAME="1044206"></a>
+  Свойство<TH VALIGN=baseline ALIGN=left><A NAME="1044208"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044236"></a>AUTH_TYPE</PRE><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1044210"></a>auth_type</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1047360"></a>
+  Тип авторизации, если запрос защищён авторизацией любого типа. Netscape web-серверы 
+  поддерживают базовую авторизацию доступа HTTP.<br>
+  Пример значения: <CODE>basic</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044238"></a>REMOTE_USER</PRE><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1044214"></a>auth_user</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1047363"></a>
+  Имя локального HTTP-пользователь web-браузера, если авторизации доступа HTTP 
+  была активирована для данного URL. Заметьте, что это не способ определения 
+  имени пользователя, получившего доступ к Вашей программе.
+  Пример значения: <CODE>ksmith</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044240"></a>REQUEST_METHOD</PRE>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044219"></a>method</PRE><TD VALIGN=baseline ALIGN=left><P>
+<A NAME="1047366"></a>HTTP-метод, ассоциированный с запросом. Приложение может 
+использовать его для определения соответствующего ответа на запрос.<br>
+Пример значения: <CODE>GET</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044242"></a>SERVER_PROTOCOL</PRE>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044224"></a>protocol</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1047369"></a>Уровень протокола HTTP, поддерживаемый клиентским 
+программным обеспечением. Пример значения:
+<CODE>HTTP/1.0</CODE></P><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044244"></a>QUERY_STRING</PRE>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044228"></a>query</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1047357"></a>Информация запрашивающей HTML-страницы; если имеется "?", 
+информация в URL, идущая после знака "?". Пример значения: <CODE>x=42</CODE></P></TABLE>
+<p>
+<A NAME="1044503"></a>Серверная функция <CODE>ssjs_getCGIVariable</CODE> даёт 
+Вам доступ к переменным окружения, установленным в серверном процессе, включая CGI-переменные, 
+перечисленные в следующей таблице.</p>
+<A NAME="1053610"></a><h5><A NAME="1044408"></a>
+Таблица 5.8&nbsp; CGI-переменные, доступные через <CODE>ssjs_getCGIVariable</CODE></h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1044412"></a>Переменная<TH VALIGN=baseline ALIGN=left>
+<A NAME="1044414"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044416"></a>AUTH_TYPE</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1047950"></a>Тип авторизации, если запрос защищён авторизацией 
+любого типа. Netscape web-серверы поддерживают базовую авторизацию доступа HTTP.<br>
+Пример значения: <CODE>basic</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044425"></a>HTTPS</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1044427"></a>Если на сервере активна служба безопасности/security, 
+значение этой переменной
+<CODE>ON</CODE>; иначе - <CODE>OFF</CODE>. Пример значения: <CODE>ON</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044430"></a>HTTPS_KEYSIZE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044432"></a>Количество битов в ключе 
+сессии, используемом для шифрования сессии, если безопасность on. Пример 
+значения: <CODE>128</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044435"></a>HTTPS_SECRETKEYSIZE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044437"></a>
+Количество битов, используемых для генерации private-ключа сервера.<br>
+Пример значения: <CODE>128</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044444"></a>PATH_INFO</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1044446"></a>Информация пути, установленная браузером. Пример: <CODE>/cgivars/cgivars.html</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044449"></a>PATH_TRANSLATED</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044451"></a>
+Фактическое системное pathname/имя пути , содержащегося в <CODE>PATH_INFO</CODE>. 
+Пример:
+<CODE>/usr/ns-home/myhttpd/js/samples/cgivars/cgivars.html</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044454"></a>QUERY_STRING</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1047959"></a>
+<A NAME="1047357"></a>Информация запрашивающей HTML-страницы; если имеется "?", 
+информация в URL, идущая после знака "?". Пример значения: <CODE>x=42</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044459"></a>REMOTE_ADDR</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044461"></a>
+IP-адрес хоста, отправившего запрос. Пример: <CODE>198.93.95.47</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044464"></a>REMOTE_HOST</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1044466"></a>Если DNS на сервере включена, имя хоста, отправившего 
+запрос; иначе - его IP-адрес. Пример: <CODE>www.netscape.com</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044469"></a>REMOTE_USER</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1044471"></a>Имя локального HTTP-пользователя web-браузера, если 
+авторизация доступа HTTP была активирована данным URL. Заметьте, что это не 
+способ определения user name того, кто выполнил доступ к Вашей программе. Пример: <CODE>ksmith</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044474"></a>REQUEST_METHOD</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044476"></a>
+HTTP-метод, ассоциированный с запросом. Приложение может использовать его для 
+определения ответа на запрос. Пример: <CODE>GET</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044479"></a>SCRIPT_NAME</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044481"></a>
+pathname к данной странице, как он введён в URL. Пример: <CODE>cgivars.html</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044484"></a>SERVER_NAME</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044486"></a>hostname или IP-адрес, 
+по которому приложение
+JavaScript запущено, как они даны в URL. Пример: <CODE>piccolo.mcom.com</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044489"></a>SERVER_PORT</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1044491"></a>TCP-порт, по которому запущен сервер. Пример: <CODE>2020</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044494"></a>SERVER_PROTOCOL</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044496"></a>
+Уровень протокола HTTP, поддерживаемый клиентским программным обеспечением. 
+Пример: <CODE>HTTP/1.0</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1044499"></a>SERVER_URL</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1044501"></a>URL, введённый пользователем для доступа к данному 
+серверу. Пример: <CODE>https://piccolo:2020</CODE></P></TABLE>
+<p>
+<A NAME="1044380"></a>Здесь приведён синтаксис <CODE>ssjs_getCGIVariable</CODE>:</p>
+<PRE><A NAME="1043930"></a>value = ssjs_getCGIVariable("name");</PRE>
+<p><A NAME="1044346"></a>
+Этот оператор устанавливает в переменную <CODE>value</CODE> значение 
+CGI-переменной <CODE>name</CODE>.
+Если предоставленный вами аргумент не является одной из CGI-переменных, 
+перечисленных в <A HREF="#1044408">
+Таблице 5.8</A>,
+машина выполнения ищет переменную окружения с этим именем в среде сервера. Если 
+она найдена,
+машина выполнения возвращает значение; иначе, возвращает null. Например, 
+следующий код присваивает значение стандартной переменной окружения <CODE>CLASSPATH</CODE> 
+переменной JavaScript 
+<CODE>classpath</CODE>:</p>
+<PRE><A NAME="1043938"></a>classpath = ssjs_getCGIVariable("CLASSPATH");</PRE>
+<p><A NAME="1043803"></a>
+Метод <CODE>httpHeader</CODE> объекта <CODE>request</CODE> возвращает шапку/header 
+текущего клиентского запроса. Для CGI-скрипта Netscape web-серверы устанавливают CGI-переменные 
+для некоторой информации в шапке. Для приложений JavaScript Вы получаете эту 
+информацию непосредственно из шапки.
+<A HREF="#1043813">Таблица 5.9</A> показывает информацию, доступную как 
+переменные CGI в среде CGI,
+но как свойства шапки - в серверном JavaScript. В свойствах шапки символы 
+подчёркивания в имени
+CGI-переменной (_) заменяются на тире (-); например, CGI-переменная
+<CODE>CONTENT_LENGTH</CODE> соответствует свойству шапки <CODE>content-length</CODE>.</p>
+<A NAME="1053626"></a>
+<h5><A NAME="1043813"></a>Таблица 5.9&nbsp;CGI-переменные, доступные через 
+клиентские &quot;шапки&quot;</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1043817"></a>CGI-переменная<TH VALIGN=baseline ALIGN=left><A NAME="1043819"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043821"></a>CONTENT_LENGTH</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044743"></a>
+Количество байтов, отправленных клиентом.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043825"></a>CONTENT_TYPE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044736"></a>
+Тип данных, отправленных клиентом, если форма отправлена методом <CODE>POST</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043829"></a>HTTP_ACCEPT</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044771"></a>
+Перечисляет типы данных, которые может принимать клиент.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043833"></a>HTTP_USER_AGENT</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044781"></a>
+Идентифицирует браузер, используемый для доступа к Вашей программе.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043837"></a>HTTP_IF_MODIFIED_SINCE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1044786"></a>
+Дата, установленная в соответствии со стандартным временем GMT (по Гринвичу), 
+дающая возможность отправлять клиенту ответ на запрос только тогда, когда дата 
+была изменена после данной даты.</P></TABLE>
+<p>
+<A NAME="1043647"></a>Дополнительно о манипулировании клиентской &quot;шапкой&quot; см.
+<A HREF="misc.htm#1020125">"Манипуляции с Запросом и Ответом&quot;</A>.</p>
+<p>
+<A NAME="1044063"></a>В таблице даны CGI-переменные, не поддерживаемые серверным 
+JavaScript, которые не могут быть применены при запуске приложений JavaScript.</p>
+<A NAME="1053632"></a><h5><A NAME="1043656"></a>
+Таблица 5.10&nbsp; CGI-переменные, не поддерживаемые серверным JavaScript</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1043660"></a>Переменная<TH VALIGN=baseline ALIGN=left><A NAME="1043662"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043664"></a>GATEWAY_INTERFACE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1043666"></a>
+Версия CGI, запущенная на сервере. Не применяется к приложениям JavaScript.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1043668"></a>SERVER_SOFTWARE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1043670"></a>
+Тип запущенного сервера. Недоступна для приложений JavaScript.</P></TABLE>
+<H2><A NAME="Communicating Between Server and Client"></A><A NAME="1035757"></a>
+Сообщение Между Сервером и Клиентом</H2><hr>
+<p><A NAME="1031017"></a>
+Нередко Вашим приложениям JavaScript нужно передать информацию либо с сервера 
+клиенту, либо с клиента на сервер. Например, когда пользователь в первый раз 
+выполняет доступ к приложению <CODE>videoapp</CODE>, оно динамически генерирует 
+список категорий видео-файлов из текущего содержимого БД. Эта информация, 
+генерируемая на сервере, должна быть передана обратно клиенту. И наоборот, когда 
+пользователь щёлкает на категории из этого списка, выбор пользователя должен 
+быть передан обратно на сервер, чтобы он мог сгенерировать набор файлов.</p>
+<h4><A NAME="Head2;"></A><A NAME="1019011"></a>Отправка Значений с Клиента на 
+Сервер</h4>
+<hr>
+<p>
+<A NAME="1034578"></a>Есть несколько способов отправки информации с клиента на 
+сервер:</p>
+<ul><LI><A NAME="1034579"></a>Машина выполнения автоматически создаёт свойства 
+  объекта
+<CODE>request</CODE> для каждого значения в HTML-форме.
+(См. <A HREF="#1034650">"Доступ к Значениям Формы"</A>)</LI>.<LI><A NAME="1034939"></a>
+  Если Вы используете основанную на URL технику обслуживания свойств объекта <CODE>client</CODE>, 
+  Вы можете модифицировать URL, отправленный серверу, чтобы включить значения 
+  свойств объектов <CODE>client</CODE> и <CODE>request</CODE>. (См. <A HREF="#1034871">"Кодирование 
+  Информации в URL"</A>)</LI>.<LI><A NAME="1034951"></a>
+  Вы можете использовать куки для установки значений свойств объектов <CODE>client</CODE> 
+  и
+<CODE>request</CODE>. (См. <A HREF="#1035266">"Использование Кук"</A>)</LI>.<LI><A NAME="1040997"></a>
+  На стороне клиента Вы можете модифицировать шапку/header клиентского запроса.
+  Вы можете затем использовать метод <CODE>httpHeader</CODE> объекта <CODE>request</CODE> 
+  для манипулирования шапкой и, возможно, телом запроса. (См. <A HREF="misc.htm#1020125">"Манипуляции 
+  с Запросом и Ответом"</A>).</LI></ul>
+<H4><A NAME="Head3;"></A><A NAME="1034650"></a>Доступ к Значениям Формы</H4>
+<hr>
+<p>
+<A NAME="1018171"></a>Формы это альфа и омега приложений на JavaScript. Вы 
+используете такие элементы формы как текстовые поля и радио-кнопки в 
+качестве первичного механизма переноса данных с клиента на сервер. Когда 
+пользователь щёлкает на кнопке Submit, браузер отправляет значения, введённые 
+форму, на сервер для обработки.</p>
+<p>
+<A NAME="1019016"></a>Атрибут <CODE>ACTION</CODE> тэга <CODE>FORM</CODE> 
+определяет приложение, которому отправляются значения. Для того чтобы отправить 
+информацию приложению на сервер,
+используйте URL приложения как значение атрибута <CODE>ACTION</CODE>.</p>
+<p>
+<A NAME="1019024"></a>Если документ, содержащий форму, является скомпилированной 
+частью того же самого приложения,
+Вы можете просто предоставить имя страницы вместо полного URL. Например, вот тэг <CODE>FORM</CODE> 
+из приложения-примера Hangman:</p>
+<PRE><A NAME="1018137"></a>&lt;FORM METHOD="post" ACTION="hangman.html"&gt;</PRE>
+<p><A NAME="1018138"></a>
+Формы, отправляемые приложениям на серверном JavaScript, могут использовать <CODE>get</CODE> 
+или <CODE>post</CODE> в качестве значения атрибута <CODE>METHOD</CODE>.</p>
+<BLOCKQUOTE>
+  <p><B>ПРИМЕЧАНИЕ: </B><A NAME="1018142"></a>
+  Приложения на серверном JavaScript не поддерживают автоматическую выгрузку 
+  файлов. 
+  То есть, если специфицированная action это страница в приложении JavaScript, 
+  Вы отправляете элемент <CODE>INPUT</CODE> с типом <CODE>TYPE="file"</CODE>, 
+  Ваше приложение обязано само обработать этот файл, как описано в разделе <A HREF="misc.htm#1020125">"Манипуляции 
+  с Запросом и Ответом".</p>
+</BLOCKQUOTE>
+<p>
+<A NAME="1034803"></a>Каждый элемент ввода HTML-формы соответствует свойству 
+объекта
+<CODE>request</CODE>. Имя свойства специфицируется атрибутом <CODE>NAME</CODE> 
+элемента формы. Например, следующий HTML создаёт свойство объекта <CODE>request</CODE> 
+под названием
+<CODE>guess</CODE>, которое принимает одиночный символ в текстовом поле. Вы 
+обращаетесь к этому свойству в серверном JavaScript как к<CODE> request.guess</CODE>.</p>
+<PRE><A NAME="1034806"></a>&lt;FORM METHOD="post" ACTION="hangman.html"&gt; <br>&lt;P&gt; <br>
+What is your guess? <br>&lt;INPUT TYPE="text" NAME="guess" SIZE="1"&gt;</PRE>
+<p><A NAME="1034864"></a>
+Элемент <CODE>SELECT</CODE>, дающий возможность множественного выбора, требует 
+особого обращения, поскольку это единственное свойство, которое может иметь 
+несколько значений. Вы можете использовать функцию <CODE>getOptionValue</CODE> 
+для получения значений выбранных опций в списке множественного выбора. 
+Дополнительно см. <A HREF="#1035663">"Использование Списков Select"</A>.</p>
+<p><A NAME="1019039"></a>
+Информацию об объекте <CODE>request</CODE> см. в разделе <A HREF="sessmgmt.htm#1036535">"Объект
+request"</A>.</p>
+<p><A NAME="1034860"></a>Если Вы хотите обработать данные сначала на стороне 
+клиента, Вы должны создать функцию клиентского JavaScript для выполнения 
+обработки значений элементов формы и передать затем вывод клиентской функции 
+элементу формы. Вы можете скрыть/hide этот элемент, чтобы он не отображался 
+пользователю, если Вы хотите выполнить клиентский препроцессинг.</p>
+<p>
+<A NAME="1014634"></a>Например, у Вас имеется функция клиентского JavaScript под 
+названием
+<CODE>calc</CODE>, выполняющая расчёт на основе пользовательского ввода. Вы 
+хотите передать результат работы этой функции Вашему приложению для дальнейшей 
+обработки. Сначала Вам нужно определить скрытый элемент формы для результата:</p>
+<PRE><A NAME="1014266"></a>&lt;INPUT TYPE="hidden" NAME="result" SIZE=5&gt;</PRE>
+<p><A NAME="1014268"></a>
+Затем Вам нужно создать обработчик события <CODE>onClick</CODE> для кнопки Submit, 
+который назначает вывод функции в скрытый элемент:</p>
+<PRE><A NAME="1014269"></a>&lt;INPUT TYPE="submit" VALUE="Submit"<br>
+&nbsp;&nbsp;&nbsp;onClick="this.form.result.value=calc(this.form)"&gt;</PRE>
+<p><A NAME="1014270"></a>
+Значение элемента <CODE>result</CODE> отправляется вместе с другими значениями 
+элементов формы. Обратиться к этому значению в приложении можно <CODE>request.result</CODE>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1035663"></a>Использование Списков Select</H4>
+<hr>
+<p>
+<A NAME="1035664"></a>HTML-тэг <CODE>SELECT</CODE>, используемый с атрибутом <CODE>MULTIPLE</CODE>,
+даёт возможность ассоциировать несколько значений с одним элементом формы. Если 
+Вашему приложению нужны списки с возможностью выбора нескольких опций, Вы 
+используете функцию <CODE>getOptionValue</CODE> для получения значений в JavaScript. 
+Синтаксис <CODE>getOptionValue</CODE> таков:</p>
+<PRE><A NAME="1035666"></a>itemValue = getOptionValue(name, index)</PRE>
+<p><A NAME="1035667"></a>
+Здесь <CODE>name</CODE> это строка, специфицированная как атрибут <CODE>NAME</CODE> 
+тэга
+<CODE>SELECT</CODE>, а <CODE>index</CODE> это порядковый индекс выбранной опции, 
+начиная с 0.
+Функция <CODE>getOptionValue</CODE> возвращает значение выбранного элемента, как 
+специфицировано ассоциированным тэгом <CODE>OPTION</CODE>.</p>
+<p><A NAME="1035668"></a>
+Функция <CODE>getOptionValueCount</CODE> возвращает количество опций (специфицированных 
+тэгами
+<CODE>OPTION</CODE>) в списке выбора. Она требует только одного аргумента, 
+строки, содержащей имя тэга <CODE>SELECT</CODE>.</p>
+<p><A NAME="1035669"></a>
+Например, у Вас имеется следующий элемент:</p>
+<PRE><A NAME="1035670"></a>&lt;SELECT NAME="what-to-wear" MULTIPLE SIZE=8&gt;<br>
+&nbsp;&nbsp;&nbsp;&lt;OPTION SELECTED&gt;Jeans<br>&nbsp;&nbsp;&nbsp;&lt;OPTION&gt;Wool Sweater<br>
+&nbsp;&nbsp;&nbsp;&lt;OPTION SELECTED&gt;Sweatshirt<br>&nbsp;&nbsp;&nbsp;&lt;OPTION SELECTED&gt;Socks<br>
+&nbsp;&nbsp;&nbsp;&lt;OPTION&gt;Leather Jacket<br>&nbsp;&nbsp;&nbsp;&lt;OPTION&gt;Boots<br>
+&nbsp;&nbsp;&nbsp;&lt;OPTION&gt;Running Shoes<br>&nbsp;&nbsp;&nbsp;&lt;OPTION&gt;Cape<br>&lt;/SELECT&gt;</PRE>
+<p><A NAME="1035671"></a>
+Вы можете обработать ввод из этого select-списка таким образом:</p>
+<PRE><A NAME="1035672"></a>&lt;SERVER&gt;<br>var i = 0;<br>var howmany = getOptionValueCount("what-to-wear");<br>
+while ( i &lt; howmany ) {<br>&nbsp;&nbsp;&nbsp;var optionValue = <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;getOptionValue("what-to-wear", i);<br>
+&nbsp;&nbsp;&nbsp;write ("&lt;br&gt;Item #" + i + ": " + optionValue + "\n");<br>
+&nbsp;&nbsp;&nbsp;i++;<br>}<br>&lt;/SERVER&gt;</PRE>
+<p><A NAME="1035673"></a>
+Если пользователь оставил выбор по умолчанию, скрипт возвратит:</p>
+<p><A NAME="1035674"></a>
+Item #0: Jeans<br>Item #1: Sweatshirt<br>Item #2: Socks</p>
+<H4><A NAME="Head3;"></A><A NAME="1034871"></a>Кодирование Информации в URL</H4>
+<hr>
+<p>
+<A NAME="1035052"></a>Вы можете вручную кодировать свойства объекта <CODE>request</CODE> 
+в URL, по которому выполняется доступ к странице Вашего приложения. При создании URL 
+используется следующий синтаксис:</p>
+<PRE><A NAME="1034873"></a>URL?varName1=value1[&amp;varName2=value2...]</PRE>
+<p><A NAME="1034874"></a>
+Здесь <CODE>URL</CODE> это базовый URL, каждое <CODE>varName</CODE><I><CODE>N</CODE></I>&nbsp; 
+это имя свойства,
+каждое <CODE>value</CODE><I><CODE>N</CODE></I>&nbsp; это соответствующее 
+свойству значение (с мнемониками специальных символов). В этой схеме после 
+базового URL идёт знак вопроса (<CODE>?</CODE>), после которого, в свою очередь, 
+идут пары имён свойств и их значений. Каждая пара отделяется амперсандом
+(<CODE>&amp;</CODE>). Когда машина выполнения на сервере получает результирующий URL 
+в качестве клиентского запроса, она создаёт свойство объекта <CODE>request</CODE> 
+под названием <CODE>varName</CODE><I><CODE>N</CODE></I>&nbsp; для каждой 
+переменной.</p>
+<p><A NAME="1036292"></a>
+Например, следующий HTML определяет гиперссылку на страницу, инстанциирующую 
+свойства объекта <CODE>request</CODE> <CODE>i</CODE> и <CODE>j</CODE> в 1 и 2, 
+соответственно. Операторы JavaScript в
+<CODE>refpage.html</CODE> могут затем обратиться к эти переменным <CODE>request.i</CODE> 
+и
+<CODE>request.j</CODE>.</p>
+<PRE><A NAME="1034878"></a>&lt;A HREF="refpage.html?i=1&amp;j=2"&gt;Click Here&lt;/A&gt;</PRE>
+<p>
+<A NAME="1034879"></a>Вместо использования статической URL-строки, как в 
+предыдущем примере, Вы можете использовать операторы серверного или клиентского JavaScript 
+для динамической генерации URL, кодирующего значения свойств. Например, Ваше 
+приложение может включать страницу:</p>
+<PRE><A NAME="1036341"></a>&lt;HTML&gt;<br>&lt;HEAD&gt;<br>&lt;SCRIPT&gt;<br>function compute () {<br>
+&nbsp;&nbsp;&nbsp;// <I>... заменить подходящими расчётами</I>,
+&nbsp;&nbsp;&nbsp;// <I>которые возвращают строку поиска ...
+
+<br></I>&nbsp;&nbsp;&nbsp;return "?num=25";<br>}<br>
+&lt;/SCRIPT&gt;<br>&lt;/HEAD&gt;</PRE><PRE><A NAME="1036327"></a>&lt;BODY&gt;<br>
+&lt;a HREF="refpage.htm" onClick="this.search=compute()"&gt;<br>Click here to submit
+a value.&lt;/a&gt;&lt;/p&gt;</PRE><PRE><A NAME="1036329"></a>&lt;/BODY&gt;<br>&lt;/HTML&gt;</PRE>
+<p>
+<A NAME="1036307"></a>В данном случае, если пользователь щёлкнет на ссылке, 
+машина выполнения на клиенте запустит на выполнение обработчик события <CODE>onClick</CODE>. 
+Этот обработчик устанавливает часть поиска из URL в ссылке в какую-нибудь 
+строку, возвращённую функцией <CODE>compute</CODE>. Когда машина выполнения на 
+сервере получит этот запрос, она создаст свойство <CODE>num</CODE> объекта <CODE>request</CODE> 
+и установит его значение в 25.</p>
+<p><A NAME="1036373"></a>
+В качестве второго примера Вы можете добавить свойства объекта <CODE>request</CODE> 
+в URL, созданный в серверном скрипте. Это особенно применимо, если Вы перенаправляете клиентский запрос на новую страницу. Чтобы добавить свойства 
+объекта <CODE>request</CODE> в серверный скрипт, Вы можете использовать такой 
+оператор:</p>
+<PRE><A NAME="1034880"></a>&lt;A HREF=`"refpage.html?i=" + escape(i) + "&amp;j=" + escape(j)`&gt;<br>
+&nbsp;&nbsp;&nbsp;Click Here&lt;/A&gt;</PRE>
+<p><A NAME="1034881"></a>
+Если вы создаёте URL в операторе серверного JavaScript, свойства объекта <CODE>client</CODE> 
+не добавляются автоматически. Если Вы используете технику на основе URL для 
+объекта <CODE>client</CODE>, используйте функцию <CODE>addClient</CODE> для 
+генерирования окончательного URL. В этом примере оператор может быть таким:</p>
+<PRE><A NAME="1034882"></a>&lt;A HREF=`addClient("refpage.html?i=" + escape(i)<br>
+&nbsp;&nbsp;&nbsp;+ "&amp;j=" + escape(j))`&gt;Click Here&lt;/A&gt;</PRE>
+<p><A NAME="1034885"></a>
+Об использовании <CODE>addClient</CODE> см. <A HREF="sessmgmt.htm#1063729">"Присоединение 
+Свойств Объекта client к URL Вручную"</A>.</p>
+<p><A NAME="1053315"></a>
+Функция <CODE>escape</CODE> ядра JavaScript даёт возможность кодировать имена 
+или значения, присоединённые к
+URL, включая специальные символы. Вообще, если приложению необходимо 
+генерировать имена и значения собственных свойств в URL запроса, Вы должны 
+использовать <CODE>escape</CODE>, чтобы гарантировать корректную интерпретацию 
+всех значений. Дополнительно см. книгу <I><a href="../servref12/default.htm">Серверный JavaScript. Справочник</a></I>.</p>
+<p><A NAME="1053323"></a>
+Помните, что URL не изменяется, если пользователь перезагружает его, хотя 
+содержимое страницы может измениться.
+Любые свойства, высланные в оригинальном URL, восстанавливают свои значения в URL, 
+имевшиеся на момент его первой отправки,
+независимо от любых возможных изменений, сделанных при обработке. Например, если 
+пользователь щёлкнул кнопку
+Reload для перезагрузки URL в предыдущем примере, <CODE>i</CODE> и <CODE>j</CODE> 
+снова установятся в 1 и 2, соответственно.</p>
+<h4><A NAME="Head2;"></A><A NAME="1036590"></a>Отправка Значений с Сервера 
+Клиенту</h4><hr>
+<p><A NAME="1014273"></a>Приложение JavaScript сообщается с клиентом через HTML 
+и клиентский JavaScript. Если Вам нужно просто вывести информацию пользователю, 
+нет никаких проблем: Вы создаёте HTML для форматирования этой информации так, 
+как она будет отображаться.</p>
+<p>
+<A NAME="1014275"></a>Однако Вам может понадобиться выслать значения 
+непосредственно клиентскому скрипту. Можно сделать это по-разному, включая такие 
+способы:</p>
+<ul><LI><A NAME="1014276"></a>
+  Вы можете установить значения по умолчанию формы и значения для 
+  скрытых/невидимых элементов формы. (См. <A HREF="#1023822">"Значения по 
+  Умолчанию Формы и Скрытых Элементов Формы"</A>)</LI>.<LI><A NAME="1014281"></a>
+  Вы можете непосредственно заменить информацию в клиентских операторах
+<CODE>SCRIPT</CODE> или обработчиках событий. (См. <A HREF="#1023837">"Прямая 
+  Замена"</A>)</LI>.<LI><A NAME="1035167"></a>
+  Вы можете использовать куки для отправки значений свойств объекта <CODE>client</CODE> 
+  или других значений клиенту.
+(См. <A HREF="#1035266">"Использование Кук"</A>)</LI>.<LI><A NAME="1050958"></a>
+  Вы можете изменить шапку/header ответа, высылаемую клиенту, используя функции <CODE>deleteResponseHeader</CODE> 
+  и <CODE>addResponseHeader</CODE>.
+(См. <A HREF="misc.htm#1020125">"Манипуляции с Запросом и Ответом"</A>).</LI></ul>
+<H4><A NAME="Head3;"></A><A NAME="1023822"></a>Значения по Умолчанию Формы и 
+Скрытых Элементов Формы</H4>
+<hr>
+<p>
+<A NAME="1019137"></a>Чтобы отобразить HTML-форму с набором значений по 
+умолчанию в элементах формы, используйте тэг <CODE>INPUT</CODE> для создания 
+необходимых элементов формы, замещая выражения серверного JavaScript
+атрибутов <CODE>VALUE</CODE>. Например, Вы можете использовать следующий 
+оператор для отображения элемента text и установки значения по умолчанию на 
+основе значения переменной <CODE>client.custname</CODE>:</p>
+<PRE><A NAME="1014285"></a>&lt;INPUT TYPE="text" NAME="customerName" SIZE="30"<br>
+&nbsp;&nbsp;&nbsp;VALUE=`client.custname`&gt;</PRE>
+<p><A NAME="1014286"></a>
+Начальным значением этого текстового поля становится значение переменной <CODE>client.custname</CODE>.
+Так, если значением <CODE>client.custname</CODE> является Victoria, клиенту 
+будет выслан такой оператор:</p>
+<PRE><A NAME="1019167"></a>&lt;INPUT TYPE="text" NAME="customerName" SIZE="30" VALUE="Victoria"&gt;</PRE>
+<p><A NAME="1014288"></a>
+Вы может использовать аналогичную технику со скрытыми элементами формы, если  
+не хотите показывать значения пользователю, как в следующем примере:</p>
+<PRE><A NAME="1014289"></a>&lt;INPUT TYPE="hidden" NAME="custID" SIZE=5 VALUE=`client.custID`&gt;</PRE>
+<p>
+<A NAME="1014290"></a>В обоих случаях Вы можете использовать эти значения 
+клиентского JavaScript в значениях свойств объектов, доступных клиенту. Если эти 
+два элемента находятся в форме с именем <CODE>entryForm</CODE>,
+то значения станут свойствами JavaScript <CODE>document.entryForm.customerName</CODE> 
+и <CODE>document.entryForm.custID</CODE>, соответственно. Вы можете затем 
+выполнять обработку этих значений на стороне клиента. См. также книгу
+<I><a href="../clientguide13/index.htm">Клиентский JavaScript. Руководство</a></I>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1023837"></a>
+Прямая Замена</H4><hr>
+<p><A NAME="1019155"></a>Вы можете также использовать серверный JavaScript для 
+генерирования клиентских скриптов. Эти значения могут использоваться в 
+последовательности операторов на клиенте. В качестве простого примера Вы можете 
+инициализировать клиентскую переменную по имени <CODE>budget</CODE> на основе 
+значения <CODE>client.amount</CODE> таким образом:</p>
+<PRE><A NAME="1014297"></a>&lt;p&gt;The budget is:<br>&lt;SCRIPT&gt;<br>&lt;SERVER&gt;<br>
+write("var budget = " + client.amount);<br>&lt;/SERVER&gt;<br>document.write(budget);<br>&lt;/SCRIPT&gt;</PRE>
+<p>
+<A NAME="1014299"></a>Если значение <CODE>client.amount</CODE> равно 50, это 
+сгенерирует такой JavaScript:</p>
+<PRE><A NAME="1019499"></a>&lt;p&gt;The budget is:<br>&lt;SCRIPT&gt;<br>var budget = 50<br>
+document.write(budget);<br>&lt;/SCRIPT&gt;</PRE>
+<p><A NAME="1023847"></a>
+При запуске на клиенте это будет выглядеть так:</p>
+<PRE><A NAME="1023848"></a>The budget is: 50</PRE><h4><A NAME="Head2;"></A><A NAME="1035266"></a>
+Использование Кук</h4><hr>
+<p><A NAME="1035307"></a>Куки это механизм, который Вы можете использовать на 
+клиенте для сохранения информации между запросами. эта информация находится в 
+файле с названием <CODE>cookie.txt </CODE>(куки-файл), хранящемся на клиентской 
+машине. Протокол Netscape cookie детально описан в книге
+<I><a href="../clientguide13/index.htm">Клиентский JavaScript. Руководство</a></I>.</p>
+<p><A NAME="1035420"></a>
+Вы можете использовать куки для отправки информации в обоих направлениях, от 
+клиента серверу и с сервера клиенту. Куки, высылаемые с клиента, становятся 
+свойствами объекта
+<CODE>client</CODE> или объекта <CODE>request</CODE>. Хотя Вы можете выслать с 
+сервера клиенту любое строковое значение в качестве куки, простейший метод будет 
+- отправить свойства объекта
+<CODE>client</CODE>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1035411"></a>
+Свойства Объекта client как Куки</H4><hr>
+<p><A NAME="1035407"></a>
+Если приложение использует технику клиентских кук для работы с объектом <CODE>client</CODE>, 
+машина выполнения на сервере сохраняет имена и значения свойств объекта <CODE>client</CODE> 
+как куки на клиенте. Об использовании кук для работы с объектом
+<CODE>client</CODE> см. раздел <A HREF="sessmgmt.htm#1036896">"Техника Работы с 
+Объектом client"</A>.</p>
+<p><A NAME="1035320"></a>
+Для свойства объекта <CODE>client</CODE> <I><CODE>propName</CODE></I>&nbsp; 
+машина выполнения автоматически создаёт куку с именем <CODE>NETSCAPE_LIVEWIRE.</CODE><I><CODE>propName</CODE></I>,
+принимая, что приложение использует технику работы с клиентскими куками. Машина 
+выполнения кодирует значения свойств так, как это требуется по протоколу кук Netscape 
+cookie protocol.</p>
+<p><A NAME="1035524"></a>
+Для доступа к этим кукам в клиентском JavaScript Вы можете извлечь эту 
+информацию путём использования свойства
+<CODE>document.cookie</CODE> и такой функции как <CODE>getSSCookie</CODE>, как 
+показано здесь:</p>
+<PRE><A NAME="1035322"></a>function getSSCookie(name) {<br>
+&nbsp;&nbsp;&nbsp;var search = "NETSCAPE_LIVEWIRE." + name + "=";<br>&nbsp;&nbsp;&nbsp;var retstr = "";<br>
+&nbsp;&nbsp;&nbsp;var offset = 0;<br>&nbsp;&nbsp;&nbsp;var end = 0;<br>
+&nbsp;&nbsp;&nbsp;if (document.cookie.length &gt; 0) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offset = document.cookie.indexOf(search);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (offset != -1) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offset += search.length;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end = document.cookie.indexOf(";", offset);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (end == -1) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end = document.cookie.length;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;retstr = unescape(document.cookie.substring(offset, end));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;return(retstr)<br>}</PRE>
+<p><A NAME="1035482"></a>
+Функция <CODE>getSSCookie</CODE> не является предопределённой функцией JavaScript. 
+Если Вам нужна похожая функциональность, Вы обязаны определить её (функцию) в 
+Вашем приложении.</p>
+<p><A NAME="1035508"></a>
+Чтобы отправленная на сервер информация стала свойством объекта <CODE>client</CODE>, 
+добавьте куку с именем, имеющим форму <CODE>NETSCAPE_LIVEWIRE.</CODE><I><CODE>propName.</CODE></I> 
+Предположим, Ваше приложение использует технику работы с клиентскими куками, а 
+машина выполнения на сервере создаёт свойство объекта <CODE>client</CODE> под 
+названием <I><CODE>propName</CODE></I>&nbsp; для данной куки.</p>
+<p>
+<A NAME="1045664"></a>Тогда Вы можете использовать функцию типа следующей:</p>
+<PRE><A NAME="1035485"></a>function setSSCookie (name, value, expire) {<br>
+&nbsp;&nbsp;&nbsp;document.cookie = <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"NETSCAPE_LIVEWIRE." + name + "=" <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ escape(value)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ((expire == null) ? "" : ("; expires=" + expire.toGMTString()));<br>}</PRE>
+<p><A NAME="1035563"></a>
+Здесь функция <CODE>setSSCookie</CODE> также не является предопределённой 
+функцией JavaScript. Если Вам необходима аналогичная функциональность, Вы 
+обязаны определить функцию в Вашем приложении.</p>
+<p><A NAME="1035324"></a>
+Вы можете вызывать эти функции в клиентском JavaScript для получения набора 
+значений свойств объекта
+<CODE>client</CODE>, как в следующем примере:</p>
+<PRE><A NAME="1035325"></a>var value = getSSCookie ("answer"); <br>if (value == "") {<br>
+&nbsp;&nbsp;&nbsp;var expires = new Date();<br>&nbsp;&nbsp;&nbsp;expires.setDate(expires.getDate() + 7);<br>
+&nbsp;&nbsp;&nbsp;setSSCookie ("answer", "42", Expires);<br>}<br>else <br>
+&nbsp;&nbsp;&nbsp;document.write ("The answer is ", value);</PRE>
+<p><A NAME="1035326"></a>
+Эта группа операторов проверяет, имеется ли свойство объекта <CODE>client</CODE> 
+с названием
+<CODE>answer</CODE>. Если нет, код создаёт его и устанавливает значение 42; если 
+найдено, выводится его значение.</p>
+<H4><A NAME="Head3;"></A><A NAME="1035415"></a>Другие Куки</H4><hr>
+<p><A NAME="1035621"></a>
+Когда серверу высылается запрос на страницу приложения JavaScript, шапка/header 
+запроса включает все куки, установленные в данный момент для приложения. Можно 
+использовать метод <CODE>request.httpHeader</CODE> для доступа к этим кукам из 
+серверного JavaScript и присвоения их значений серверным переменным.
+И наоборот, Вы можете использовать функцию <CODE>addResponseHeader</CODE> для 
+добавления новых кук в ответ, высылаемый обратно клиенту. Эта функциональность&nbsp; 
+описана в разделе
+<A HREF="misc.htm#1020125">"Манипуляция с Запросом и Ответом"</A>.</p>
+<p>
+<A NAME="1036545"></a>На клиентской стороне Вы можете использовать функцию вроде 
+приведённой здесь для доступа к куке:</p>
+<PRE><A NAME="1036498"></a>function GetCookie (name) {<br>&nbsp;&nbsp;&nbsp;var arg = name + "=";<br>
+&nbsp;&nbsp;&nbsp;var alen = arg.length;<br>&nbsp;&nbsp;&nbsp;var clen = document.cookie.length;<br>
+&nbsp;&nbsp;&nbsp;var i = 0;<br>&nbsp;&nbsp;&nbsp;while (i &lt; clen) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var j = i + alen; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (document.cookie.substring(i, j) == arg) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var end = document.cookie.indexOf (";", j); <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (end == -1) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end = document.cookie.length; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return unescape(document.cookie.substring(j, end));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i = document.cookie.indexOf(" ", i) + 1; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (i == 0) break; <br>&nbsp;&nbsp;&nbsp;} <br>
+&nbsp;&nbsp;&nbsp;return null; <br>}</PRE>
+<p><A NAME="1036499"></a>
+И Вы может использовать функцию типа приведённой ниже для установки куки на клиенте:</p>
+<PRE><A NAME="1036549"></a>function setCookie (name, value, expires, path, domain, secure) {<br>
+&nbsp;&nbsp;&nbsp;document.cookie = <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name + "="<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ escape(value)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ((expires) ? "; expires=" + expires.toGMTString() : "")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ((path) ? "; path=" + path : "")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ((domain) ? "; domain=" + domain : "")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ((secure) ? "; secure" : ""); <br>}</PRE>
+<p><A NAME="1033638"></a>
+Если путь, специфицированный Вами для куки, находится в Вашем приложении JavaScript, 
+то эта кука будет отправлена в ответ на любой запрос к приложению.</p>
+<p><A NAME="1036557"></a>
+Вы можете использовать эту технику для передачи информации куки между клиентом и 
+сервером, независимо от вида используемой техники работы с объектом <CODE>client</CODE>.</p>
+<H2><A NAME="Garbage Collection"></A><A NAME="1049215"></a>Сбор Мусора</H2><hr>
+<p><A NAME="1049216"></a>
+Серверный JavaScript имеет сборщика мусора, который автоматически освобождает 
+память, выделенную для объекта, более не используемого. В большинстве случаев 
+нет необходимости понимать досконально работу сборщика мусора.
+Этот раздел даёт обзор&nbsp; сборщика мусора и информацию о том, когда он 
+вызывается.</p>
+<BLOCKQUOTE>
+  <p><a name="1049217"><b>Важно!</b></a></p>
+  <p><A NAME="1049218"></a>Этот раздел 
+  даёт возможность продвинутым пользователям взглянуть на внутренние процессы JavaScript. Netscape 
+  не гарантирует, что эти алгоритмы останутся такими же в последующих релизах.</p>
+</BLOCKQUOTE>
+<p><A NAME="1049219"></a>Пространство объекта в JavaScript состоит из арен. То 
+есть машина выполнения JavaScript
+размещает набор арен, из которого затем размещает объекты. Если машина 
+выполнения получает запрос на новый объект, она сначала просматривает список 
+свободных арен. Если в списке свободных есть место, машина выделяет его. Иначе машина 
+выполнения выделяет место в текущей используемой арене. Если используются все 
+арены, машина размещает новую арену. Если все объекты арены - мусор, сборщик 
+мусора освобождает арену.</p>
+<p>
+<A NAME="1049220"></a>Строка JavaScript обычно размещается как GC-объект. Строка 
+имеет ссылку на байты строки, которая также размещается в куче/heap процесса. 
+Если строковой объект подвергся сборке мусора, байты строки высвобождаются.</p>
+<p><A NAME="1049221"></a>
+Работа сборщика мусора JavaScript основана на пометке и уничтожении. Сборщик не 
+перемещает объекты. Он всегда обрабатывает корневой набор объектов. Этот 
+корневой набор/root set включает в себя стэк JavaScript, объект global для 
+контекста JavaScript и любые объекты JavaScript, которые были явно добавлены в 
+корневой набор. В фазе разметки сборщик мусора помечает все объекты, достижимые 
+из корневого набора. В конечной фазе все непомеченные объекты уничтожаются. Все 
+убранные объекты собираются в список свободных.</p>
+<p><A NAME="1049222"></a>
+Сборка мусора считается необходимой, если количество текущих используемых байтов 
+в 1.5 раза превышает количество байтов, бывших в использовании в конце последней 
+уборки мусора. Машина выполнения проверяет это условие в следующих точках и 
+начинает уборку, если это необходимо:</p>
+<ul><LI><A NAME="1049223"></a>В конце каждого запроса.</LI><LI><A NAME="1049224"></a>
+  Во время длительных вычислений JavaScript после предопределённого количества 
+  выполненных операций с байт-кодами JavaScript и только когда выполняется 
+  операция ветвления. Если у Вас код без операций ветвления,
+  сбор мусора не происходит просто оттого, что выполняется предопределённое 
+  количество операций.
+(Операция ветвления/branch может быть в операторах <CODE>if</CODE>, <CODE>while</CODE>, 
+  вызове функции и т.п.)</LI>.<LI><A NAME="1049225"></a>Когда делается попытка 
+  разместить новый объект JavaScript, но в JavaScript нет свободной памяти и 
+  дополнительная память не может быть получена от операционной системы.</LI><LI><A NAME="1049226"></a>
+  Если вызывается функция <CODE>lw_ForceGarbageCollection</CODE>.</LI></ul>
+<H2><A NAME="Error Handling in Server-Side JavaScript"></A>
+<A NAME="1055133"></a> Обработка Ошибок в Серверном JavaScript</H2><hr>
+<p><A NAME="1055134"></a>
+Функция&nbsp; <CODE>ssjs_onError</CODE>, если она определена в Вашем приложении, 
+вызывается в случае ошибки серверного JavaScript, такой как "undefined variable name/имя 
+переменной не определено&quot;. В функции <CODE>ssjs_onError</CODE> Вы можете 
+делать всё, 
+что можно делать в функции серверного JavaScript, включая доступ к объектам <CODE>server</CODE>, <CODE>project</CODE>, <CODE>client</CODE> 
+и <CODE>request</CODE>. Вы можете также выполнять перенаправление и вызывать другие функции.</p>
+<p>
+<A NAME="1055135"></a>Функция <CODE>ssjs_onError</CODE> имеет следующий 
+синтаксис:</p>
+<PRE><A NAME="1055136"></a>function ssjs_onError (&lt;message&gt;,&lt;file&gt;,&lt;line number&gt;) </PRE>
+<P><A NAME="1055137"></a><CODE>&lt;message&gt;</CODE> текст сообщения об ошибке</P>
+<P><A NAME="1055138"></a><CODE>&lt;file&gt;</CODE> имя исходного файла</P>
+<P><A NAME="1055139"></a><CODE>&lt;line number&gt;</CODE> номер строки с ошибкой</P>
+<p>
+<A NAME="1055140"></a>Ошибка JavaScript в ходе выполнения функции onError 
+записывается в log-файл и трассируется (если активна). Функция <CODE>ssjs_onError</CODE>, 
+однако, не вызывается рекурсивно. Ошибка в функции onError вызывает запись 
+сообщения в error log,
+но не выполняет вызов onError.</p>
+<p><A NAME="1055141"></a>
+Вот пример функции:</p>
+<PRE><A NAME="1055142"></a>function ssjs_onError(msg,file,line) </PRE><PRE><A NAME="1055143"></a>{ </PRE><PRE><A NAME="1055144"></a>write("&lt;br&gt;\n&lt;hr&gt;") </PRE>
+<PRE><A NAME="1055145"></a>write("error message: "+msg+"&lt;br&gt;\n") </PRE>
+<PRE><A NAME="1055146"></a>write("file name: "+file+"&lt;br&gt;\n") </PRE>
+<PRE><A NAME="1055147"></a>write("line number: "+line+"&lt;br&gt;\n") </PRE><PRE><A NAME="1055148"></a>
+write("&lt;hr&gt;") </PRE><PRE><A NAME="1055149"></a>}</PRE>
+<p>
+<B>ПРИМЕЧАНИЕ:</B></p>
+<p>
+<A NAME="1055151"></a>Чтобы дать каждой странице её 
+собственную специальную функцию onError, добавьте присвоение <tt>ssjs_onError</tt> 
+в начале кода страницы. Например:</p>
+<PRE><A NAME="1055152"></a>ssjs_onError = custom_onError; </PRE><PRE><A NAME="1055153"></a>
+function custom_onError(msg,file,line) </PRE><PRE><A NAME="1055154"></a>{ </PRE>
+<PRE><A NAME="1055155"></a>// ... </PRE><PRE><A NAME="1055156"></a>} </PRE>
+<p><A NAME="1055157"></a>
+Серверный JavaScript выполняет всё, что <CODE>ssjs_onError</CODE> представляет 
+во время ошибки.
+Вы можете использовать одну функцию <CODE>ssjs_onError</CODE>, которая совместно 
+используется всеми страницами, либо можете динамически переключаться на другую 
+функцию onError в любое время, в том числе в начале каждой страницы.
+Если два запроса выполняют одну и ту же функцию onError в один момент времени, 
+они имеют различные среды выполнения, как если бы Вы одновременно выполняли 
+какую-нибудь другую функцию.<A NAME="1055128"></A></p>
+<h5 ALIGN=right><a href="contents.htm">Оглавление</a> | <a href="sampapp.htm">Назад</a>
+| <a href="sessmgmt.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT></BODY></HTML>

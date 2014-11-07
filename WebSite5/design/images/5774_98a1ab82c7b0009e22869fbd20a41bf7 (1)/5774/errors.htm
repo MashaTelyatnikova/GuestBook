@@ -1,0 +1,276 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<TITLE>Обработка Ошибок в LiveWire.</TITLE></HEAD>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="data.htm">Назад</a>
+| <a href="video.htm">Вперёд</a> | <a href="bklast.htm">Индекс</a></h5>
+<HR><h1>Глава 12<BR><a name="1031793"></a>Обработка Ошибок LiveWire</h1>
+<p>
+<A NAME="1033943"></a>В этой главе рассмотрены типы ошибок, которые могут 
+появиться при работе с реляционными БД.</p>
+<p>
+<A NAME="1037550"></a>В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1038311"></a><a href="#1038270">Проверка Ошибочных Условий/Error Conditions</a></LI><LI><A NAME="1036819"></a><A HREF="#1031972">Return-Значения</A><LI><A NAME="1036823"></a>
+  <a href="#1019587">Методы Работы с Ошибками</a></LI><LI><A NAME="1036827"></a>
+  <a href="#1031582">Статус-Коды</a></LI></ul><H2><A NAME="Checking for Error Conditions"></A>
+<A NAME="1038270"></a>Проверка Ошибочных Условий</H2><hr>
+<p><A NAME="1038276"></a>
+При написании приложения на языке JavaScript Вы должны знать о различных ошибках.
+В тех случаях, когда Вы используете LiveWire Database Service для взаимодействия 
+с реляционной БД,
+ошибки могут возникать по разным причинам. Например, SQL-операторы могут не 
+выполняться из-за ограничений ссылочной целостности/referential
+integrity, потери привилегий доступа, блокировки записи или таблицы в 
+многопользовательской БД и т.д.
+Если акция терпит неудачу, сервер БД возвращает сообщение об ошибке с указанием 
+причины.</p>
+<p>
+<A NAME="1038277"></a>Ваш код должен проверять наличие ошибок и обрабатывать их 
+соответствующим образом.</p>
+<H2><A NAME="Return Values"></A><A NAME="1031972"></a>Return-Значения</H2><hr>
+<p><A NAME="1031258"></a>
+Return-значение методов объектов LiveWire может указывать, имеется ошибка или нет.
+Методы могут возвращать значения различных типов. В зависимости от типа Вы 
+можете получать различную информацию о возможных ошибках.</p>
+<h4><A NAME="Head2;"></A><A NAME="1031979"></a>Число</h4>
+<hr>
+<p>
+<A NAME="1031546"></a>Если метод возвращает число, return-значение может 
+представлять число либо статус-код. Например, <CODE>Cursor.columns</CODE> 
+возвращает количество столбцов в курсоре, а <CODE>Cursor.updateRow</CODE> 
+возвращает число, обозначающее наличие или отсутствие ошибки.</p>
+<p>
+<A NAME="1032074"></a>Методы <CODE>Cursor.columns</CODE> и <CODE>Resultset.columns</CODE> 
+возвращают числовое значение.</p>
+<p>Следующие методы возвращают число, обозначающее статус-код:</p>
+<PRE><A NAME="1032189"></a>Connection.beginTransaction<br>Connection.commitTransaction<br>Connection.execute<br>
+Connection.majorErrorCode<br>Connection.minorErrorCode<br>Connection.release<br>
+Connection.rollbackTransaction<br>Connection.SQLTable</PRE><PRE><A NAME="1036402"></a>Cursor.close<br>
+Cursor.deleteRow<br>Cursor.insertRow<br>Cursor.updateRow</PRE>
+<PRE><A NAME="1036406"></a>database.beginTransaction<br>database.connect<br>database.commitTransaction<br>
+database.disconnect<br>database.execute<br>database.majorErrorCode<br>database.minorErrorCode<br>
+database.rollbackTransaction<br>database.SQLTable<br>database.storedProcArgs</PRE>
+<PRE><A NAME="1032255"></a>DbPool.connect<br>DbPool.disconnect<br>DbPool.majorErrorCode<br>
+DbPool.minorErrorCode<br>DbPool.storedProcArgs</PRE><PRE><A NAME="1032271"></a>Resultset.close</PRE>
+<PRE><A NAME="1032273"></a>Stproc.close</PRE>
+<p><A NAME="1032051"></a>
+Если числовое return-значение метода указывает статус-код, 0 означает успешное 
+выполнение, а ненулевое число указывает на ошибку. Если статус-код ненулевой, Вы 
+можете использовать методы
+<CODE>majorErrorCode</CODE> и <CODE>majorErrorMessage</CODE> ассоциированного 
+объекта
+<CODE>Connection</CODE>, <CODE>database</CODE> или <CODE>DbPool</CODE> для того, 
+чтобы найти информацию об ошибке. В некоторых случаях методы <CODE>minorErrorCode</CODE> 
+и
+<CODE>minorErrorMessage</CODE> предоставляют дополнительную информацию об ошибке. 
+О return-значениях этих методов см. <A HREF="#1019587">"Методы Работы с Ошибками&quot;</A>.</p>
+<h4><A NAME="Head2;"></A><A NAME="1031980"></a>Объект</h4><hr>
+<p><A NAME="1034889"></a>
+Если метод возвращает объект, он может быть либо реальным объектом, либо null. 
+Если метод возвращает null, возможно, возникла ошибка JavaScript. В большинстве 
+случаев, если ошибка возникла в БД, метод возвращает верный объект, но программа 
+устанавливает код ошибки.</p>
+<p>
+<A NAME="1034932"></a>Глобальная функция <CODE>blob</CODE> возвращает объект. 
+Кроме того, следующие методы также возвращают объект:</p>
+<PRE><A NAME="1035110"></a>Connection.cursor<br>Connection.storedProc<br>database.cursor<br>
+database.storedProc<br>DbPool<VAR> (constructor)<br></VAR>DbPool.connection<br>Stproc.resultSet</PRE>
+<p>
+<A NAME="1034896"></a>Создаёте ли Вы курсор, результирующий набор или хранимую 
+процедуру, Вы должны проверять и существование созданного объекта, и возможное 
+наличие кода ошибки. Вы можете использовать методы
+<CODE>majorErrorCode</CODE> и <CODE>majorErrorMessage</CODE> для тестирования 
+ошибки.</p>
+<p>
+<A NAME="1034905"></a>Например, Вы можете создать курсор и проверить его 
+корректность кодом такого вида:</p>
+<PRE><A NAME="1034907"></a>// Создаётся Cursor-объект.<br>custs = connobj.cursor ("select id, name, city <br>
+&nbsp;&nbsp;&nbsp;from customer order by id");</PRE><PRE><A NAME="1034908"></a>// Прежде чем продолжить, убедитесь, что возвращён реальный курсор
+// и что нет ошибки БД.<br>
+if ( custs &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1034909"></a>
+&nbsp;&nbsp;&nbsp;// Получить первый ряд.</PRE>
+<PRE><br>&nbsp;&nbsp;&nbsp;custs.next();</PRE>
+<PRE><A NAME="1034924"></a>&nbsp;&nbsp;&nbsp;// <I>... процессинг рядов курсора ...</I></PRE><PRE><A NAME="1034911"></a>&nbsp;&nbsp;&nbsp;//Закрыть курсор.
+<br>&nbsp;&nbsp;&nbsp;custs.close();<br>}</PRE>
+<PRE><A NAME="1034925"></a>else
+<br>&nbsp;&nbsp;&nbsp;// <I>... обработка ошибок ...</I></PRE>
+<h4><A NAME="Head2;"></A><A NAME="1034898"></a>Булево Значение</h4><hr>
+<p><A NAME="1035118"></a>
+Следующие методы возвращают Булевы значения:</p>
+</P>
+<PRE><A NAME="1035119"></a>Connection.connected<br>Cursor.next<br>database.connected<br>DbPool.connected<br>
+Resultset.next</PRE>
+<p><A NAME="1034899"></a>Если метод возвращает Boolean-значение, <CODE>true</CODE> 
+обычно указывает на успешное выполнение, в то время как <CODE>false</CODE> 
+указывает на некоторое другое состояние. Return-значение <CODE>false</CODE> не 
+означает реальной ошибки; оно может означать и условие успешного завершения.</p>
+<p>
+<A NAME="1032330"></a>Например, <CODE>Connection.connected</CODE> возвращает <CODE>false</CODE> 
+для указания на то, что <CODE>Connection</CODE> -объект в данное время не 
+соединён. Это может означать, что ошибка возникла при создании <CODE>Connection</CODE> 
+-объекта или что ранее использованное соединение было намеренно разорвано. Эти 
+события не являются ошибками метода <CODE>connected</CODE>. Если ошибка возникла 
+при создании объекта, Ваш код должен отлавливать ошибку в работе этого метода. 
+Если соединение было разорвано, Вы можете установить его вновь.</p>
+<p><A NAME="1032372"></a>
+Второй пример - <CODE>Cursor.next</CODE> возвращает <CODE>false</CODE>, когда Вы 
+ряды курсора закончились. Если оператор <CODE>SELECT</CODE>, используемый для 
+создания <CODE>Cursor</CODE> -объекта, находит таблицу, но не находит столбцы, 
+соответствующие условию оператора <CODE>SELECT</CODE>, создаётся пустой курсор. 
+При первой Вашей попытке вызова метода <CODE>next</CODE> для этого курсора он 
+возвращает
+<CODE>false</CODE>. Ваш код должен учитывать такую возможность.</p>
+<h4><A NAME="Head2;"></A><A NAME="1031982"></a>Строка</h4><hr>
+<p><A NAME="1031465"></a>
+Если метод возвращает строку, Вы обычно не получаете сообщения об ошибке. Если, 
+однако, метод возвращает
+null, проверьте ассоциированный error-метод.</p>
+<p><A NAME="1035271"></a>
+Следующие методы возвращают строку:</p>
+<PRE><A NAME="1036460"></a>Connection.majorErrorMessage<br>Connection.minorErrorMessage<br>
+Cursor.columnName<br>database.majorErrorMessage<br>database.minorErrorMessage<br>DbPool.majorErrorMessage<br>
+DbPool.minorErrorMessage<br>Resultset.columnName</PRE><h4><A NAME="Head2;"></A><A NAME="1036467"></a>
+Void</h4><hr>
+<p><A NAME="1031487"></a>Некоторые методы не возвращают значение. Вы не можете 
+ничего сказать о возможных ошибках в работе этих методов. Следующие методы не 
+возвращают значения:</p>
+<PRE><A NAME="1035185"></a>Connection.release<br>Cursor.close<br>database.disconnect<br>DbPool.disconnect<br>
+Resulset.close</PRE><H2><A NAME="Error Methods"></A><A NAME="1019587"></a>Методы 
+Работы с Ошибками</H2>
+<hr>
+<p>
+<A NAME="1035308"></a>Как уже было сказано, многие методы возвращают числовой 
+статус-код. Если метод возвращает статус-код, может иметься и соответствующие 
+код ошибки и сообщение от сервера БД.
+LiveWire имеет четыре метода для объектов <CODE>Connection</CODE>, <CODE>DbPool</CODE> 
+и
+<CODE>database</CODE> для доступа к error-кодам и сообщениям БД.</p>
+<p>Вот эти методы:</p>
+<ul><LI><A NAME="1019591"></a><CODE>majorErrorMessage</CODE>: наивысшее 
+  сообщение об ошибке, возвращённое базой данных.</LI><LI><A NAME="1019593"></a>
+<CODE>minorErrorMessage</CODE>: наименьшее сообщение об ошибке, возвращённое 
+  базой данных.</LI><LI><A NAME="1019595"></a>
+<CODE>majorErrorCode</CODE>: наивысший error-код, возвращённый БД. Обычно он 
+  соответствует SQLCODE сервера.</LI><LI><A NAME="1019597"></a>
+<CODE>minorErrorCode</CODE>: второй/secondary error-код, возвращённый базой 
+  данных.</LI></ul>
+<p><A NAME="1035757"></a>
+Результаты, возвращаемые этими методами, зависят от используемого сервера БД и 
+статус-кода БД.
+В большинстве случаев Вам нужно рассматривать только наивысший error-код или 
+сообщение об ошибке, чтобы понять суть ошибки. Меньшие error-код и сообщение 
+используются только в некоторых ситуациях.</p>
+<BLOCKQUOTE><p><B>ПРИМЕЧАНИЕ: </B><A NAME="1035326"></a>
+  Вызов другого метода объектов <CODE>Connection</CODE>, <CODE>DbPool</CODE> или
+<CODE>database</CODE> может зачистить/reset error-коды и сообщения. Чтобы 
+  исключить потерю информации,
+  не забудьте проверить эти методы, перед тем как продолжить.</BLOCKQUOTE>
+<p>
+<A NAME="1032502"></a>После получения сообщения об ошибке ваше приложение может 
+вывести сообщение пользователю. Ваше сообщение может включать строку, 
+возвращённую <CODE>majorErrorMessage</CODE> или
+<CODE>minorErrorMessage</CODE>, или число, возвращённое <CODE>majorErrorCode</CODE> 
+или
+<CODE>minorErrorCode</CODE>. Дополнительно можно обработать число или строку, 
+перед тем как вывести их.</p>
+<p>
+<A NAME="1032519"></a>При обсчёте строки, возвращённой <CODE>majorErrorMessage</CODE> 
+и
+<CODE>minorErrorMessage</CODE>, LiveWire возвращает строку поставщика БД с 
+присоединённым дополнительным текстом.
+Детальную информацию о возвращаемых значениях см. в описаниях этих методов в 
+книге
+<I><a TARGET="_top" href="../servref12/index.htm">Серверный JavaScript. Справочник</a></I>.</p>
+<H2><A NAME="Status Codes"></A><A NAME="1031582"></a>
+Статус-Коды</H2><hr>
+<p><A NAME="1031583"></a>В следующей таблице дан список статус-кодов, 
+возвращаемых различными методами. Netscape рекомендует не использовать эти 
+значения напрямую. Вместо этого, если метод возвращает ненулевое значение, 
+используйте ассоциированные методы <CODE>majorErrorCode</CODE> и <CODE>majorErrorMessage</CODE> 
+для определения конкретной ошибки.</p>
+<A NAME="1037525"></a><h5><B><A NAME="1031808"></a>
+</B>Таблица 12.1&nbsp; Статус-Коды методов LiveWire</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><B><A NAME="1031816"></a>
+Статус-Код<TH VALIGN=baseline ALIGN=left><B><A NAME="1031818"></a>
+Пояснение<TH VALIGN=baseline ALIGN=left><B><A NAME="1031820"></a>
+Статус-Код<TH VALIGN=baseline ALIGN=left><B><A NAME="1031822"></a>
+Пояснение<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031824"></a>
+0</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031826"></a>
+    Нет ошибки</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031828"></a>
+14</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031830"></a>
+Null-параметр</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031832"></a>
+1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031834"></a>
+  Недостаточно памяти</A></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031836"></a>
+15</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031838"></a>
+  Объект
+<CODE>database</CODE> не найден</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031840"></a>
+2</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031842"></a>
+  Объект не был инициализирован</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031844"></a>
+16</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031846"></a>
+  Отсутствует необходимая информация</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031848"></a>
+3</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031850"></a>
+  Ошибка конвертации типов</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031852"></a>
+17</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031854"></a>
+  Объект не поддерживает несколько читателей</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031856"></a>
+4</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031858"></a>
+  БД не зарегистрирована</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031860"></a>
+18</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031862"></a>
+  Объект не поддерживает удаление</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031864"></a>
+5</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031866"></a>
+  Ошибка, выданная сервером</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031868"></a>
+19</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031870"></a>
+  Объект не поддерживает вставку</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031872"></a>
+6</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031874"></a>
+  Сообщение сервера</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031876"></a>
+20</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031878"></a>
+  Объект не поддерживает обновление</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031880"></a>
+7</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031882"></a>
+  Ошибка в библиотеке поставщика</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031884"></a>
+21</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031886"></a>
+  Объект не поддерживает обновление</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031888"></a>
+8</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031890"></a>
+  Потеря соединения</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031892"></a>
+22</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031894"></a>
+  Объект не поддерживает индексы</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031896"></a>
+9</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031898"></a>
+  Конец fetch (<i>не смог перевести - прим. перев.</i>)</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031900"></a>
+23</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031902"></a>Объект не может 
+  быть уничтожен</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031904"></a>
+10</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031906"></a>
+  Неверное использование объекта</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031908"></a>
+24</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031910"></a>
+  Предоставлено некорректное соединение</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031912"></a>
+11</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031914"></a>
+  Столбец не существует</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031916"></a>
+25</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031918"></a>
+  Объект не поддерживает привилегии</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031920"></a>
+12</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031922"></a>
+  Неверное позиционирование внутри объекта (нарушение границ)</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031924"></a>
+26</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031926"></a>
+  Объект не поддерживает курсоры</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1031928"></a>
+13</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031930"></a>
+  Неподдерживаемая возможность</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031932"></a>
+27</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1031934"></a>Невозможно открыть</P></TABLE>
+<A NAME="1038164"></A>
+<h5><a href="contents.htm">Оглавление</a> | <a href="data.htm">Назад</a>
+| <a href="video.htm">Вперёд</a> | <a href="bklast.htm">Индекс</a></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT></BODY></HTML>

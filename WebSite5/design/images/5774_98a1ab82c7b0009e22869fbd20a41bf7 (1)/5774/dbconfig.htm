@@ -1,0 +1,496 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<TITLE>Конфигурирование Вашй Базы Данных.</TITLE></head>
+<BODY>
+<h5><FONT SIZE=-1><a href="contents.htm">Оглавление</a> | <a href="db2.htm">Назад</a>
+| <a href="data.htm">Вперёд</a> | <a href="bklast.htm">Индекс</a></FONT></h5><HR>
+<A NAME="1065978"></A><h1>Глава 10<BR><A NAME="1055577"></A>Конфигурирование Базы Данных</h1>
+<p><A NAME="1055579"></A>
+В этой главе рассматривается настройка Вашей Базы Данных для запуска со службой LiveWire Database Service. 
+Вы должны прочесть эту главу и&nbsp; раздел <A HREF="getstart.htm#1011926">"Информация 
+Конфигурации"</A> перед тем как использовать LiveWire с Вашими JavaScript-приложениями.</p>
+<h6>ПРИМЕЧАНИЕ:</h6>
+<p> <A NAME="1055519"></A>
+Могут понадобиться изменения в клиентах БД. Дополнительно см. <EM><A HREF="http://home.netscape.com/eng/server/webserver/4.0/relnotes/relnotes.htm" TARGET="_top">Enterprise Server 4.x Release Notes</A></EM>.</p>
+<p><A NAME="1065671"></A>В этой главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1068549"></A>
+<A HREF="#1037195">О Службе LiveWire Database Service</A></LI><LI><A NAME="1064206"></A><A HREF="#1039267">
+Проверка Конфигурации Вашей БД</A></LI><LI><A NAME="1064210"></A><A HREF="#1029166">
+Поддерживаемые Клиенты БД и ODBC-Драйверы</A></LI><LI><A NAME="1064214"></A><A HREF="#1067028">DB2</A></LI><LI><A NAME="1064218"></A><A HREF="#1030068">Informix</A></LI><LI><A NAME="1064222"></A><A HREF="#1030156">ODBC</A></LI><LI><A NAME="1064226"></A><A HREF="#1057005">Oracle</A></LI><LI><A NAME="1064230"></A><A HREF="#1037471">Sybase</A></LI></ul>
+<H2><A NAME="About LiveWire Database Service"></A>
+<A NAME="1037195"></A>О Службе LiveWire Database Service</H2><hr>
+<p><A NAME="1068524"></A>Одновременно с версиями 3.x и 4.x<I> </I>Netscape-серверов Вы обязаны установить 
+клиентскую библиотеку БД (и к тому же - определённую версию), если хотите использовать LiveWire Database Service.
+Вы также обязаны сконфигурировать эту клиентскую библиотеку для работы с LiveWire.</p>
+<p><A NAME="1060215"></A>Netscape-серверы не поставляются вместе клиентскими 
+библиотеками БД. Вам нужно связаться с поставщиком Вашей БД на предмет получения 
+соответствующей библиотеки. Вам необходимо установить и сконфигурировать 
+клиентские библиотеки только тех БД, которые Вы будете использовать.</p>
+<p><A NAME="1036830"></A>Если Вы устанавливаете БД на другую машину (не на ту, где 
+установлен web-сервер), Вы обязаны иметь установленную клиентскую библиотеку БД 
+на машине с web-сервером. Вы обязаны получить соответствующее лицензионное 
+разрешение от поставщика Вашей БД. Netscape не сделает это за Вас.</p>
+<p><A NAME="1039986"></A>Требования по конфигурированию Вашей БД могут отличаться в 
+зависимости от того, находятся ли БД и web-сервер на одной или на разных машинах. 
+Если они на одной машине, последующая информация будет касаться <i>локальной 
+конфигурации</i>; если на разных машинах - <i>удалённой конфигурации</i>.</p>
+<p><A NAME="1051216"></A>В этой главе рассмотрены только те аспекты установки 
+клиента БД, которые имеют отношение к использованию с LiveWire. Для получения 
+общей информации об установке клиента БД обратитесь к соответствующей 
+документации поставщика БД.</p>
+<H2><A NAME="Checking Your Database Configuration"></A>
+<A NAME="1039267"></A>Проверка Конфигурации Вашей БД</H2><hr><p><A NAME="1039245"></A>
+После выполнения установки, описанной в данной главе, Вы можете использовать 
+приложение-образец <CODE>dbadmin</CODE> для проверки правильности работы Вашего 
+соединения с БД. Вы используете это приложение
+JavaScript для соединения с Вашим сервером БД и выполнения различных несложных 
+задач, таких как выполнение оператора <CODE>SELECT</CODE> и отображение 
+результатов или отправки произвольных SQL-команд серверу.</p>
+<p><A NAME="1039489"></A>Поскольку <CODE>dbadmin</CODE> может использоваться для модификации и удаления 
+таблиц БД, доступ к ней автоматически ограничен, если Вы выбрали защищённый 
+режим Application Manager. Дополнительно об ограничении Application Manager см. <A HREF="appdev.htm#1043589">"Управление 
+Доступом к Приложению&quot;</A>.</p><p><A NAME="1039297"></A>
+Первое, что Вы обязаны сделать при использовании <CODE>dbadmin</CODE>, это 
+соединиться с БД. Выберите
+Connect to Database. Появится форма, показанная на <A HREF="#1060226">Рисунке 10.1</A>, 
+где вы можете ввести информацию о соединении. Введите параметры и щёлкните Connect, 
+чтобы попытаться установить соединение с сервером. О параметрах соединения см. <A HREF="db1.htm#1030030">"Пулы 
+Соединений Базы Данных&quot;</A>, а также описание метода <CODE>connect</CODE> в 
+книге <I><a TARGET="_top" href="../servref12/index.htm">Серверный JavaScript. 
+Справочник</a></I>.</p><h5><A NAME="1060226"></A>
+Рисунок 10.1 Страница соединения <CODE>dbadmin</CODE></h5><P>
+<IMG SRC="graphics/dba.gif" width="566" height="656"></P><P>
+<A NAME="1046773"></A>Если соединение установилось, появляется страница Execute Query.
+Это означает, что ваша БД соответствующим образом сконфигурирована для работы с LiveWire Database Service.
+Если соединиться не удалось, появится страница Database Connect Error. В этом 
+случае убедитесь, что Вы следовали инструкциям по конфигурированию конкретной БД и &quot;железа&quot;.</P>
+<H2><A NAME="Supported Database Clients and ODBC Drivers"></A><A NAME="1029166"></A>
+Поддерживаемые Клиенты БД и ODBC-Драйверы</H2><hr><p><A NAME="1057688"></A>
+В следующей таблице дано резюме по конкретным поставщикам БД, поддерживаемых на каждой платформе
+Netscape Enterprise Server 3.x (относительно Netscape Enterprise Server 4.0 см. 
+замечания Enterprise Server 4.0 Release Notes).<br>Данные поставщики БД не поддерживаются сервером
+Netscape FastTrack Server.</p><A NAME="1065401"></A><h5><A NAME="1067862"></A>
+Таблица 10.1&nbsp; Клиентские библиотеки поставщиков БД, поддерживаемые на 
+каждой платформе сервером Netscape Enterprise Server</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1067876"></A>
+Поставщик БД<TH VALIGN=baseline ALIGN=left><A NAME="1067878"></A>AIX<TH VALIGN=baseline ALIGN=left>
+<A NAME="1067880"></A>DEC<TH VALIGN=baseline ALIGN=left><A NAME="1067882"></A>Irix 6.2
+<TH VALIGN=baseline ALIGN=left><A NAME="1067884"></A>>HP-UX 11.0<TH VALIGN=baseline ALIGN=left>
+<A NAME="1067886"></A>Solaris 2.5.1/2.6<TH VALIGN=baseline ALIGN=left><A NAME="1067888"></A>Windows NT 
+4.0 w/ SP4<TR><TD VALIGN=baseline ALIGN=left><A NAME="1067890">DB2<TD VALIGN=baseline ALIGN=left>
+<A NAME="1067892"></A>CAE 2.1.2</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067894"></A>
+Не поддерживается</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067896"></A>
+Не поддерживается</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067898"></A>V5.2</P>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1067900"></A>
+V5.2</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067902"></A>V5.2</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1067904"></A>Informix<TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1067906"></A>
+Informix Client 7.22</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067908"></A>
+Informix Client 7.22</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067910"></A>
+Informix Client 7.22</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067912"></A>
+SDK 2.10 (ESQL 9.16)</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067914"></A>
+SDK 2.10 (ESQL 9.16)</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067916"></A>
+SDK 2.10 TC1 (ESQL 9.16)</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1067918"></A>Microsoft</A><A NAME="1067919"></A>ODBC
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1067921"></A>
+ODBC Mgr Visigenic 2.0</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067923"></A>
+Не поддерживается</P><P><A NAME="1067924"></A></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067926"></A>
+ODBC Mgr Visigenic 2.0</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067928"></A>
+Не поддерживается</P><P><A NAME="1067929"></A>
+</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067931"></A>
+Поддерживается только на Solaris 2.5.1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068232"></A>
+MS SQL Server 6.5 (драйвер 3.60)</P><P><A NAME="1068306"></A></P><P><A NAME="1068233"></A>
+SQL Anywhere 5.5 (драйвер 5.00) </P><P><A NAME="1067933"></A>MS Access 7.0 (драйвер 3.51.171300)</P>
+<TR><TD VALIGN=baseline ALIGN=left><A NAME="1067938"></A>Oracle<A HREF="#1067937"><SUP>1</SUP></A>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1067940"></A>
+Oracle Client 7.3.<I>x</I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067942"></A>
+Oracle Client 7.3.<I>x</I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067944"></A>
+Oracle Client 7.3.<I>x</I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067946"></A>
+Oracle Client <I></I></P><P><A NAME="1067947"></A>
+<I>8.0.5</I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067949"></A>
+Oracle Client </P><P><A NAME="1067950"></A>
+<I>8.0.5</I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067952"></A>
+Oracle Client 8.0.5</P><TR><TD VALIGN=baseline ALIGN=left><A NAME="1067954"></A>Sybase
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1067956"></A>Open</P><P><A NAME="1067957"></A>
+Client</P><P><A NAME="1067958"></A>
+/C 11.1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067960"></A>
+Open</P><P><A NAME="1067961"></A>Client</P><P><A NAME="1067962"></A>
+/C 11.1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067964"></A>Open</P><P><A NAME="1067965"></A>
+Client</P><P><A NAME="1067966"></A>/C 11.1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067970"></A>
+11.1.1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067974"></A>
+11.1.1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1067976"></A>11.1.1</P></TABLE>
+<TABLE><TR><TD><p><SUP>1</SUP></A><A NAME="1067937"></A>Версия Oracle SQL*Net 1.1 больше не поддерживается.</p></TABLE>
+<p><A NAME="1059983"></A>В следующей таблице дано резюме по поддержке ODBC в Windows NT 
+для Netscape Enterprise Server и Netscape FastTrack Server.</p>
+<A NAME="1065472"></A>
+<h5><A NAME="1060722"></A>Таблица 10.2&nbsp; Поддержка ODBC в Windows NT</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1060726"></A>
+ODBC-Компонент<TH VALIGN=baseline ALIGN=left><A NAME="1060728"></A>Windows NT 4.0 SP4
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1060730"></A>
+ODBC Manager</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1060732"></A>
+MS ODBC Manager 3.51 MCAD 2.0 SP2</P>
+<TR><TD VALIGN=baseline ALIGN=left COLSPAN=2 ROWSPAN=1><A NAME="1060734"></A>ODBC-Драйверы<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1060738"></A>MS SQL Server 6.5</P>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1060740"></A>
+MS SQL Server Driver 3.60 (sqlsrv32.dll)</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1060750"></A>
+MS Access 7.0</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1060752"></A>
+MS Access Driver 3.51.171300 (odbcjt32.dll)</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1060754"></A>
+Sybase SQL Anywhere 5.5</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1060756"></A>
+Sybase SQL Anywhere Driver 5.00.0003 (wod50t.dll)</P></TABLE>
+<p><A NAME="1057440"></A>Обратите внимание, что ODBC не поддерживается на платформах Unix.</p>
+<h6>ПРИМЕЧАНИЕ:</h6>
+<p> <A NAME="1066867"></A>Visigenic больше не обновляет свои 
+существующие ODBC-драйверы или SDK. 
+Вместо этого Visigenic избрал INTERSOLV для предоставления пути для обновления 
+этих драйверов и продуктов. (См. <A HREF="http://www.intersolv.com/newsstand/pr9711191.htm" TARGET="_top">http://www.intersolv.com/
+newsstand/pr9711191.htm</A>). Visigenic предоставит документ, покрывающий 
+различия между драйверами Visigenic и INTERSOLV ODBC.
+<A NAME="1045230"></A>В таблице перечислены возможности поддерживаемых ODBC-драйверов для NT.</p>
+<A NAME="1065530"></A><h5><A NAME="1045147"></A>Таблица 10.3&nbsp; Возможности ODBC-драйверов в NT</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1045159"></A>
+SQL-БД<TH VALIGN=baseline ALIGN=left><A NAME="1045161"></A>Соединение<TH VALIGN=baseline ALIGN=left><A NAME="1045163"></A>
+SQL passthrough/пропуск<TH VALIGN=baseline ALIGN=left><A NAME="1045165"></A>
+Курсор &quot;Только для чтения&quot;<TH VALIGN=baseline ALIGN=left><A NAME="1045167"></A>
+Обновляемый курсор<TH VALIGN=baseline ALIGN=left><A NAME="1045169"></A>
+Хранимые процедуры<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1045171"></A>
+MS-SQL Server 6.5</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045173"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045175"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045177"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045179"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045181"></A>
+Да</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1045183"></A>
+Sybase SQL Anywhere</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045185"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045187"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045189"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045191"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045193"></A>
+Не проверено</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1045195"></A>
+Access</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045197"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045199"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045201"></A>
+Да</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045203"></A>
+Нет</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1045205"></A>
+N/A</P></TABLE>
+<p><A NAME="1067539"></A>Обратите внимание, что ODBC не поддерживается на платформах Unix.</p>
+<H2><A NAME="DB2"></A><A NAME="1067028"></A>DB2</H2><hr><p><A NAME="1067029"></A>
+Для использования DB2-сервера у вас должен быть Netscape Enterprise Server. Вы 
+не можете получить доступ к DB2 из Netscape FastTrack Server.</p>
+<p><A NAME="1040498"></A>Все платформы: Установить DB2-клиент версии 2.1.2. Для&nbsp; Solaris 
+Вам нужен APAR #JR10150. См. DB2-документацию <CODE><A HREF="http://www.software.ibm.com/data/db2/" TARGET="_top">
+http://www.software.ibm.com/data/db2/</A></CODE>.</p><p><A NAME="1051071"></A>
+Если серверы БД и web находятся на разных машинах: Чтобы определить возможность 
+соединения с DB2-сервером, вы можете выполнить следующую команду из командной строки DB2:</p>
+<PRE><A NAME="1051073"></A>DB2 TERMINATE # эта команда даёт возможность работы команды catalog<br>
+DB2 CONNECT TO имяБД USERID idпользователя USING пароль</PRE>
+<p><A NAME="1051108"></A>Если вы используете в приложении типы данных <CODE>BLOB</CODE> или <CODE>CLOB</CODE>, 
+вы обязаны установить опцию <CODE>longdatacompat</CODE> в Вашем файле <CODE>$DB2PATH/db2cli.ini</CODE> 
+в 1. Например:</p><PRE><A NAME="1040520"></A>[Database name]<br>longdatacompat=1</PRE><p><A NAME="1047717"></A>
+Если Вы сделали изменения в файле <CODE>db2cli.ini</CODE>, Вы обязаны 
+рестартовать Ваш web-сервер, чтобы они начали действовать.</p><p><A NAME="1040611"></A>
+Только для Unix: Вы обязаны установить следующие переменные окружения/environment variables:</p>
+<A NAME="1065564"></A><TABLE BORDER="2" cellpadding="5"><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1038906"></A>DB2INSTANCE</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1038908"></A>
+Специфицирует имя порта соединения, определённое и на сервере, и на клиенте. Это 
+имя имеется также и в файле конфигурации <CODE>dbm</CODE> для параметра 
+конфигурации <CODE>SVCENAME</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1038910"></A>DB2PATH</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1051541"></A>Специфицирует директорию верхнего уровня, в которой 
+установлен DB2.</P><P><A NAME="1038912"></A>
+Например: <CODE>/home/$DB2INSTANCE/sqllib</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1040848"></A>DB2COMM</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1040850"></A>
+Проверяет, что данная переменная специфицирует протокол, который будет 
+использоваться. Например:</P><P><A NAME="1040851"></A>
+DB2COMM=TCPIP</P><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1038914"></A>PATH</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1038916"></A>
+Обязана включать пути <CODE>$DB2PATH/misc:$DB2PATH/adm:$DB2PATH/bin</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1059163"></A>LD_LIBRARY_PATH</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1059165"></A>
+(Solaris и Irix) Обязана включать директорию DB2 <CODE>lib</CODE>. Например, на Solaris 
+обязана включать <CODE>/opt/IBMdb2/v2.1/lib</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1059175"></A>SHLIB_PATH</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1059177"></A>(HP-UX) Обязана включать директорию DB2 <CODE>lib</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1040672"></A>LIBPATH</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1040674"></A>(AIX) Обязана включать директорию DB2 <CODE>lib</CODE>.</P></TABLE><H2><A NAME="Informix"></A><A NAME="1030068"></A>Informix</H2>
+<hr><p><A NAME="1056997"></A>При использовании сервера Informix Вы обязаны иметь Netscape Enterprise Server. 
+Вы не можете получить доступ к Informix из Netscape FastTrack Server.</p>
+<p><A NAME="1046878"></A>Если серверы БД и web находятся на разных машинах, 
+следуйте инструкциям раздела <A HREF="#1030069">"Удалённый Informix."</A></p>
+<p><A NAME="1046882"></A>Если серверы БД и web находятся на одной машине, следуйте 
+инструкциям раздела <A HREF="#1030072">"Локальный Informix."</A></p>
+<h4><A NAME="Head2;"></A><A NAME="1030069"></A>Удалённый Informix</h4><hr><p><A NAME="1053620"></A>
+Только для Unix: Установите Informix ESQL/C Runtime Client 7.22 (называемый также Informix I-Connect), 
+а затем установите следующие переменные окружения:</p><A NAME="1065570"></A>
+<TABLE BORDER="2" cellpadding="5"><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1053623"></A>INFORMIXDIR</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1053625"></A>
+Специфицирует верхнюю директорию, в которой установлен Informix.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1053627"></A>INFORMIXSERVER</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1053629"></A>
+Специфицирует имя Informix-сервера по умолчанию.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1053631"></A>INFORMIXSQLHOSTS</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1053633"></A>
+Специфицирует путь файла <CODE>sqlhosts</CODE>, если Вы поместили его 
+куда-нибудь кроме <CODE>$INFORMIXDIR/etc/sqlhosts</CODE>. Эту переменную 
+устанавливать не нужно, если Вы оставили файл <CODE>sqlhosts</CODE> в этой директории.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1060151"></A>SHLIB_PATH</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1060168"></A>
+(HP-UX) Обязана содержать <CODE>$INFORMIXDIR/lib</CODE> и <CODE>$INFORMIXDIR/lib/esql</CODE>.</P></TABLE>
+<p><A NAME="1059101"></A>Вы обязаны также изменить <CODE>$INFORMIXDIR/etc/sqlhosts</CODE>, 
+чтобы оно соответствовал имени службы в файле <CODE>/etc/services</CODE>. О том, 
+как это сделать, см. документацию Informix.</p>
+<p><A NAME="1053677"></A>Только для NT: Установите Informix ESQL/C Runtime
+Client 7.20 (называемый также Informix I-Connect.) В процессе установки все 
+необходимые переменные окружения также устанавливаются.
+Вы используете подходящую утилиту Informix для ввода нужной информации об 
+удалённом сервере, с которым Вы хотите устанавливать соединение.</p>
+<p><A NAME="1059107"></A>Если Ваш web-сервер запускается как System, убедитесь, 
+что у вас запущен <CODE>regcopy.exe</CODE>.</p>
+<p><A NAME="1053678"></A>Все платформы: В зависимости от используемой службы имён, 
+Вам может понадобиться также отредактировать соответствующий файл - добавить IP-адрес 
+удалённой хост-машины, с которой Вы соединяетесь.
+В NT это файл <CODE>winnt\system32\drivers\etc\hosts</CODE> ниже директории NT SystemRoot.
+На Unix это файл <CODE>/etc/hosts</CODE>.</p><p><A NAME="1035321"></A>
+В той же директории добавьте следующую строку к файлу <CODE>services</CODE>:</p>
+<PRE><A NAME="1037342"></A><I><CODE>ifmx_srvc</CODE></I> <I><CODE>port</CODE></I>/tcp # Informix Online Server</PRE>
+<p><A NAME="1042366"></A>где <I>ifmx_srvc</I> это имя Вашей службы, а
+<I>port</I> - номер порта. Номер порта обязан совпадать с номером порта на 
+удалённой машине, который прослушивается Informix-сервером. Чтобы эта строка 
+начала действовать, Вы обязаны либо вставить как минимум один пробел после <CODE>tcp</CODE>, 
+либо поместить комментарий в конце этой строки. Например, если Ваша служба
+Informix называется ifmx1 и номер порта 1321, Вы добавляете следующую строку:</p>
+<PRE><A NAME="1042385"></A>ifmx1 1321/tcp # Informix Online Server</PRE>
+<h4><A NAME="Head2;"></A><A NAME="1030072"></A>Локальный Informix</h4>
+<hr>
+<p><A NAME="1055356"></A>Если вы устанавливаете Informix локально, Вы обязаны 
+установить клиента Informix до установки Informix-сервера.</p>
+<p><A NAME="1053818"></A>Только для Unix: Если Вы используете 7.22 Online Server 
+для Unix, процесс инсталяции создаёт соответствующую структуру директорий и файл <CODE>sqlhosts</CODE>.
+Вы обязаны установить переменные окружения, как для удалённого сервера.</p><p><A NAME="1042373"></A>
+Только для NT: Вы должны установить Online Server 7.20. Это установит также и клиента; 
+дополнительные шаги не нужны. Если Ваш web-сервер запускается как System, 
+убедитесь, что у вас запущен <CODE>regcopy.exe</CODE>.</p>
+<H2><A NAME="ODBC"></A><A NAME="1030156"></A>ODBC</H2><hr><p><A NAME="1045328"></A>
+Все платформы: О возможностях и об используемых ODBC-драйверах см.
+<A HREF="#1029166">"Поддерживаемые Клиенты БД и ODBC-Драйверы."</A></p>
+<p><A NAME="1034619"></A>Вам необходимо иметь соответствующие ODBC-драйверы для БД, 
+с которой Вы устанавливаете соединение. Также необходимо иметь дополнительные 
+файлы ODBC-соединений/connectivity.</p><p><A NAME="1037818"></A>
+Большинство программных продуктов, предоставляющие ODBC connectivity, 
+поддерживают ODBC-драйвер или драйверы и ODBC connectivity.</p>
+<p><A NAME="1037822"></A>Только для NT: В настоящее время Netscape сертифицирован с ODBC Manager 
+версии 2.5. Если у вас имеется доступ к ODBC-драйверу, но не к файлам ODBC connectivity,
+Вы можете получить их в MS ODBC SDK. Чтобы получить обновлённые файлы для Access, Foxpro 
+и Excel, Вам может понадобиться патч WX1350 от Microsoft.</p><p><A NAME="1053885"></A>
+Только для Unix: Для ODBC на Unix вы можете использовать драйвер от Visigenic либо от OpenLink.
+Если Вы используете драйвер от Visigenic, следуйте инструкциям раздела
+<A HREF="#1050379">"Visigenic ODBC-Драйвер (только Unix)."</A> Если Вы используете драйвер от OpenLink,
+следуйте инструкциям раздела <A HREF="#1050297">"OpenLink ODBC-Драйвер (только Solaris)."</A></p>
+<h4><A NAME="Head2;"></A><A NAME="1030201"></A>ODBC Data Source Names/Имена Источников Данных (только NT)</h4>
+<hr>
+<p><A NAME="1030203"></A>Могут быть созданы два типа источников данных:</p>
+<ul><LI><A NAME="1030205"></A>System/Системное DSN: Если вы используете 
+системное DSN, web-сервер обязан стартовать в бюджете System.</LI><LI><A NAME="1030207"></A>User/Пользовательское DSN: 
+Если вы используете пользовательское DSN, web-сервер обязан стартовать в 
+соответствующем пользовательском бюджете NT (user account).</LI></ul><p><A NAME="1030210"></A>
+Источник данных описывает параметры соединения для каждой БД, необходимые для ODBC
+connectivity. Источник данных определяется чрез использование ODBC-администратора. 
+Если ODBC установлен, администратор также устанавливается. Каждый ODBC-драйвер требует различной 
+информации для определения источника данных.</p>
+<h4><A NAME="Head2;"></A><A NAME="1050297"></A>OpenLink ODBC-Драйвер (только Solaris)</h4>
+<hr>
+<p><A NAME="1051188"></A>Установите брокер запросов OpenLink Workgroup Edition ODBC Driver 
+на сервер БД. Он должен быть запущен, до того как Вы сможете соединиться с БД с использованием агента запросов OpenLink.</p><p><A NAME="1051189"></A>
+Установите агента запросов (request agent) в клиенте OpenLink Generic ODBC версии 1.5 на клиентской машине БД.</p>
+<p><A NAME="1050377"></A>Переименуйте или скопируйте файл драйвера менеджера агента 
+запросов из <CODE>libiodbc.so</CODE> в <CODE>libodbc.so</CODE> в директории <CODE>$ODBCDIR/lib</CODE>,
+где <CODE>$ODBCDIR</CODE> это директория, в которой установлен ODBC.</p>
+<p><A NAME="1051493"></A>Когда Вы устанавливаете Ваш сервер, Вы делаете так, чтобы он запускался как 
+некоторый пользователь: root, nobody или конкретный пользователь сервера. 
+Выбранный Вами пользователь должен иметь домашнюю директорию, которую, возможно, 
+понадобится создать. Например, по умолчанию домашняя директория для пользователя nobody 
+на Irix это <CODE>/dev/null</CODE>. Если Вы устанавливаете Ваш сервер на Irix как nobody, 
+Вы обязаны создать для пользователя nobody другую домашнюю директорию.</p><p><A NAME="1051986"></A>
+В этой домашней директории Вы обязаны иметь файл<CODE> .odbc.ini</CODE>. 
+Например, если сервер запускается как root, этот файл находится в директории (/).</p>
+<p><A NAME="1051996"></A>
+Установите следующие переменные окружения:</p>
+<A NAME="1065576"></A>
+<TABLE BORDER="2" cellpadding="5"><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1051989"></A>LD_LIBRARY_PATH</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1051991"></A>
+(Solaris и Irix) Добавляет размещение ODBC-библиотек к данной переменной.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1051993"></A>UDBCINI</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1051995"></A>Специфицирует местонахождение файла <CODE>.odbc.ini</CODE>.</P></TABLE>
+<h4><A NAME="Head2;"></A><A NAME="1050379"></A>Visigenic ODBC-Драйвер (только Unix)</h4>
+<hr>
+<p><A NAME="1052004"></A>При установке сервера он запускается как пользователь: root, nobody 
+или определённый пользователь сервера. Выбранный вами пользователь должен иметь 
+существующую домашнюю директорию, которую, возможно, понадобится создать. 
+Например, домашняя директория по умолчанию для пользователя nobody в системе Irix 
+это <CODE>/dev/null</CODE>. Если Вы устанавливаете Ваш сервер в Irix как nobody, 
+Вы обязаны дать пользователю nobody другую домашнюю директорию.</p>
+<p><A NAME="1052005"></A>В этой домашней директории обязан находиться файл <CODE>.odbc.ini</CODE>. 
+Например, если Вы запускаете сервер как root, этот файл находится в корневой директории (/).</p>
+<p><A NAME="1058714"></A>Установите следующие переменные окружения:</p><A NAME="1067496"></A>
+<TABLE BORDER="2" cellpadding="5"><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1059259"></A>LD_LIBRARY_PATH</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1059261"></A>
+(Solaris и Irix) Добавьте местонахождение ODBC-библиотек в данную переменную. В 
+предыдущем примере это может быть <CODE>/u/my-user/odbcsdk/lib</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1059255"></A>SHLIB_PATH</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1059257"></A>
+(HP-UX) Добавьте местонахождение ODBC-библиотек в данную переменную.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1059251"></A>LIBPATH</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1059253"></A>(AIX) Добавьте местонахождение ODBC-библиотек в данную переменную.</P></TABLE>
+<h6>ПРИМЕЧАНИЕ:</h6>
+<p> <A NAME="1067502"></A>Visigenic больше не обновляет свои 
+существующие ODBC--драйверы и SDK. 
+Вместо этого Visigenic избрал INTERSOLV для предоставления обновлённого пути для 
+этих драйверов и продуктов. (См. 
+<a href="http://www.intersolv.com/%20newsstand/pr9711191.htm">http://www.intersolv.com/
+newsstand/pr9711191.htm</a>). Visigenic будет предоставлять документ, проясняющий 
+операционные различия между ODBC-драйверами Visigenic и INTERSOLV.</p>
+<H2><A NAME="Oracle"></A><A NAME="1057005"></A>Oracle</H2><hr>
+<p><A NAME="1057011"></A>Чтобы использовать сервер Oracle, Вы обязаны иметь Netscape Enterprise Server. 
+Вы не можете получить доступ к Oracle из Netscape FastTrack Server.</p><p><A NAME="1057006"></A>
+Если БД и web-сервер находятся на разных машинах, следуйте инструкциям раздела
+<A HREF="#1037542">"Удалённый Oracle."</A></p><p><A NAME="1046947"></A>
+Если БД и web-сервер находятся на одной машине, следуйте инструкциям раздела
+<A HREF="#1037880">"Oracle Local."</A></p><p><A NAME="1054042"></A>
+Только для Unix: Убедитесь, что Вы можете соединиться с Вашей БД Oracle через SQL*Net. Если 
+Вы закончили инсталяцию, Вы можете использовать loopback-тест для проверки 
+корректности соединения. Например,
+из <CODE>sqlplus</CODE> Вы можете попытаться соединиться с Вашей БД с помощью следующей команды:</p>
+<PRE><A NAME="1054043"></a>connect <I>username</I>/<I>password</I>@<I>service_name</I></PRE>
+<p><A NAME="1057026"></a>Или из командной строки Unix:</p>
+<PRE><A NAME="1057030"></a>sqlplus <I>username</I>/<I>password</I>@<I>service_name</I></PRE>
+<p><A NAME="1058831"></a>В этих командах Вы используете <I>service_name</I> из 
+Вашего файла <CODE>tnsnames.ora</CODE>.</p>
+<h4><A NAME="Head2;"></A><A NAME="1037542"></a>Удалённый Oracle</h4>
+<hr>
+<p><A NAME="1049687"></a>Только для NT: Вы обязаны установить клиентское 
+программное обеспечение Oracle 7.3.2 для NT.
+Клиенты Oracle 7.1 и 7.2 не поддерживаются. Вы обязаны также создать файлы 
+конфигурации Oracle, используемые соответствующей утилитой конфигурирования Oracle.</p><p><A NAME="1054103"></a>
+Только для Unix: Прежде чем Вы сможете подключиться к Oracle под Irix, Вы обязаны иметь 
+соответствующие патчи для Irix.
+См. в <EM><A HREF="http://home.netscape.com/eng/server/webserver/3.0/es46.htm" TARGET="_top">
+Enterprise Server 3.x Release Notes</A></EM> информацию о необходимых патчах.</p>
+<p><A NAME="1054113"></a>Вы обязаны установить клиентов Oracle 7.3.<I>x</I> для Unix.
+Клиенты Oracle 7.1 и 7.2 не поддерживаются.</p><p><A NAME="1057074"></a>
+Вы обязаны установить следующие переменные окружения:</p><A NAME="1065617"></a>
+<TABLE BORDER="2" cellpadding="5"><TR><TD VALIGN=baseline ALIGN=left width="90"><PRE><A NAME="1057066"></a>ORACLE_HOME</PRE>
+<TD VALIGN=baseline ALIGN=left width="662"><P><A NAME="1057068"></a>
+Специфицирует директорию верхнего уровня, в которой установлен Oracle.</P>
+<TR><TD VALIGN=baseline ALIGN=left width="90"><PRE><A NAME="1057070"></a>TNS_ADMIN</PRE>
+<TD VALIGN=baseline ALIGN=left width="662"><P><A NAME="1057072"></a>
+Специфицирует место размещения файлов конфигурации, например, <CODE>$ORACLE_HOME/network/admin</CODE>.
+После инсталяции Oracle создаёт файлы конфигурации под <CODE>/var/opt/oracle</CODE>.
+Если <CODE>listener.ora</CODE> и <CODE>tnsnames.ora</CODE> находятся в этой 
+директории, Вам может не понадобиться устанавливать <CODE>TNS_ADMIN</CODE>, 
+поскольку по умолчанию Oracle использует <CODE>/var/opt/oracle</CODE>.</P></TABLE>
+<p><A NAME="1054125"></a>Если эти переменные не установлены надлежащим образом, Oracle 
+возвращает код ошибки
+ORA-1019 при первой попытке установления соединения. Об обработке ошибок см. <A HREF="errors.htm#1031793">
+Главу 12, "Обработка Ошибок для LiveWire."</A></p>
+<h4><A NAME="Head2;"></A><A NAME="1037880"></a>Локальный Oracle</h4>
+<hr>
+<p><A NAME="1060698"></a>Только для
+Unix: Прежде чем Вы сможете подключиться к Oracle под Irix, Вы обязаны иметь 
+соответствующие патчи для Irix. 
+См. в <EM><A HREF="http://home.netscape.com/eng/server/webserver/3.0/es36.htm" TARGET="_top">Enterprise Server 3.x Release Notes</A></EM> 
+информацию о необходимых патчах.</p>
+<p><A NAME="1057059"></a>Все платформы: Вы обязаны установить Oracle Workgroup Enterprise Server 7.3.2 (NT) 
+или Enterprise Server 7.3.<I>x</I> (Unix). Клиенты Oracle 7.1 и 7.2 не 
+поддерживаются. Уточните у вашего поставщика сервера, совместима ли Ваша версия Oracle-сервера 
+с Oracle-клиентом.</p><p><A NAME="1057086"></a>Вы обязаны установить следующие 
+переменные окружения:</p>
+<A NAME="1065623"></a><TABLE BORDER="2" cellpadding="5">
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1058838"></a>ORACLE_HOME</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1058840"></a>
+Специфицирует директорию верхнего уровня, в которой установлен Oracle.</A></P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1058842"></a>ORACLE_SID</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1058844"></a>
+Специфицирует Oracle System Identifier (Системный Идентификатор).</P></TABLE><p><A NAME="1039046"></a>
+Если у Вас локальный сервер БД Oracle, Вы обязаны передавать пустую строку в 
+качестве второго аргумента методу <CODE>connect</CODE> объектов <CODE>database</CODE> 
+или <CODE>DbPool</CODE> или конструктору <CODE>DbPool</CODE>. Таким образом, эти 
+методы используют значение переменной окружения <CODE>ORACLE_SID</CODE>. Например:</p>
+<PRE><A NAME="1057098"></a>database.connect ("ORACLE", "" "user", "password", "");</PRE>
+<p><A NAME="1057097"></a>Об инсталяции Oracle см. дополнительно документацию по Oracle.</p>
+<H2><A NAME="Sybase"></A><A NAME="1037471"></a>Sybase</H2><hr>
+<p><A NAME="1057017"></a>Чтобы использовать сервер Sybase, Вы обязаны иметь Netscape Enterprise Server. 
+Вы не можете получить доступ к Sybase из Netscape FastTrack Server.</p><p><A NAME="1046983"></a>
+Если БД и web-сервер находятся на разных машинах, следуйте инструкциям раздела
+<a href="#1058768">"Удалённый Sybase."</a></p><p><A NAME="1046987"></a>
+Если БД и web-сервер находятся на одной машине, следуйте инструкциям раздела <A HREF="#1037477">"Локальный Sybase."</A></p><p><A NAME="1059652"></a>
+Кроме того, если Вы используете Unix-платформу, и Sybase имеет многопоточный 
+драйвер для этой платформы, следуйте инструкциям раздела <A HREF="#1059674">"Sybase (только для Unix)."</A> 
+См. в <EM><A HREF="http://home.netscape.com/eng/server/webserver/3.0/es36.htm" TARGET="_top">Enterprise
+Server 3.x Release Notes</A></EM> список Unix-платформ, на которых Sybase имеет 
+многопоточный драйвер.</p><h4><A NAME="Head2;"></A><A NAME="1058768"></a>Удалённый Sybase</h4>
+<hr>
+<p><A NAME="1058769"></a>Только для Unix: Установите следующие переменные окружения:</p>
+<A NAME="1065629"></a><TABLE BORDER="2" cellpadding="5">
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1058795"></a>SYBASE</PRE><TD VALIGN=baseline ALIGN=left><A NAME="1058804"></a>
+Директория верхнего уровня, в которой установлен Sybase.<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1061841"></a>LD_LIBRARY_PATH</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1061843"></a>
+(DEC) Обязана содержать <CODE>$SYBASE/lib</CODE>.</P></TABLE><p><A NAME="1054228"></a>
+Для Solaris Вы обязаны также следовать инструкциям раздела <A HREF="#1059674">"Sybase (только 
+для Unix)."</A></p>
+<p><A NAME="1037474"></a>Все платформы: Вы обязаны установить SYBASE Open Client/C. 
+Поддерживаемые поставщики перечислены в разделе <A HREF="#1029166">"Поддерживаемые 
+Клиенты БД и ODBC-Драйверы."</A></p>
+<p><A NAME="1054239"></a>Вы можете использовать подходящую утилиту Sybase для 
+ввода в файл <CODE>sql.ini</CODE> (NT) и файл <CODE>interfaces</CODE> (все 
+платформы) информации об удалённом сервере, с которым Вы хотите установить 
+соединение. Дополнительно см. документацию Sybase.</p>
+<h4><A NAME="Head2;"></A><A NAME="1037477"></a>Локальный Sybase</h4>
+<hr>
+<p><A NAME="1058817"></a>Только для Unix: Установите следующие переменные окружения:</p>
+<A NAME="1065635"></a><TABLE BORDER="2" cellpadding="5">
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1058814"></a>SYBASE</PRE><TD VALIGN=baseline ALIGN=left><A NAME="1058816"></a>
+Директория верхнего уровня, в которой установлен Sybase.<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1061845">LD_LIBRARY_PATH</A></PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1061847">
+(DEC) </a>Обязана содержать<A NAME="1061847">
+<CODE>$SYBASE/lib</CODE>.</P></TABLE><p><A NAME="1054265"></a>
+Для Solaris Вы обязаны также следовать инструкциям раздела <A HREF="#1059674">"Sybase (только для Unix)."</A></p>
+<p><A NAME="1040206"></a>Все платформы: Установите Sybase SQL Server версии 11.1; 
+клиентская часть устанавливается вместе с сервером. Поддерживаемые версии 
+перечислены в разделе <A HREF="#1029166">"Поддерживаемые Клиенты БД и ODBC-Драйверы."</A></p><p><A NAME="1057164"></a>
+Вы можете использовать подходящую утилиту Sybase для ввода в файл <CODE>sql.ini</CODE> (NT) 
+и файл <CODE>interfaces</CODE> (все платформы) информации об удалённом сервере, 
+с которым Вы хотите установить соединение. Дополнительно см. документацию Sybase.</p>
+<h4><A NAME="Head2;"></A><A NAME="1059674"></a>Sybase (только для Unix)</h4>
+<hr>
+<p><A NAME="1059729"></a>На некоторых Unix-платформах Sybase имеет и 
+однопоточный, и многопоточный драйверы. Если Sybase имеет многопоточный драйвер 
+для конкретной Unix-машины, Вы обязаны использовать этот многопоточный драйвер с LiveWire. 
+На этих платформах Ваш web-сервер будет вести себя непредсказуемо с однопоточным 
+драйвером. Это требование применяется как для локальных, так и для удалённых 
+соединений. оно не применяется к Windows-платформам.</p><p><A NAME="1059732"></a>
+См. в <EM><A HREF="http://home.netscape.com/eng/server/webserver/3.0/" TARGET="_top">Enterprise
+Server 3.x Release Notes</A></EM> список Unix-платформ, на которых Sybase имеет 
+многопоточный драйвер.</p>
+<p><A NAME="1059733"></a>Чтобы убедиться в том, что Вы используете многопоточный 
+драйвер, вы обязаны отредактировать Ваш файл
+<CODE>$SYBASE/config/libtcl.cfg</CODE>. Он содержит пару строк, которые включают 
+однопоточный, либо многопоточный драйвер. Вы обязаны иметь одну из этих строк 
+закомментированную, а другую активную. Например, на Solaris найдите эти строки:</p>
+<PRE><A NAME="1059676"></a>[DRIVERS]<br>;libtli.so=tcp unused ; Это беспоточный tli-драйвер.<br>
+libtli_r.so=tcp unused ; Это поточный tli-драйвер.</PRE><p><A NAME="1059677"></a>
+Удостоверьтесь, что строка для однопоточного драйвера закомментирована, а строка 
+многопоточного драйвера - не закомментирована. Имена файлов различаются на 
+разных платформах, но эти строки всегда расположены в разделе <CODE>DRIVERS</CODE> 
+и всегда закомментированы, чтобы различать однопоточный и многопоточный драйверы.</p><BLOCKQUOTE>
+<h6>ПРИМЕЧАНИЕ:</h6>
+<p> <A NAME="1059679"></a>
+Если вы хотите использовать утилиту Sybase <CODE>isql</CODE>, Вы обязаны 
+использовать беспоточный <CODE>tli</CODE> -драйвер. В этом случае строка для <CODE>libtli_r.so </CODE>
+обязана быть закомментирована. Об использовании этого драйвера см. документацию 
+по Sybase.</p></BLOCKQUOTE>
+<h5><FONT SIZE=-1><a href="contents.htm">Оглавление</a> | <a href="db2.htm">Назад</a>
+| <a href="data.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></FONT></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright © 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT></BODY></HTML>

@@ -1,0 +1,1359 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<title>Глава 9. Работа с БД.</title></head>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="db1.htm">Назад</a>
+ | <a href="dbconfig.htm">Вперёд</a>
+ | <a href="bklast.htm">Индекс</a></h5>
+<HR>
+<h1>Глава 9<br>
+<a name="1064023"></a>Работа с Базой Данных</a></h1>
+<p><A NAME="1067028"></a>
+В этой главе обсуждается работа с реляционными базами данных DB2, Informix, ODBC, Oracle 
+и Sybase.
+Рассматривается, как запрашивать информацию из БД и использовать её в приложении, 
+как работать с транзакциями и как выполнять хранимые процедуры.</p>
+<p><A NAME="1069227"></a>
+Не забывайте, что, если Ваше приложение работает на Netscape FastTrack Server, а 
+не на Netscape Enterprise Server,
+оно может иметь доступ только к серверам БД, использующим стандарт ODBC.</p>
+<p><A NAME="1074343"></a>
+В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1075248"></a>
+  <a href="#1064282">Взаимодействие с Реляционной Базой Данных</a></LI><LI><A NAME="1073102"></a>
+<A HREF="#1064191">Автоматическое Отображение Результатов Выполнения Запроса</A></LI><LI><A NAME="1073106"></a>
+<A HREF="#1030355">Выполнение Произвольных Операторов SQL</A></LI><LI><A NAME="1073110"></a>
+<A HREF="#1030418">Манипуляции с Результатами Выполнения Запросов с Помощью 
+  Курсоров</A></LI><LI><A NAME="1073114"></a>
+<A HREF="#1040958">Обслуживание Транзакций</A></LI><LI><A NAME="1073118"></a>
+<A HREF="#1065726">Работа с Двоичными/Бинарными Данными</A></LI><LI><A NAME="1073122"></a>
+<A HREF="#1030702">Вызов Хранимых Процедур</A></LI></ul>
+<H2><A NAME="Interacting with a Relational Database"></A><A NAME="1064282"></a>
+ Взаимодействие с Реляционной Базой Данных</H2><hr><p><A NAME="1075229"></a>
+Сервис LiveWire Database Service даёт возможность взаимодействовать с 
+реляционной БД различными способами.<br>
+Вы можете:</p>
+<ul><LI><A NAME="1064283"></a>
+  Выполнять запросы к БД и заставить машину выполнения автоматически 
+  форматировать результаты.</LI><LI><A NAME="1064284"></a>
+  Использовать курсоры для выполнения запросов к БД и представлять результаты в 
+  манере приложения или использовать их при вычислениях.</LI><LI><A NAME="1064285"></a>
+  Использовать курсоры для изменения информации в БД.</LI><LI><A NAME="1064286"></a>
+  Использовать транзакции.</LI><LI><A NAME="1064287"></a>
+  Выполнять процессинг SQL без помощи курсоров.</LI><LI><A NAME="1064288"></a>
+  Запускать хранимые процедуры.</LI>
+</ul><p><A NAME="1067426"></a>
+Об установке и обслуживании соединений БД см.
+<A HREF="db1.htm#1023351">Главу 8, "Соединение с Базой Данных&quot;</A>.</p>
+<H2>
+<A NAME="Automatically Displaying Query Results"></A><A NAME="1064191"></a>
+ Автоматическое Отображение Результатов Выполнения Запроса</H2><hr><p><A NAME="1031649"></a>
+Наиболее простым и быстрым способом отобразить результаты выполнения запросов к 
+БД является использование метода
+<CODE>SQLTable</CODE> объекта <CODE>database</CODE> или объекта <CODE>Connection</CODE>.
+Метод <CODE>SQLTable</CODE> принимает оператор SQL <CODE>SELECT</CODE> и 
+возвращает HTML-таблицу.
+Каждый ряд и столбец в запросе это ряд и столбец таблицы. Таблица HTML имеет 
+также заголовочную ячейку для каждого столбца таблицы БД.</p>
+<p><A NAME="1030336"></a>
+Метод <CODE>SQLTable</CODE> не даёт Вам возможности управлять форматированием 
+вывода. Кроме того,
+если вывод содержит объект <CODE>Blob</CODE>, этот объект не выводится как 
+изображение.
+(Об использовании blob см. раздел <A HREF="#1065726">"Работа с Бинарными 
+Данными&quot;</A>). если Вы хотите специализировать вывод, используйте курсор БД для 
+создания Вашей собственной функции вывода/отображения. См. также <A HREF="#1030418">"Манипуляции 
+с Результатами Выполнения Запросов с Помощью Курсоров&quot;</A>.</p>
+<p><A NAME="1030341"></a>
+В качестве примера: если <CODE>myconn</CODE> это <CODE>Connection</CODE> -объект, 
+следующий оператор JavaScript отображает результат выполнения запроса к БД в 
+виде таблицы:</p>
+<PRE><A NAME="1030342"></a>myconn.SQLTable("select * from videos");</PRE>
+<p><A NAME="1030343"></a>
+Вот первая часть таблицы, которая могла бы быть сгенерирована этим оператором:<br>
+&nbsp;</p>
+<A NAME="1074099"></a>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1074867"></a>
+Title<TH VALIGN=baseline ALIGN=left><A NAME="1074869"></a>ID
+<TH VALIGN=baseline ALIGN=left><A NAME="1074871"></a>Year<TH VALIGN=baseline ALIGN=left><A NAME="1074873"></a>
+Category<TH VALIGN=baseline ALIGN=left><A NAME="1074875"></a>Quantity
+<TH VALIGN=baseline ALIGN=left><A NAME="1074877"></a>On Hand<TH VALIGN=baseline ALIGN=left><A NAME="1074879"></a>
+Synopsis<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074881"></a>
+A Clockwork Orange</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074883"></a>
+1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074885"></a>
+1975</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074887"></a>
+Science Fiction</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074889"></a>
+5</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074891"></a>
+3</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074893"></a>
+Little Alex and his droogies stop by the Miloko bar for a refreshing libation before a wild night on
+the town.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074895"></a>
+Philadelphia Story</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074897"></a>
+1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074899"></a>
+1940</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074901"></a>
+Romantic Comedy</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074903"></a>
+</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074905">
+</A></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074907"></a>
+Katherine Hepburn and Cary Grant are reunited on the eve of her remarriage, with Jimmy
+Stewart for complications.</P></TABLE>
+<H2>
+<A NAME="Executing Arbitrary SQL Statements"></A><A NAME="1030355"></a>
+Выполнение Произвольных Операторов SQL</H2><hr><p><A NAME="1030364"></a>
+Метод <CODE>execute</CODE> объекта <CODE>database</CODE> или объекта <CODE>Connection</CODE> 
+даёт приложению возможность выполнять произвольный оператор SQL. Использование <CODE>execute</CODE> 
+называется выполнением передаваемого SQL, поскольку этот метод передаёт SQL 
+непосредственно на сервер.</p>
+<p>
+<A NAME="1030371"></a>
+Вы можете использовать <CODE>execute</CODE> для выполнения оператора SQL любого 
+языка определения данных/data definition language (DDL) или языка 
+манипулирования данными/data manipulation language
+(DML), поддерживаемого сервером БД. Примером могут служить операторы <CODE>CREATE</CODE>,
+<CODE>ALTER</CODE> и <CODE>DROP</CODE>. Хотя Вы можете использовать <CODE>execute</CODE> 
+для выполнения любого оператора SQL, Вы не можете с помощью этого метода 
+возвращать данные.</p>
+<p>
+<A NAME="1043339"></a>
+Обратите внимание, что <CODE>execute</CODE> служит для выполнения стандартных 
+операторов SQL, а не для выполнения расширений SQL, поставляемых некоторыми 
+производителями БД. Например, Вы не можете вызвать функцию Oracle <CODE>describe</CODE> 
+или функцию Informix <CODE>load</CODE> из метода <CODE>execute</CODE>.</p>
+<p>
+<A NAME="1030384"></a>
+Для выполнения передаваемых операторов SQL просто задайте оператор SQL как 
+параметр метода
+<CODE>execute</CODE>. Например, Вам нужно удалить таблицу из БД, на которую 
+имеется ссылка в свойстве <CODE>oldtable</CODE> объекта <CODE>project</CODE>. 
+Чтобы выполнить это, Вы можете использовать такой вызов метода:</p>
+<PRE><A NAME="1030385"></a>connobj.execute("DROP TABLE " + project.oldtable);</PRE>
+<h6>
+<A NAME="1030386"></a>Важно!</h6>
+<p><A NAME="1030390"></a>При использовании <CODE>execute</CODE> Ваш SQL-оператор 
+обязан строго соответствовать требованиям синтаксиса SQL данного сервера БД. 
+Например, некоторые серверы требуют, чтобы каждый оператор SQL заканчивался 
+символом &quot;точка с запятой&quot;. Дополнительно см. документацию к Вашему серверу БД.<br>
+<A NAME="1030391"></a>
+Если Вы не стартуете транзакцию явно, единственный оператор подтверждается 
+автоматически.
+Об управлении транзакциями см. <A HREF="#1040958">"Обслуживание Транзакций&quot;</A>.</p>
+<p>
+<A NAME="1066520"></a>
+Для выполнения некоторых операций, таких как создание и удаление таблиц, Вам 
+могут понадобиться права доступа, предоставляемые администратором базы данных. 
+См. документацию Вашего сервера БД и обратитесь к администратору сервера БД.</p>
+<H2>
+<A NAME="Manipulating Query Results with Cursors"></A><A NAME="1030418"></a>
+Манипуляции с Результатами Выполнения Запросов с Помощью Ку&#x0301;рсоров</H2><hr><p><A NAME="1030419"></a>
+Часто Вам необходимо не просто отобразить таблицу с результатами выполнения 
+запроса, но изменить форматирование этих результатов или даже выполнить 
+какую-нибудь их обработку.
+Для манипуляций результатами выполнения запроса Вы работаете с курсором БД, 
+возвращаемым запросом к БД. Для создания экземпляра класса <CODE>Cursor</CODE> 
+вызовите метод <CODE>cursor</CODE> объекта <CODE>database</CODE> или объекта
+<CODE>Connection</CODE>, передав ему оператор SQL <CODE>SELECT</CODE> в качестве 
+параметра.</p>
+<p><A NAME="1030429"></a>
+Вы можете представить курсор как виртуальную таблицу с рядами и столбцами, 
+специфицированный по запросу. Курсор предполагает также понятие текущего ряда, 
+который в реальности является указателем на ряд виртуальной таблицы. Когда 
+Вы выполняете операции с курсором, они обычно воздействуют на текущий ряд.</p>
+<p>
+<A NAME="1074210"></a>
+По окончании работы, закройте курсор БД путём вызова его метода <CODE>close</CODE>. 
+Соединение с БД не может быть освобождено, пока не закрыты все ассоциированные с 
+ним курсоры. Например, если Вы вызываете метод <CODE>release</CODE> объекта
+<CODE>Connection</CODE> и это соединение имеет ассоциированный курсор, который 
+не был закрыт, соединение не будет освобождено, пока курсор не будет закрыт.</p>
+<p>
+<A NAME="1074268"></a>
+В таблице обобщены методы и свойства класса <CODE>Cursor</CODE>.</p>
+<A NAME="1074288"></a><h5><A NAME="1074220"></a>
+Таблица 9.1&nbsp; Свойства и Методы Класса&nbsp;<CODE>Cursor</CODE></h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1074225"></a>
+  Метод или Свойство<TH VALIGN=baseline ALIGN=left><A NAME="1074227"></a>
+  Описание<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074230"></a>
+<I><CODE>colName</CODE></I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074232"></a>
+    Свойства, соответствующие каждому столбцу курсора. Имя каждого свойства<I><CODE> colName</CODE></I>&nbsp; 
+    это имя столбца в БД.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074235"></a>
+<CODE>close</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074237"></a>
+  Закрывает курсор.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074240"></a>
+<CODE>columns</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074242"></a>
+  Возвращает количество столбцов в курсоре.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074245"></a>
+<CODE>columnName</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074247"></a>
+  Возвращает имя столбца в курсоре.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074250"></a>
+<CODE>next</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074252"></a>
+  Делает следующий ряд курсора текущим рядом.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074255"></a>
+<CODE>insertRow</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074257"></a>
+  Вставляет новый ряд в специфицированную таблицу.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074260"></a>
+<CODE>updateRow</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074262"></a>
+  Обновляет записи в текущем ряду специфицированной таблицы.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1074265"></a>
+<CODE>deleteRow</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1074267"></a>
+  Удаляет текущий ряд специфицированной таблицы.</P></TABLE>
+<p>
+<A NAME="1074269"></a>
+Полную информацию об этих методах см. в описании класса <CODE>Cursor</CODE> в 
+книге
+<I><a TARGET="_top" href="../servref12/index.htm">&quot;Серверный JavaScript. 
+Справочник&quot;</a></I>.</p>
+<h2>
+<A NAME="Head2;"></A><A NAME="1030510"></a>Создание Курсора</h2><hr><p><A NAME="1030511"></a>
+Как только приложение установило соединение с БД, Вы можете создать курсор путём 
+вызова метода <CODE>cursor</CODE> ассоциированного объекта <CODE>database</CODE> 
+или <CODE>Connection</CODE>. Создание объекта
+<CODE>Cursor</CODE> также открывает курсор в БД. Вам не нужно выполнять 
+отдельную команду open.</p>
+<p>Можно предоставить следующую информацию при создании объекта <CODE>Cursor</CODE>:</p>
+<ul><LI><A NAME="1030520"></a>
+  Оператор SQL <CODE>SELECT</CODE>, поддерживаемый сервером БД. Чтобы 
+  гарантировать независимость от вида БД,
+  используйте синтаксис SQL 89/92. Курсор создаётся как виртуальная таблица 
+  результата выполнения этого оператора SQL.</LI><LI><A NAME="1030522"></a>
+  Необязательный Булев параметр указывает, является ли курсор обновляемым. 
+  Используйте этот параметр только в том случае, когда Вам нужно изменять 
+  содержимое БД, как указано в разделе <A HREF="#1070901">"Изменение Информации 
+  Базы Данных&quot;</A>. Не всегда возможно создать обновляемый курсор для каждого 
+  оператора SQL, так как это контролируется базой данных. Например, если 
+  оператор <CODE>SELECT</CODE> будет таким:
+<CODE>"select count(*) from videos"</CODE>, Вы не сможете создать обновляемый 
+  курсор.</LI>
+</ul><p><A NAME="1030526"></a>
+Например, следующий оператор создаёт курсор для записей таблицы <CODE>CUSTOMER</CODE>.
+Записи содержат столбцы <CODE>id</CODE>, <CODE>name</CODE> и <CODE>city</CODE> и 
+упорядочены по значениям столбца <CODE>id</CODE>.</p>
+<PRE><A NAME="1030527"></a>custs = connobj.cursor ("select id, name, city<br>&nbsp;&nbsp;&nbsp;from customer
+order by id");</PRE>
+<p><A NAME="1030528"></a>
+Этот оператор устанавливает в переменную <CODE>custs</CODE> объект <CODE>Cursor</CODE>. 
+Запрос SQL может вернуть следующие ряды:</p>
+<PRE><A NAME="1030529"></a>1 Sally Smith Suva<br>2 Jane Doe Cupertino<br>3 John Brown Harper's Ferry</PRE>
+<p><A NAME="1030530"></a>
+Затем Вы можете получить доступ к этой информации через использование методов <CODE>Cursor</CODE>-объекта <CODE>custs</CODE>.
+Этот объект имеет свойства <CODE>id</CODE>, <CODE>name</CODE> и <CODE>city</CODE>, 
+соответствующие столбцам виртуальной таблицы.</p>
+<p>
+<A NAME="1030531"></a>
+Когда Вы первоначально создаёте <CODE>Cursor</CODE>-объект, указатель 
+позиционируется сразу перед первым рядом виртуальной таблицы. В последующих 
+разделах рассматривается, как получить информацию из виртуальной таблицы.</p>
+<p><A NAME="1030532"></a>
+Вы можете также использовать оператор конкатенации строк (+) и строковые 
+переменные (такие как значения свойств <CODE>client</CODE> или
+<CODE>request</CODE>) при конструировании оператора <CODE>SELECT</CODE>. 
+Например, следующий вызов использует ранее сохранённый customer ID для 
+последующей специализации запроса:</p>
+<PRE><A NAME="1030533"></a>custs = connobj.cursor ("select * from customer where id = "<br>
+&nbsp;+ client.customerID);</PRE>
+<p><A NAME="1048055"></a>
+При попытке создания <CODE>Cursor</CODE>-объекта Вы можете столкнуться с 
+различными проблемами. Например, если оператор <CODE>SELECT</CODE> в вызове 
+метода <CODE>cursor</CODE> обращается к несуществующей таблице, БД возвращает 
+ошибку, и метод <CODE>cursor</CODE> возвращает null вместо
+<CODE>Cursor</CODE>-объекта. В этой ситуации Вы должны использовать методы <CODE>majorErrorCode</CODE> 
+и
+<CODE>majorErrorMessage</CODE> для определения возникшей ошибки.</p>
+<p><A NAME="1048039"></a>
+В качестве второго примера, предположим, что оператор <CODE>SELECT</CODE> 
+обращается к существующей таблице, в которой нет рядов. В этом случае БД может 
+не возвратить ошибку, а метод <CODE>cursor</CODE> возвратит верный <CODE>Cursor</CODE> 
+-объект. Однако, поскольку этот объект не содержит рядов, при первой попытке 
+использования метода <CODE>next</CODE> в этом объекте он возвратит <CODE>false</CODE>. 
+Ваше приложение должно проверять возможность возникновения такой ситуации.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1030535"></a>Отображение Значений Записи</h4>
+<hr><p>
+<A NAME="1030536"></a>Когда Вы создаёте курсор, он получает свойство <I><CODE>colName</CODE></I>&nbsp; 
+для каждого именованного столбца виртуальной таблицы (отличное от свойств, 
+соответствующих агрегатным функциям), как определено оператором <CODE>SELECT</CODE>. 
+Вы можете получать доступ к значениям текущего ряда, используя эти свойства. В 
+вышеприведённом примере курсор имеет свойства для столбцов <CODE>id</CODE>,
+<CODE>name</CODE> и <CODE>city</CODE>. Вы можете вывести значения для первого 
+возвращённого ряда, используя следующие операторы:</p>
+<PRE><A NAME="1069527"></a>// Создаётся Cursor-объект.
+
+<br>custs = connobj.cursor ("select id, name,
+city <br>&nbsp;&nbsp;&nbsp;from customer order by id");</PRE><PRE><A NAME="1030538"></a>// Прежде чем продолжить, убедитесь, что курсор действительно был возвращён<br>// и не было ошибки БД.<br>
+if ( custs &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1069558"></a>&nbsp;&nbsp;&nbsp;
+// Получаем первый ряд.
+
+<br>&nbsp;&nbsp;&nbsp;custs.next();</PRE><PRE><A NAME="1069557"></a>&nbsp;&nbsp;&nbsp;
+// Отображаем значение.
+
+<br>&nbsp;&nbsp;&nbsp;write ("&lt;B&gt;Customer Name:&lt;/B&gt;" + custs.name + "&lt;BR&gt;");<br>&nbsp;&nbsp;&nbsp;write ("&lt;B&gt;City:&lt;/B&gt; " + custs.city + "&lt;BR&gt;");<br>&nbsp;&nbsp;&nbsp;write ("&lt;B&gt;Customer ID:&lt;/B&gt; " + custs.id);</PRE>
+<PRE><A NAME="1069562"></a>&nbsp;&nbsp;&nbsp;//Закрываем курсор.
+
+<br>&nbsp;&nbsp;&nbsp;custs.close();<br>
+}</PRE>
+<p><A NAME="1030539"></a>Сначала текущим рядом является первый ряд таблицы. 
+Выполнение метода <CODE>next</CODE> передвигает текущий ряд на первый ряд 
+таблицы.
+Например, предположим, что это первый ряд курсора:</p>
+<PRE><A NAME="1030544"></a>1 Sally Smith Suva</PRE>
+<p><A NAME="1030546"></a>
+Тогда предыдущий код выведет:</p>
+<p><A NAME="1030547"></a>
+Customer Name: Sally Smith <br>City: Suva<br>Customer ID: 1</p>
+<p><br>
+<A NAME="1040734"></a>
+Вы можете обращаться к свойствам <CODE>Cursor</CODE> -объекта (или, в 
+действительности, объекта JavaScript) как к элементам массива. Элемент массива с 
+индексом <span lang="en-us">[0] </span>соответствует первому столбцу, элемент 
+массива с индексом <span lang="en-us">[</span>1<span lang="en-us">] </span>
+соответствует второму столбцу, и так далее.</p>
+<p><A NAME="1030552"></a>
+Например, Вы можете использовать индекс для отображения тех же значений 
+столбцов, что и в предыдущем примере:</p>
+<PRE><A NAME="1030553"></a>write ("&lt;B&gt;Customer Name:&lt;/B&gt; " + custs[1] + "&lt;BR&gt;");<br>
+write ("&lt;B&gt;City:&lt;/B&gt; " + custs[2] + "&lt;BR&gt;");<br>write ("&lt;B&gt;Customer ID:&lt;/B&gt;
+" + custs[0]);</PRE>
+<p><A NAME="1030554"></a>Эта техника особенно применима внутри циклов. Например,
+Вы можете создать <CODE>Cursor</CODE> -объект с названием <CODE>custs</CODE> и 
+вывести результат выполнения запроса в виде таблицы
+HTML с помощью следующего кода:</p>
+<PRE><A NAME="1030555"></a>// Создаётся Cursor-объект.
+
+<br>custs = connobj.cursor ("select id, name, city 
+
+from customer order by id");</PRE><PRE><A NAME="1064573"></a>// Прежде чем продолжить, убедитесь, что курсор действительно был возвращён<br>// и не было ошибки БД.<br>
+if ( custs &amp;&amp; (connobj.majorErrorCode() == 0) ) {<br>&nbsp;&nbsp;&nbsp;
+write ("&lt;TABLE BORDER=1&gt;");
+
+<br>&nbsp;&nbsp;&nbsp;// Отображаем имена столбцов как заголовки.<br>
+&nbsp;&nbsp;&nbsp;write("&lt;TR&gt;");<br>&nbsp;&nbsp;&nbsp;i = 0;<br>
+&nbsp;&nbsp;&nbsp;while ( i &lt; custs.columns() ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write("&lt;TH&gt;", custs.columnName(i), "&lt;/TH&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i++;<br>&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;write("&lt;/TR&gt;");</PRE><PRE><A NAME="1030557"></a>&nbsp;&nbsp;&nbsp;// Отображаем каждый ряд виртуальной таблицы.
+
+<br>&nbsp;&nbsp;&nbsp;while(custs.next()) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write("&lt;TR&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ( i &lt; custs.columns() ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write("&lt;TD&gt;", custs[i], "&lt;/TD&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i++;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;write("&lt;/TR&gt;");<br>&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;write ("&lt;/TABLE&gt;");</PRE><PRE><A NAME="1063621"></a>&nbsp;&nbsp;&nbsp;// Закрываем курсор.
+
+<br>&nbsp;&nbsp;&nbsp;custs.close();<br>}</PRE>
+<p><A NAME="1030558"></a>
+Этот код может вывести примерно такую таблицу:</p>
+<A NAME="1074296"></a>
+<P><TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1068583"></a>ID<TH VALIGN=baseline ALIGN=left><A NAME="1068585"></a>
+NAME<TH VALIGN=baseline ALIGN=left><A NAME="1068587"></a>CITY
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1068589"></a>
+1</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068591"></a>
+Sally Smith</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068593"></a>Suva</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1068595"></a>
+2</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068597"></a>
+Jane Doe</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068599"></a>Cupertino</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1068601"></a>
+3</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068603"></a>
+John Brown</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1068605"></a>Harper's Ferry</P></TABLE>
+<p>
+<A NAME="1064616"></a>В примере использованы методы, обсуждаемые в последующих 
+разделах.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1030560"></a>Отображение Выражений и Агрегатных 
+Функций</h4>
+<hr><p>
+<A NAME="1030562"></a>Операторы <CODE>SELECT</CODE> могут запрашивать значения, 
+не являющиеся столбцами в БД, такие как агрегатные значения и выражения SQL. Для 
+таких значений <CODE>Cursor</CODE> -объект не имеет именованного свойства. Вы 
+можете получить к ним доступ только через использование свойства индекса массива <CODE>Cursor</CODE> 
+-объекта для данного значения.</p>
+<p><A NAME="1030563"></a>
+В следующем примере создаётся курсор с именем <CODE>empData</CODE>, делается 
+переход к первому ряду этого курсора и затем отображается значение, запрошенное 
+агрегатной функцией <CODE>MAX</CODE>. Выполняется также проверка того, что&nbsp; 
+результаты из БД верны, перед тем как использовать их:</p>
+<PRE><A NAME="1030564"></a>empData = connobj.cursor ("select min(salary), avg(salary),<br>
+&nbsp;&nbsp;&nbsp;max(salary) from employees");<br>if ( empData &amp;&amp; (connobj.majorErrorCode() == 0) )
+{<br>&nbsp;&nbsp;&nbsp;rowexists = empData.next();<br>&nbsp;&nbsp;&nbsp;if (rowexists)
+{ write("Highest salary is ", empData[2]); }<br>}</PRE>
+<p><A NAME="1063272"></a>
+Во втором примере создаётся курсор с именем <CODE>empRows</CODE> для подсчёта 
+количества рядов в таблице,
+выполняется переход к ряду в этом курсоре, а затем отображается количество рядов 
+параллельно с выполнением проверки на верность данных:</p>
+<PRE><A NAME="1063308"></a>empRows = connobj.cursor ("select count(*) from employees");<br>
+if ( empRows &amp;&amp; (connobj.majorErrorCode() == 0) ) {<br>&nbsp;&nbsp;&nbsp;rowexists = empRows.next();
+<br>&nbsp;&nbsp;&nbsp;if (rowexists) { write ("Number of rows in table: ", empRows[0]); }<br>}</PRE>
+<h4>
+<A NAME="Head2;"></A><A NAME="1030568"></a>Навигация с Помощью Курсоров</h4><hr><p><A NAME="1030569"></a>
+Сначала указатель курсора позиционируется перед первым рядом виртуальной таблицы. 
+Метод
+<CODE>next</CODE> используется для перемещения между записями виртуальной 
+таблицы. Этот метод передвигает указатель на следующий ряд и возвращает <CODE>true</CODE>, 
+когда следующий ряд виртуальной таблицы найден. Если следующего ряда нет, <CODE>next</CODE> 
+возвращает <CODE>false</CODE>.</p>
+<p>
+<A NAME="1030577"></a>Например, предположим, что виртуальная таблица имеет 
+столбцы с названиями <CODE>title</CODE>,
+<CODE>rentalDate</CODE> и <CODE>dueDate</CODE>. Следующий код использует <CODE>next</CODE> 
+для итерации по рядам и отображения значений столбцов в таблице:</p>
+<PRE><A NAME="1063629"></a>// Создаём курсор.
+
+<br>custs = connobj.cursor ("select * from customer");</PRE>
+<PRE><A NAME="1064718"></a>// Проверяем курсор и отсутствие ошибок БД.<br>
+if ( custs &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1064789"></a>&nbsp;&nbsp;&nbsp;
+write ("&lt;TABLE&gt;");</PRE><PRE><A NAME="1063672"></a>&nbsp;&nbsp;&nbsp;// Итерация по рядам с отображением значений.
+
+<br>&nbsp;&nbsp;&nbsp;while (custs.next()) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+write ("&lt;TR&gt;&lt;TD&gt;" + custs.title + "&lt;/TD&gt;" + <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;"&lt;TD&gt;" + custs.rentalDate + "&lt;/TD&gt;" + <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;"&lt;TD&gt;" + custs.dueDate + "&lt;/TD&gt;&lt;/TR&gt;");<br>&nbsp;&nbsp;&nbsp;}</PRE>
+<PRE><A NAME="1064801"></a>&nbsp;&nbsp;&nbsp;write ("&lt;/TABLE&gt;");</PRE><PRE><A NAME="1063673"></a>
+&nbsp;&nbsp;&nbsp;// Всегда закрывайте курсоры по окончании работы!
+
+<br>&nbsp;&nbsp;&nbsp;custs.close();<br>
+}</PRE>
+<p><A NAME="1064786"></a>Этот код даст на выходе:</p>
+<A NAME="1074302"></a>
+<TABLE BORDER="2" CELLPADDING=5><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1064830"></a>
+Clockwork Orange</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1070577"></a>
+6/3/97</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1064832"></a>9/3/97</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1064834"></a>
+Philadelphia Story</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1064976"></a>
+8/1/97</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1064836"></a>8/5/97</P></TABLE>
+<p>
+<A NAME="1069858"></a>Вы не всегда можете находиться в нужном месте в курсоре. 
+Например,
+предположим, что Вы создаёте курсор и, пока Вы работаете с ним, кто-то добавляет 
+ряд в таблицу.
+В зависимости от установок БД, этот ряд может появиться в Вашем курсоре. Исходя 
+из этого, когда это удобно (как при обновлении рядов), Вы можете сделать так, 
+чтобы Ваш код проверял, находится ли указатель в нужном ряду.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1030584"></a>Работа со Столбцами</h4>
+<hr><p>
+<A NAME="1030592"></a>Метод <CODE>columns</CODE> класса <CODE>Cursor</CODE> 
+возвращает количество столбцов в курсоре. Этот метод не принимает параметров:</p>
+<PRE><A NAME="1030593"></a>custs.columns()</PRE>
+<p><A NAME="1030594"></a>
+Вы можете использовать этот метод, если нужно итерировать по каждому столбцу 
+курсора.</p>
+<p><A NAME="1030602"></a>
+Метод <CODE>columnName</CODE> класса <CODE>Cursor</CODE> возвращает имя столбца 
+виртуальной таблицы. Этот метод принимает параметр - целое число, 
+специфицирующее порядковый номер столбца, начиная с 0. Первым столбцом 
+виртуальной таблицы является столбец 0, вторым - столбец 1, и так далее.</p>
+<p><A NAME="1070897"></a>
+Например, следующее выражение присваивает имя первого столбца курсора <CODE>custs</CODE> 
+переменной <CODE>header</CODE>:</p>
+<PRE><A NAME="1070898"></a>header = custs.columnName(0)</PRE>
+<p><A NAME="1070905"></a>
+Если Ваш оператор <CODE>SELECT</CODE> использует шаблон (*) для выбора 
+всех столбцов таблицы,
+метод <CODE>columnName</CODE> не гарантирует, что порядок присвоения номеров 
+столбцам будет тем же. То есть, предположим, у Вас есть оператор:</p>
+<PRE><A NAME="1070920"></a>custs = connobj.cursor ("select * from customer");</PRE>
+<p><A NAME="1070924"></a>
+Если таблица customer имеет 3 столбца, ID, NAME и CITY, Вы не сможете заранее 
+предугадать, который из этих столбцов будет <CODE>custs.columnName(0)</CODE>. (Конечно, 
+есть гарантия, что последовательные вызовы <CODE>columnName</CODE> дадут 
+аналогичный результат). Если порядок для Вас важен, можно жёстко кодировать 
+имена в операторе выборки, как здесь:</p>
+<PRE><A NAME="1070942"></a>custs = connobj.cursor ("select ID, NAME, CITY from customer");</PRE>
+<p><A NAME="1070952"></a>
+В этом операторе, <CODE>custs.columnName(0)</CODE> это ID, <CODE>custs.columnName(1)</CODE> 
+это NAME, а <CODE>custs.columnName(2)</CODE> это CITY.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1070901"></a>
+Изменение Информации Базы Данных</h4><hr><p><A NAME="1030609"></a>
+Вы можете использовать обновляемый курсор для модифицирования таблицы на основе 
+текущего ряда курсора. Чтобы запросить обновляемый курсор, добавьте 
+дополнительный параметр <CODE>true</CODE> при создании курсора, как в этом 
+примере:</p>
+<PRE><A NAME="1030610"></a>custs = connobj.cursor ("select id, name, city from customer", true)</PRE>
+<p><A NAME="1030612"></a>
+Чтобы курсор был обновляемым, оператор <CODE>SELECT</CODE> обязан быть 
+обновляемым запросом
+(запросом, позволяющим производить обновление). Например, оператор не может 
+запрашивать ряды из более чем одной таблицы или содержать условие <CODE>GROUP</CODE> <CODE>BY</CODE>, 
+а также обычно он обязан запрашивать ключевые значения таблицы. Дополнительно о 
+конструировании обновляемых запросов см. документацию производителя БД.</p>
+<p>
+<A NAME="1041100"></a>Когда курсоры используются для внесения изменений в Вашу 
+БД, Вы всегда должны работать в рамках явной транзакции. Вы делаете это через 
+использование методов <CODE>beginTransaction</CODE>,
+<CODE>commitTransaction</CODE> и <CODE>rollbackTransaction</CODE>, как указано в 
+разделе <A HREF="#1040958">"Обслуживание Транзакций."</A> Если в таких ситуациях 
+Вы не используете явные транзакции, Вы можете получать ошибки из Вашей БД.</p>
+<p><A NAME="1063606"></a>
+Например, Informix и Oracle возвращают сообщения об ошибке, если Вы используете 
+курсор без явной транзакции. Oracle возвращает <CODE>Error ORA-01002: fetch out of sequence</CODE>;
+Informix возвращает <CODE>Error -206</CODE>: <CODE>There is no current row for UPDATE/DELETE cursor</CODE>.</p>
+<p>
+<A NAME="1065139"></a>Как сказано в разделе <A HREF="#1030568">"Навигация с 
+Помощью Курсоров&quot;</A>, Вы не обязательно привязаны к позиции в курсоре. Исходя 
+из этого, при внесении изменений в БД не забывайте проверять, в каком ряду Вы 
+работаете, прежде чем изменять его.</p>
+<p><A NAME="1065241"></a>
+Также запомните, что при создании курсора указатель позиционируется перед рядом 
+курсора.
+Так, чтобы обновить ряд, Вы обязаны вызвать метод <CODE>next</CODE> как минимум 
+один раз для установки указателя на первый ряд таблицы. После этого Вы можете 
+присваивать значения столбцам курсора.</p>
+<p>
+<A NAME="1065249"></a>В следующем примере обновляемый курсор вычисляет премию 
+для продавцов, выполнивших норму. Затем этой информацией обновляется БД:</p>
+<PRE><A NAME="1065263"></a>connobj.beginTransaction ();</PRE><PRE><A NAME="1065392"></a>emps = connobj.cursor(
+<br>&nbsp;&nbsp;&nbsp;"select * from employees where dept='sales'", true);</PRE><PRE><A NAME="1045301"></a>
+// Прежде чем продолжить, убедитесь, что курсор действительно был возвращён<br>// и не было ошибки БД.<br>
+if ( emps &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1065338"></a>
+// Производится итерация по рядам курсора с обновлением информации на базе
+// return-значения функции metQuota.
+
+<br>&nbsp;&nbsp;&nbsp;while ( emps.next()<I> </I>) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (metQuota (request.quota, emps.sold)) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;emps.bonus = computeBonus (emps.sold);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else emps.bonus = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;emps.updateRow ("employees");<br>&nbsp;&nbsp;&nbsp;}</PRE>
+<PRE><A NAME="1045339"></a>&nbsp;&nbsp;&nbsp;// После выполнения - закрывается курсор и подтверждается транзакция.<br>
+&nbsp;&nbsp;&nbsp;emps.close();<br>&nbsp;&nbsp;&nbsp;connobj.commitTransaction();<br>}<br>else {<br>
+&nbsp;&nbsp;&nbsp;// Если курсор для работы отсутствовал, транзакция откатывается.<br>
+&nbsp;&nbsp;&nbsp;connobj.rollbackTransaction();<br>}</PRE>
+<p><A NAME="1042204"></a>
+Этот пример создаёт обновляемый курсор для всех employees/служащих департамента Sales. 
+Производится итерация по рядам курсора через использование определяемой 
+пользователем функции JavaScript <CODE>metQuota</CODE>, для того чтобы 
+определить, выполнил ли служащий норму. Эта функция использует значение свойства <CODE>quota</CODE> 
+объекта <CODE>request</CODE> (возможно, установленное в форме на клиентской 
+странице) и столбец <CODE>sold</CODE> курсора для выполнения этого определения. 
+Код затем устанавливает соответствующую премию и вызывает <CODE>updateRow </CODE>
+для модифицирования таблицы <CODE>employees</CODE>. Когда пройдены все ряды 
+курсора, подтверждается транзакция. Если вызов метода <CODE>cursor</CODE> не 
+вернул никакого курсора, транзакция откатывается.</p>
+<p><A NAME="1041823"></a>
+Помимо метода <CODE>updateRow</CODE>, Вы можете использовать методы <CODE>insertRow</CODE> 
+и
+<CODE>deleteRow</CODE> для вставки нового ряда или удаления текущего. При 
+использовании <CODE>deleteRow</CODE> не нужно присваивать никакого значения, 
+поскольку этот метод просто удаляет весь ряд.</p>
+<p>
+<A NAME="1041678"></a>Если Вы используете <CODE>insertRow</CODE>, значения, 
+присваиваемые столбцам, используются для нового ряда. Если перед этим Вы вызвали 
+метод <CODE>next</CODE> курсора, то текущие значения в ряду используются для 
+столбцов без присвоенных значений; иначе столбцы будут иметь значения null.
+Также, если некоторые столбцы таблицы не вошли в курсор, <CODE>insertRow</CODE> 
+вставляет null в эти столбцы. Место расположения вставляемого ряда зависит от 
+библиотеки производителя БД. Если Вам нужен доступ к ряду после вызова метода <CODE>insertRow</CODE>, 
+Вы обязаны сначала закрыть имеющийся курсор, а затем открыть новый.</p>
+<h6>ПРИМЕЧАНИЕ:</h6>
+<p> <A NAME="1046407"></a>
+В
+DB2 имеется тип данных <CODE>Time</CODE>. JavaScript не имеет соответствующего 
+типа данных. 
+Поэтому Вы не можете обновлять ряды значениями, использующими тип данных DB2 <CODE>Time</CODE>.</p>
+<H2>
+<A NAME="Managing Transactions"></A><A NAME="1040958"></a>Обслуживание 
+Транзакций</H2><hr><p><A NAME="1040960"></a>
+Транзакция это несколько действий с базой данных, выполняемых вместе. Либо все 
+эти действия выполняются успешно, либо все вместе терпят неудачу. Если эти 
+действия выполняют (окончательно) изменения БД, говорится, что транзакция 
+подтверждена. Вы можете также выполнить откат /roll back транзакции, т.е. не 
+подтвердить её; это отменяет все выполненные действия.</p>
+<p><A NAME="1040961"></a>
+Транзакции важны для поддержания целостности и структуры данных. В то время как 
+различные серверы БД реализуют механизм транзакций с некоторыми отличиями, 
+сервис LiveWire Database Service предоставляет одни и те же методы для 
+обслуживания транзакций на всех БД. Проверьте в документации продавца БД 
+информацию о согласованности данных и уровнях изоляции транзакций.</p>
+<p><A NAME="1050177"></a>
+Вы можете использовать явный контроль транзакции над выполнением любого набора 
+действий. Например, акции, модифицирующие БД, должны проходить под управлением 
+транзакций. Это акции, соответствующие операторам SQL <CODE>INSERT</CODE>,
+<CODE>UPDATE</CODE> и <CODE>DELETE</CODE>. Транзакции могут также использоваться 
+для контролирования согласованности данных.</p>
+<p><A NAME="1042477"></a>
+Для большинства БД, если Вы не выполняете явного управления транзакциями, машина 
+выполнения использует фоновый механизм БД - autocommit/автоподтверждение, когда 
+каждый оператор в БД рассматривается как отдельная транзакция.
+Каждый оператор подтверждается или откатывается немедленно на основе успеха или 
+неуспеха выполнения каждого отдельного оператора. Явное управление транзакциями 
+переопределяет работу этого механизма по умолчанию.</p>
+<p><A NAME="1042469"></a>
+В некоторых БД, таких как Oracle, autocommit это явный механизм, который LiveWire 
+включает для каждого отдельного оператора. В других БД, таких как Informix, autocommit 
+это поведение по умолчанию, если Вы не создаёте транзакцию. В общем, LiveWire 
+скрывает эти различия и переводит приложение в режим autocommit, если приложение 
+не использует <CODE>beginTransaction</CODE> для явного старта транзакции.</p>
+<p>
+<A NAME="1069773"></a>Для ANSI-БД Informix, LiveWire не использует autocommit. 
+Для этих БД приложение всегда использует транзакции, даже если никогда явно не 
+вызывает <CODE>beginTransaction</CODE>.
+Приложение обязано использовать <CODE>commitTransaction</CODE> или <CODE>rollbackTransaction</CODE> 
+для завершения транзакции.</p>
+<h6>ПРИМЕЧАНИЕ:</h6>
+<p> <A NAME="1041852"></a>
+Настоятельно советуем всегда использовать явный контроль транзакций при 
+выполнении изменений в БД. Это гарантирует, что изменения будут сделаны или 
+отменены вместе. Кроме того, при использовании обновляемых курсоров Вы также 
+всегда должны использовать явные транзакции для контроля за целостностью Ваших 
+данных в период между чтением данных (с помощью <CODE>next</CODE>) и их 
+изменением (с помощью<CODE> insertRow</CODE>, 
+<CODE>updateRow</CODE> или <CODE>deleteRow</CODE>).<br>
+Как указано в разделе <A HREF="#1070901">"Изменение Информации Базы Данных"</A>, 
+использование явного контроля транзакций и обновляемых курсоров необходимо для 
+того, чтобы исключить ошибки в некоторых БД, таких как Oracle и Informix.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1041884"></a>Использование Методов Управления 
+Транзакциями</h4><hr><p><A NAME="1040976"></a>
+Используйте следующие методы объектов <CODE>database</CODE> или <CODE>Connection</CODE> 
+для явного управления транзакциями:</p>
+<ul><LI><A NAME="1040978"></a>
+<CODE>beginTransaction</CODE> стартует новую транзакцию. Все действия, 
+  модифицирующие базу данных, группируются в данную транзакцию, называемую 
+  текущей транзакцией.</LI><LI><A NAME="1040981"></a>
+<CODE>commitTransaction</CODE> подтверждает текущую транзакцию. Этот метод 
+  пытается подтвердить все действия, выполненные после последнего вызова метода <CODE>beginTransaction</CODE>.</LI><LI><A NAME="1040985"></a>
+<CODE>rollbackTransaction</CODE> откатывает текущую транзакцию. Этот метод 
+  отменяет все изменения, сделанные с момента последнего вызова метода <CODE>beginTransaction</CODE>.</LI><A NAME="1042450"></a> 
+  Конечно, если Ваша БД не поддерживает транзакции, Вы не сможете использовать 
+  их. 
+  Например, БД Informix, созданная с использованием опции <CODE>NO</CODE> <CODE>LOG</CODE>, 
+  не поддерживает транзакции, и Вы получите ошибку при использовании данных 
+  методов.</ul><p><A NAME="1050215"></a>
+Сервис LiveWire Database Service не поддерживает вложение транзакций. Если Вы 
+вызовете <CODE>beginTransaction</CODE> несколько раз до подтверждения или отката 
+первой открытой Вами транзакции, Вы получите ошибку.</p>
+<p>
+<A NAME="1045475"></a>Для объекта <CODE>database</CODE> максимум области 
+видимости транзакции ограничен текущим клиентским запросом (HTML-страницей) в 
+приложении. Если приложение существует на странице до вызова метода <CODE>commitTransaction</CODE> 
+или <CODE>rollbackTransaction</CODE>, то транзакция автоматически подтверждается 
+или откатывается на основе установок параметра
+<CODE>commitflag</CODE>, задаваемого при соединении с БД.</p>
+<p><A NAME="1045477"></a>
+Для объектов <CODE>Connection</CODE> область видимости транзакции ограничена 
+периодом существования этих объектов. Если Вы освобождаете соединение или 
+закрываете пул соединений до вызова методов
+<CODE>commitTransaction</CODE> или <CODE>rollbackTransaction</CODE>, то 
+транзакция автоматически подтверждается или откатывается на основе установок 
+параметра
+<CODE>commitflag</CODE>, задаваемого при соединении с БД методом <CODE>connect</CODE> 
+или в конструкторе <CODE>DbPool</CODE>.</p>
+<p><A NAME="1040990"></a>
+Если текущая транзакция отсутствует (то есть, если приложение не вызывало
+<CODE>beginTransaction</CODE>), вызовы методов <CODE>commitTransaction</CODE> и <CODE>rollbackTransaction</CODE> 
+могут привести к ошибке в БД.</p>
+<p><A NAME="1042224"></a>
+Транзакция может работать с разными объёмами данных. Пример из раздела <A HREF="#1070901">"Изменение 
+Информации Базы Данных"</A> создаёт одну транзакцию для модифицирования всех 
+рядов курсора. Если в Вашем курсоре небольшое количество рядов, такой подход 
+будет оправданным.</p>
+<p>
+<A NAME="1045545"></a>Если, однако, Ваш курсор возвращает тысячи рядов, Вы 
+можете обработать этот курсор в нескольких транзакциях. Такой подход снизит 
+размер транзакций и улучшит доступ к информации.</p>
+<p><A NAME="1042305"></a>
+Если Вы разбиваете Ваш процесс на несколько транзакций, убедитесь, что вызов
+<CODE>next</CODE> и ассоциированный вызов <CODE>updateRow</CODE> или <CODE>deleteRow</CODE> 
+происходят внутри одной транзакции. Если Вы получаете ряд в одной транзакции, 
+завершаете её, а <i>затем</i> пытаетесь обновить или удалить ряд, Вы можете 
+получить ошибку в БД.</p>
+<p>
+<A NAME="1045575"></a>Выбор способа обработки транзакции зависит от целей Вашего 
+приложения.
+Нужно обратиться к документации создателя БД для получения информации о том, как 
+использовать транзакции для данного типа БД.</p>
+<H2>
+<A NAME="Working with Binary Data"></A>
+<A NAME="1065726"></a>Работа с Двоичными/Бинарными Данными</H2><hr><p><A NAME="1065728"></a>
+Двоичные данные для мультимедиа-содержимого, такого как изображение или звуковой 
+файл, хранятся в БД в виде большого двоичного объекта/binary
+large object (BLOb). Можно использовать технику двух видов для обработки 
+бинарных данных в приложениях JavaScript:</p>
+<ul><LI><A NAME="1065729"></a>
+  Хранить имена файлов в БД, а данные - в отдельных файлах.</LI><LI><A NAME="1065730"></a>
+  Хранить данные в БД как BLOb<span lang="en-us">'</span>ы и осуществлять доступ 
+  к ним через методы класса <CODE>Blob</CODE>.</LI>
+</ul><p><A NAME="1065731"></a>Если Вам не нужно хранить BLOb-данные в БД, 
+Вы можете хранить в БД имена файлов и осуществлять доступ к этим файлам в Вашем 
+приложении с помощью стандартных тэгов HTML. Например, если Вы хотите вывести 
+изображение в каждом ряду таблицы БД, Вы можете создать в таблице столбец с 
+названием
+<CODE>imageFileName</CODE>, содержащий имя нужного файла изображения. Затем 
+можно использовать такое выражение HTML
+для показа изображения в каждом ряду:</p>
+<PRE><A NAME="1065732"></a>&lt;IMG SRC=`mycursor.imageFileName`&gt;</PRE>
+<p><A NAME="1065734"></a>
+Когда курсор проходит по таблице, имя файла в тэге <CODE>IMG</CODE> изменяется 
+на ссылку на соответствующий файл.</p>
+<p><A NAME="1065735"></a>Для того чтобы Вы могли манипулировать реальными 
+двоичными данными в Вашей БД, машина выполнения JavaScript распознаёт значения 
+столбца, являющиеся BLOb-данными. То есть,
+когда программа создаёт объект <CODE>Cursor</CODE>, если один из столбцов 
+таблицы БД содержит
+BLOb-данные, программа создаёт <CODE>Blob</CODE> -объект для соответствующего 
+значения в объекте
+<CODE>Cursor</CODE>. Вы можете затем использовать методы <CODE>Blob</CODE> 
+-объектов для отображения этих данных. Также, если нужно вставить BLOb-данные в 
+БД, программа предоставляет Вам для использования глобальную функцию.</p>
+<p><A NAME="1075085"></a>
+В таблице показаны методы и функции для работы с BLOb-данными.</p>
+<A NAME="1074312"></a>
+<h5><A NAME="1065741"></a>Таблица 9.2&nbsp; Методы и Функции для Работы 
+с Blob<span lang="en-us">'</span>ами</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1065745"></a>
+  Метод или Функция<TH VALIGN=baseline ALIGN=left><A NAME="1065747"></a>Описание<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1065750"></a>
+<CODE>blobImage</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1065752"></a>
+    Метод, используемый при отображении BLOb-данных, хранимых в БД. Возвращает 
+    тэг HTML <CODE>IMG</CODE> для специфицированного типа изображения (GIF, JPEG 
+    и т.д.).</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1065756"></a>
+<CODE>blobLink</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1065759"></a>
+  Метод, используемый при создании ссылки, которая указывает на BLOb-данные 
+  гиперссылкой. Возвращает гиперссылку HTML на BLOb.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1065762"></a>
+<CODE>blob</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1065764"></a>
+    Глобальная функция, используема для вставки или обновления данных в ряду, 
+    содержащем BLOb-данные. Присваивает BLOb-данные столбцу в курсоре.</P></TABLE><p><A NAME="1065765"></a>
+Метод <CODE>blobImage</CODE> вызывает BLOb из БД, создаёт временный файл 
+специфицированного формата и генерирует HTML-тэг <CODE>IMG</CODE>, который 
+ссылается на временный файл.
+Машина выполнения удаляет временный файл после генерации страницы и отправки её 
+клиенту.</p>
+<p>
+<A NAME="1065766"></a>Метод <CODE>blobLink</CODE> вызывает BLOb-данные из БД, 
+создаёт временный файл и генерирует гипертекстовую ссылку HTML на этот временный 
+файл. Машина выполнения удаляет временный файл после того как пользователь 
+щёлкнет на ссылке или через 60 секунд после того как запрос будет выполнен.</p>
+<p><A NAME="1065768"></a>
+Следующий пример иллюстрирует использование <CODE>blobImage</CODE> и <CODE>blobLink</CODE> 
+для создания временных файлов. В данном случае таблица <CODE>FISHTBL</CODE> 
+содержит 4 столбца: ID(ентификатор), name/имя и два изображения. Одно из них 
+является уменьшенной копией/thumbnail изображения; другое - большим изображением. 
+Код записывает HTML для отображения имени, уменьшенной копии и ссылки на большое 
+изображение.</p>
+<PRE><A NAME="1065769"></a>cursor = connobj.cursor ("select * from fishtbl");</PRE><PRE><A NAME="1066243"></a>if ( cursor &amp;&amp; (connobj.majorErrorCode() == 0) ) {<br>
+&nbsp;&nbsp;&nbsp;while (cursor.next()) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write (cursor.name);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write (cursor.picture.blobImage("gif"));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write (cursor.picture.blobLink("image\gif", "Link" + cursor.id));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write ("&lt;BR&gt;");<br>&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;cursor.close();<br>}</PRE>
+<p><A NAME="1065770"></a>
+Если <CODE>FISHTBL</CODE> содержит ряды для 4 рыб, пример может дать на выходе 
+такой HTML:</p>
+<PRE><A NAME="1065771"></a>Cod &lt;IMG SRC="LIVEWIRE_TEMP9"&gt;<br>
+&lt;A HREF="LIVEWIRE_TEMP10"&gt;Link1 &lt;/A&gt; &lt;BR&gt;<br>Anthia &lt;IMG SRC="LIVEWIRE_TEMP11"&gt;<br>
+&nbsp;&nbsp;&nbsp;&lt;A HREF="LIVEWIRE_TEMP12"&gt;Link2 &lt;/A&gt; &lt;BR&gt;<br>Scorpion
+&lt;IMG SRC="LIVEWIRE_TEMP13"&gt;<br>&nbsp;&nbsp;&nbsp;&lt;A HREF="LIVEWIRE_TEMP14"&gt;Link3 &lt;/A&gt;
+&lt;BR&gt;<br>Surgeon &lt;IMG SRC="LIVEWIRE_TEMP15"&gt;<br>
+&lt;A HREF="LIVEWIRE_TEMP16"&gt;Link4 &lt;/A&gt; &lt;BR&gt;</PRE>
+<p><A NAME="1065772"></a>
+Если Вам нужно добавить BLOb-данные в БД, используйте глобальную функцию <CODE>blob</CODE>. 
+Она вводит
+BLOb-данные в столбец в обновляемом курсоре. В противоположность <CODE>blobImage</CODE> 
+и
+<CODE>blobLink</CODE>, функция <CODE>blob</CODE> является функцией верхнего 
+уровня, а не методом.</p>
+<p><A NAME="1065774"></a>
+Следующие операторы вставляют BLOb-данные в столбцы ряда, а затем обновляют этот 
+ряд таблицы
+<CODE>FISHTBL</CODE> в БД. В курсоре имеется единственный ряд.</p>
+<PRE><A NAME="1066374"></a>// Начало транзакции.
+
+<br>database.beginTransaction();</PRE>
+<PRE><A NAME="1066264"></a>// Создание курсора.
+
+<br>fishCursor = database.cursor ("select * from fishtbl where
+<br>&nbsp;&nbsp;&nbsp;name='Harlequin Ghost Pipefish'", true);</PRE><PRE><A NAME="1066275"></a>
+// Убедимся, что курсор создан.
+
+<br>if ( fishCursor &amp;&amp; (database.majorErrorCode() == 0) ) {</PRE>
+<PRE><A NAME="1066262"></a>&nbsp;&nbsp;&nbsp;// Позиционируем указатель на ряд.<br>
+&nbsp;&nbsp;&nbsp;rowexists = fishCursor.next();</PRE><PRE><A NAME="1066340"></a>
+&nbsp;&nbsp;&nbsp;if ( rowexists ) {</PRE><PRE><A NAME="1065777"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Присваиваем/вставляем blob-данные.<br>
+fishCursor.picture = blob ("c:\\data\\fish\\photo\\pipe.gif");</PRE><PRE><A NAME="1065778"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Обновляем ряд.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fishCursor.updateRow ("fishtbl");</PRE><PRE><A NAME="1066351"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Закрываем курсор и подтверждаем изменения.
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fishCursor.close();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;database.commitTransaction();<br>&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Иначе закрываем курсор и выполняем откат транзакции.
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fishCursor.close();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;database.rollbackTransaction();<br>&nbsp;&nbsp;&nbsp;}<br>}<br>
+else {<br>
+&nbsp;&nbsp;&nbsp;// Иначе вообще не получаем курсор; откатываем транзакцию.<br>
+database.rollbackTransaction();<br>}</PRE>
+<p><A NAME="1065779"></a>Помните, что backslash (\) это escape-символ в JavaScript. 
+Исходя из этого, Вы обязаны использовать двойной обратный слэш в именах файлов NT,
+как было в данном примере.</p>
+<H2>
+<A NAME="Calling Stored Procedures"></A><A NAME="1030702"></a>Вызов Хранимых 
+Процедур</H2><hr><p><A NAME="1030703"></a>
+Хранимые процедуры являются неотъемлемой частью работы с реляционной БД. Они 
+являются средством автоматизации часто выполняемых процессов, но их 
+использование даёт также и некоторые другие преимущества:</p>
+<ul><LI><A NAME="1030704"></a>
+<I>Ограничение доступа.</I> Вы можете ограничить доступ к БД, давая 
+  пользователям доступ только через хранимые процедуры. Пользователь имеет 
+  доступ к данным, но только в пределах хранимой процедуры. Любой другой доступ 
+  запрещается.</LI><LI><A NAME="1030705"></a>
+<I>Целостность данных.</I> Хранимые процедуры создают гарантии правильного ввода 
+  и сохранения информации. Автоматизируя сложные транзакции, Вы уменьшите 
+  возможность возникновения ошибок по вине пользователя.</LI><LI><A NAME="1030706"></a><I>
+  Эффективность.</I> Хранимая процедура компилируется только один раз - при 
+  выполнении в первый раз. Последующие выполнения проходят быстрее, поскольку 
+  фаза компиляции пропускается. Это также помогает уменьшит нагрузку на сеть, 
+  так как код хранимой процедуры загружается только один раз.</LI>
+</ul><p><A NAME="1030707"></a>Сервис LiveWire Database Service 
+предоставляет два класса для работы с хранимыми процедурами: <CODE>Stproc</CODE> 
+и <CODE>Resultset</CODE>. используя методы этих классов, Вы можете вызывать 
+хранимые процедуры и манипулировать результатами их&nbsp; работы.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1030717"></a>Обмен Информацией</h4><hr><p><A NAME="1030718"></a>
+Работа хранимых процедур имеет отличия на разных БД, поддерживаемых сервисом LiveWire Database
+Service. Самое важное для LiveWire - это отличия в передаче информации в и из 
+хранимой процедуры в приложении на JavaScript. Вы всегда используете параметры 
+ввода хранимой процедуры для передачи информации в хранимую процедуру.</p>
+<p><A NAME="1045964"></a>
+Концептуально имеются несколько способов, которыми можно запросить информацию из 
+хранимой процедуры. Не всегда производитель БД даёт возможность запрашивать 
+информацию любым их этих способов.</p>
+<H4>
+<A NAME="Head3;"></A><A NAME="1030744"></a>Результирующие Наборы</H4><hr><p><A NAME="1046515"></a>
+Хранимая процедура может выполнять один или более операторов <CODE>SELECT</CODE>, 
+запрашивая информацию из БД. Вы можете представить эту информацию как 
+виртуальную таблицу, очень похожую на курсор &quot;только для чтения&quot;.
+(О курсорах см. раздел <A HREF="#1030418">"Манипулирование Результатами 
+Выполнения Запросов с Помощью Курсоров"</A>).</p>
+<p>
+<A NAME="1071075"></a>LiveWire использует класс <CODE>Resultset</CODE> как 
+контейнер рядов, возвращаемых одним оператором <CODE>SELECT</CODE> хранимой 
+процедуры. Если хранимая процедура допускает наличие нескольких операторов <CODE>SELECT</CODE>, 
+Вы получите отдельные объекты <CODE>Resultset</CODE> для каждого оператора <CODE>SELECT</CODE>. 
+Метод <CODE>resultSet</CODE> класса <CODE>Stproc</CODE> используется для 
+получения результирующего набора объектов, а затем методы этих объектов 
+используются для манипулирования результирующим набором.</p>
+<p>
+<A NAME="1071072"></a>БД различных производителей возвращают результирующий 
+набор по-разному:</p>
+<ul><LI><A NAME="1071038"></a>Хранимые процедуры Sybase могут напрямую 
+  возвращать результат выполнения одного или более операторов <CODE>SELECT</CODE>.</LI><LI><A NAME="1071036"></a>
+  Хранимые процедуры
+Informix могут иметь несколько return-значений. Несколько return-значений 
+  подобны столбцам одного ряда таблицы, за исключение того, что эти столбцы 
+  именованы. Кроме того, если Вы используете возможность
+<CODE>RESUME</CODE>, хранимая процедура может иметь набор этих return-значений. 
+  Это набор напоминает ряды таблицы. LiveWire создаёт один результирующий набор 
+  для вмещения этой виртуальной таблицы.</LI><LI><A NAME="1046537"></a>Хранимые 
+  процедуры Oracle используют ref-курсоры для вмещения рядов, возвращаемых 
+  оператором <CODE>SELECT</CODE>. Вы можете открыть несколько ref-курсоров в 
+  хранимой процедуре Oracle, чтобы вместить ряды , возвращаемые разными 
+  операторами <CODE>SELECT</CODE>. LiveWire создаёт отдельные
+<CODE>Resultset</CODE> -объекты для каждого ref-курсора.</LI><LI><A NAME="1046626"></a>
+  Хранимые процедуры
+DB2 используют открытые курсоры для возвращения результирующих наборов.</LI></ul><H4>
+<A NAME="Head3;"></A>
+<A NAME="1046628"></a>Параметры Вывода и&nbsp; Ввода/Вывода</H4><hr><p><A NAME="1046569"></a>
+Помимо стандартных параметров ввода, некоторые производители БД разрешают 
+вводить другие типы параметров для хранимых процедур. Параметры вывода хранят 
+информацию при возвращении из хранимой процедуры и параметры ввода/вывода, 
+передающие и возвращающие информацию.</p>
+<p><A NAME="1046572"></a>
+Для большинства БД Вы используете методы <CODE>outParamCount</CODE> и <CODE>outParameters</CODE> 
+класса <CODE>Stproc</CODE> для доступа к параметрам вывода и ввода/вывода.  Informix, 
+однако, не разрешает параметры вывода и ввода/вывода. Соответственно, Вы не 
+должны использовать методы <CODE>outParamCount</CODE> и <CODE>outParameters</CODE> 
+с хранимыми процедурами Informix.</p>
+<H4>
+<A NAME="Head3;"></A><A NAME="1046259"></a>Return-Значения</H4><hr><p><A NAME="1046260"></a>
+Как и вызов функции, хранимая процедура может иметь возвращаемое/return значение. 
+Для Oracle и Sybase это
+return-значение является дополнением к возвращаемому результирующему набору.</p>
+<p><A NAME="1046597"></a>
+Метод <CODE>returnValue</CODE> класса <CODE>Stproc</CODE> используется для 
+доступа к
+return-значению. Однако return-значения для хранимой процедуры Informix 
+используются для генерации её результирующего набора. Поэтому <CODE>returnValue</CODE> 
+всегда возвращает null для хранимых процедур Informix. Помимо этого, return-значения 
+недоступны для хранимых процедур ODBC и DB2.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1046076"></a>Этапы Использования Хранимых Процедур</h4>
+<hr><p><A NAME="1074616"></a>
+После установки соединения с БД этапы использования хранимой процедуры в Вашем 
+приложении несколько различаются для разных БД:</p>
+<OL><LI><A NAME="1046157"></a>
+(Только DB2) Хранимая процедура регистрируется в соответствующих системных 
+  таблицах. (Это выполняется вне JavaScript.)</LI><LI><A NAME="1030797"></a>
+(DB2, ODBC и Sybase) Определяется прототип для Вашей хранимой процедуры.</LI><LI><A NAME="1070647"></a>
+(Все БД) Выполняется хранимая процедура.</LI><LI><A NAME="1070648"></a>
+(Все БД) Создаётся <CODE>resultSet</CODE> -объект и получаются данные из этого 
+  объекта.</LI><LI><A NAME="1070649"></a>
+(DB2, ODBC и Sybase) Выполнение завершается доступом к return-значению.</LI><LI><A NAME="1038696"></a>
+  (DB2, ODBC, Oracle и Sybase) Выполнение завершается получением параметров 
+  вывода.</LI></OL>
+<p>
+<A NAME="1046649"></a>Заметьте, что для разных БД Вы можете завершить выполнение 
+Вашей хранимой процедуры получением return-значения или доступом к параметрам 
+вывода. После того как одно их этих двух действий выполнено, Вы не можете больше 
+работать с результирующим набором, созданным при выполнении хранимой процедуры.</p>
+<p><A NAME="1030801"></a>
+В следующих разделах эти этапы рассматриваются по отдельности.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1046128"></a>Регистрация Хранимой Процедуры</h4>
+<hr><p><A NAME="1046129"></a>
+Этот этап выполняется только в DB2.</p>
+<p><A NAME="1070650"></a>
+В
+DB2 имеются различные системные таблицы, в которые Вы можете записать Вашу 
+хранимую процедуру. В общем, вставка хранимой процедуры в эти таблицы не 
+обязательна. Однако, для того чтобы использовать Вашу хранимую процедуру с LiveWire,
+Вы обязаны создать вхождения в этих таблицах. Этот этап выполняется вне 
+приложения JavaScript.</p>
+<p>
+<A NAME="1046130"></a>Для обычного DB2-сервера Вы обязаны создать системную 
+таблицу <CODE>DB2CLI.PROCEDURES</CODE> и ввести в неё Ваши DB2-хранимые 
+процедуры. <CODE>DB2CLI.PROCEDURES</CODE> это таблица-псевдокаталог.</p>
+<p>
+<A NAME="1046131"></a>Если Ваш DB2 предназначен для IBM MVS/EA версии 4.1 или 
+более поздней, Вы обязаны определить имена Ваших хранимых процедур в 
+таблице-каталоге <CODE>SYSIBM.SYSPROCEDURES</CODE>.</p>
+<p><A NAME="1046132"></a>
+Не забывайте, что Вы используете C, C++ или другой язык для написания DB2-хранимой 
+процедуры. Типы данных, которые Вы используете в этих языках, не соответствуют 
+типам данных, доступным в DB2. Следовательно, если Вы добавляете хранимую 
+процедуру в <CODE>DB2CLI.PROCEDURES</CODE> или в <CODE>SYSIBM.SYSPROCEDURES</CODE>, 
+убедитесь, что записаны соответствующие типы данных DB2 для параметров хранимой 
+процедуры, а не типы данных исходных языков.</p>
+<p><A NAME="1046133"></a>Информацию о типах данных DB2 и о том, как сделать 
+вхождения в таблицах, см. в документации по DB2.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1030802"></a>Определение Прототипа для Хранимой 
+Процедуры</h4>
+<hr>
+<p>
+<A NAME="1030804"></a>Этот этап относится только к пользовательским и системным 
+хранимым процедурам DB2, ODBC и Sybase. Вам не нужно определять прототип 
+хранимых процедур БД Oracle или Informix.</p>
+<p><A NAME="1030805"></a>
+Для DB2, ODBC и Sybase программа не может определить в процессе выполнения, 
+предназначен определённый параметр для ввода, вывода, или для того и другого. 
+Соответственно, после того как Вы подключились к БД, Вы обязаны создать 
+прототип, предоставляющий информацию о хранимой процедуре, которую Вы хотите 
+использовать, через метод <CODE>storedProcArgs</CODE> объекта <CODE>database</CODE> 
+или <CODE>DbPool</CODE>.</p>
+<p>
+<A NAME="1030813"></a>Вам нужно использовать по одному прототипу для каждой 
+хранимой процедуры Вашего приложения.
+Программа игнорирует дополнительные прототипы для одной и той же процедуры.</p>
+<p><A NAME="1030814"></a>
+В прототипе Вы предоставляете имя хранимой процедуры и тип каждого из её 
+параметров.
+Параметр обязан быть: для ввода/input (<CODE>IN</CODE>), вывода/output (<CODE>OUT</CODE>), 
+а для ввода и вывода -
+(<CODE>INOUT</CODE>).<br>
+Например, чтобы создать прототип для хранимой процедуры
+<CODE>newhire</CODE>, имеющей два параметра ввода и один параметр вывода, можно 
+использовать такой вызов метода:</p>
+<PRE><A NAME="1030815"></a>poolobj.storedProcArgs("newhire", "IN", "IN", "OUT");</PRE>
+<h2><A NAME="Head2;"></A><A NAME="1040292"></a>Выполнение Хранимой Процедуры</h2>
+<hr>
+<p><A NAME="1030817"></a>
+Этот этап применяется ко всем хранимым процедурам.</p>
+<p><A NAME="1030822"></a>
+Для выполнения хранимой процедуры Вы создаёте <CODE>Stproc</CODE> -объект, 
+используя метод <CODE>storedProc</CODE> объектов <CODE>database</CODE> или <CODE>Connection</CODE>. 
+Создание такого объекта автоматически вызывает хранимую процедуру. При создании 
+объекта хранимой процедуры Вы специфицируете имя процедуры и любые параметры 
+процедуры.</p>
+<p><A NAME="1030830"></a>
+Например, у Вас есть хранимая процедура <CODE>newhire</CODE>, принимающая 
+параметры - строку и целое число. Следующий вызов метода создаёт <CODE>spObj</CODE> 
+-объект хранимой процедуры и вызывает хранимую процедуру <CODE>newhire</CODE>:</p>
+<PRE><A NAME="1030831"></a>spObj = connobj.storedProc("newhire", "Fred Jones", 1996);</PRE>
+<p><A NAME="1038748"></a>
+В общем, Вы обязаны предоставить значения для всех параметров ввода/вывода для 
+хранимой процедуры. Если хранимая процедура имеет значение по умолчанию, 
+определённое для одного из её параметров, Вы можете использовать директиву <CODE>"/Default/"</CODE> 
+для специфицирования этого значения по умолчанию. Аналогично, если хранимая 
+процедура может принимать null-значение одного из своих параметров, Вы можете 
+специфицировать это null-значение либо директивой
+<CODE>"/Null/"</CODE>, либо передав само null-значение.</p>
+<p><A NAME="1038750"></a>
+Например, предположим, хранимая процедура <CODE>demosp</CODE> принимает два 
+строковых параметра и один целочисленный. Вы можете предоставить эти параметры 
+таким образом:</p>
+<PRE><A NAME="1038752"></a>spobj = connobj.storedProc("demosp", "Param_1", "Param_2", 1);</PRE>
+<p>
+<A NAME="1039982"></a>Альтернативно, чтобы передать null для второго параметра и 
+использовать значение по умолчанию для третьего параметра, Вы можете 
+использовать один из следующих операторов:</p>
+<PRE><A NAME="1039996"></a>spobj = connobj.storedProc("demosp", "Param_1", "/Null/", "/Default/");
+spobj = connobj.storedProc("demosp", "Param_1", null, "/Default/");</PRE>
+<h6><b>ПРИМЕЧАНИЕ:</b></h6>
+<p><A NAME="1048106"></a>&nbsp;В Informix значения по умолчанию обязаны 
+появляться только после всех специфицированных значений. Например, Вы не можете 
+использовать <CODE>/Default/</CODE> для второго параметра процедуры, а затем 
+специфицировать значение для третьего параметра.<br>
+<A NAME="1039984"></a>&nbsp;Вы можете также использовать директивы <CODE>"/Default/"</CODE> 
+и <CODE>"/Null/"</CODE> для параметров ввода/вывода.</p>
+<p>
+<A NAME="1070740"></a>В Oracle хранимая процедура может принимать ref -курсоры 
+как параметры input/output или как output-параметры. Например, у Вас имеется 
+хранимая процедура Oracle под названием <CODE>proc1</CODE>, принимающая 4 
+параметра: ref -курсор, целочисленное значение, другой ref -курсор и другое 
+целочисленное значение.</p>
+<p>
+Вызов этой хранимой процедуры из SQL Plus может выглядеть так:</p>
+<PRE><A NAME="1046803"></a>execute proc1 <CODE>(refcursor1</CODE>, 3, <CODE>refcursor2</CODE>, 5);</PRE>
+<p>
+<A NAME="1046804"></a>Однако, если Вы вызываете эту процедуру из приложения JavaScript, 
+Вы не предоставляете ref -курсор-параметры. Вместо этого эквивалент может быть 
+таким:</p>
+<PRE><A NAME="1046805"></a>spobj = connobj.storedProc("proc1", 3, 5);</PRE>
+<p><A NAME="1038746"></a>
+О параметрах вывода см. <A HREF="#1038900">"Работа с Параметрами Вывода."</A> 
+Параметры вывода не могут быть null; однако Вы можете присвоить null-значение 
+параметрам ввода или ввода/вывода.</p>
+<p>
+<A NAME="1065843"></a>В таблице дано резюме по методам объекта хранимой 
+процедуры.</p>
+<A NAME="1074320"></a><h5><A NAME="1048305"></a>
+Таблица 9.3&nbsp;<CODE>Stproc</CODE> - методы</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1030834"></a>Метод<TH VALIGN=baseline ALIGN=left><A NAME="1030837"></a>
+  Описание<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1030843"></a>
+<CODE>resultSet</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1030845"></a>
+  Возвращает следующий результирующий набор для хранимой процедуры.</P><P><A NAME="1030846"></a>
+  Для Informix Вы можете иметь нуль или более результирующих наборов. Для других 
+  БД Вы можете иметь нуль, один или более результирующих наборов.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1030852"></a>
+<CODE>returnValue</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1030854"></a>
+  Запрашивает return-значение хранимой процедуры.</P><P><A NAME="1030855"></a>
+  Для Informix, DB2 и ODBC этот метод всегда возвращает null.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1030861"></a>
+<CODE>outParameters</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1030863"></a>
+  Возвращает специфицированный параметр вывода.</P><P><A NAME="1069613"></a>
+  Поскольку хранимые процедуры Informix не используют параметры вывода, не 
+  используйте этот метод с Informix.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1030870"></a>
+<CODE>outParamCount</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1030872"></a>
+  Возвращает количество параметров вывода.</P><P><A NAME="1069608"></a>
+  Для Informix этот метод всегда возвращает 0, поскольку хранимые процедуры Informix 
+  не используют параметров вывода.</P>
+</TABLE>
+<h2><A NAME="Head2;"></A><A NAME="1030876"></a>Работа с Результирующими Наборами</h2>
+<hr>
+<p><A NAME="1030877"></a>
+Этот этап применяется ко всем хранимым процедурам.</p>
+<p><A NAME="1030881"></a>
+Как указано в разделе <A HREF="#1030744">"Результирующие наборы&quot;</A>, разные БД 
+возвращают результирующие наборы разными способами. Например, у Вас имеется 
+таблица <CODE>CUSTINFO</CODE> со столбцами
+<CODE>id</CODE>, <CODE>city</CODE> и <CODE>name</CODE>. В Sybase Вы можете 
+использовать такую процедуру для получения первых 200 рядов таблицы:</p>
+<PRE><A NAME="1030883"></a>create proc getcusts as<br>begin<br>&nbsp;&nbsp;&nbsp;select id, name, city
+from custinfo where custno &lt; 200<br>end</PRE>
+<p><A NAME="1030884"></a>
+Если <CODE>CUSTINFO</CODE> является таблицей Informix, эквивалентная процедура в Informix 
+может быть:</p>
+<PRE><A NAME="1030885"></a>create procedure getcusts returning int, char(15), char(15);<br>
+define rcity, rname char (15);<br>define i int;</A></PRE><PRE><A NAME="1030886"></a>foreach<br>&nbsp;
+&nbsp;&nbsp;select id, name, city into i, rname, rcity <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+from custinfo<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where id &lt; 200;</PRE><PRE><A NAME="1030887"></a>
+&nbsp;&nbsp;&nbsp;return i, rname, rcity with resume;<br>end foreach;<br>end procedure;</PRE>
+<p><A NAME="1035316"></a>
+Если <CODE>CUSTINFO</CODE> - таблица Oracle, эквивалентная процедура Oracle 
+может быть:</p>
+<PRE><A NAME="1050775"></a>create or replace package orapack as<br>&nbsp;&nbsp;&nbsp;type custcurtype
+is ref cursor return custinfo%rowtype<br>end orapack;</PRE><PRE><A NAME="1050776"></a>create or replace
+custresultset (custcursor inout orapack.custcurtype)<br>as begin<br>&nbsp;&nbsp;&nbsp;open custcursor
+for select id, name, city from custinfo <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where id &lt; 200<br>
+end custresultset;</PRE>
+<p><A NAME="1050768"></a>Во всех случаях Вы создаёте <CODE>resultSet</CODE> 
+-объект для получения информации из хранимой процедуры. Вы делаете это через 
+использование метода <CODE>resultSet</CODE> объекта хранимой процедуры так:</p>
+<PRE><A NAME="1030893"></a>resObj = spObj.resultSet();</PRE>
+<p><A NAME="1030894"></a>
+Как и для <CODE>Cursor</CODE> -объектов, <CODE>resultSet</CODE> -объекты 
+содержат текущий ряд, то есть ряд, на котором стоит указатель в результирующем 
+наборе. Вначале указатель позиционирован перед первым рядом результирующего 
+набора. Чтобы увидеть значения рядов результирующего набора, Вы используете 
+метод <CODE>next</CODE> для перемещения указателя по рядам результирующего 
+набора, как показано в следующем примере:</p>
+<PRE><A NAME="1030898"></a>spobj = connobj.storedProc("getcusts");</PRE><PRE><A NAME="1069453"></a>
+if ( spobj &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1030899"></a>
+&nbsp;&nbsp;&nbsp;// Создаётся новый <CODE>resultSet</CODE>-объект.<br>&nbsp;&nbsp;&nbsp;
+resobj = spobj.resultSet();</PRE><PRE><A NAME="1030900"></a>&nbsp;&nbsp;&nbsp;// Перед тем как продолжить, убедитесь, что Вы получили результирующий набор.
+
+<br>&nbsp;&nbsp;&nbsp;if ( resobj &amp;&amp; (connobj.majorErrorCode() == 0) ) {
+</PRE><PRE><A NAME="1065894"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Сначала перемещает указатель <CODE>resultSet-объекта </CODE>к первому
+    // ряду результирующего набора, а затем циклически проходит по рядам.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+while (resObj.next())<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;write("&lt;TR&gt;&lt;TD&gt;" + resObj.name + "&lt;/TD&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write("&lt;TD&gt;" + resObj.city + "&lt;/TD&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+write("&lt;TD&gt;" + resObj.id + "&lt;/TD&gt;&lt;/TR&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resobj.close();<br>&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1030905"></a>
+До тех пор, пока в результирующем наборе имеется следующий ряд, метод <CODE>next</CODE> 
+возвращает
+<CODE>true</CODE> и перемещает указатель к следующему ряду. Если указатель 
+достиг последнего ряда результирующего набора, метод <CODE>next</CODE> 
+возвращает <CODE>false</CODE>.</p>
+<p><A NAME="1030909"></a>
+Предыдущий пример работает с хранимой процедурой Sybase. В этом случае <CODE>resultSet</CODE> 
+-объект содержит именованное свойство для каждого столбца результирующего набора. 
+Для процедур Informix и DB2, по контрасту, объект не содержит именованных 
+столбцов. В этом случае Вы можете получить значения, ссылаясь на позицию столбца. 
+Так, для Informix и DB2 Вы можете использовать такой код для вывода аналогичной 
+информации:</p>
+<PRE><A NAME="1065908"></a>spobj = connobj.storedProc("getcusts");</PRE><PRE><A NAME="1069498"></a>
+if ( spobj &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1065909"></a>&nbsp;&nbsp;&nbsp;
+// Создаётся новый <CODE>resultSet</CODE>-объект.
+
+<br>&nbsp;&nbsp;&nbsp;resobj = spobj.resultSet();</PRE>
+<PRE><A NAME="1065910"></a>&nbsp;&nbsp;&nbsp;// Перед тем как продолжить, убедитесь, что Вы получили результирующий набор.<br>
+&nbsp;&nbsp;&nbsp;if ( resobj &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1065911"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Сначала перемещает указатель <CODE>resultSet-объекта </CODE>к первому
+    // ряду результирующего набора, а затем циклически проходит по рядам.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (resObj.next())<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+write("&lt;TR&gt;&lt;TD&gt;" + resObj[1] + "&lt;/TD&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;write("&lt;TD&gt;" + resObj[2] + "&lt;/TD&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;write("&lt;TD&gt;" + resObj[0] + "&lt;/TD&gt;&lt;/TR&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resobj.close();<br>&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p>
+<A NAME="1030911"></a>Вы можете использовать позицию столбца для результирующих 
+наборов любой БД, а не только с Informix и DB2. Вы можете использовать имя столбца для хранимой процедуры всех 
+типов БД, а не только
+Informix или DB2.</p>
+<H4><A NAME="Head3;"></A><A NAME="1039563"></a>Несколько Результирующих Наборов</H4>
+<hr>
+<p>
+<A NAME="1030912"></a>Хранимая процедура Sybase, Oracle, DB2 или ODBC может 
+создавать несколько результирующих наборов. В этом случае хранимая процедура 
+предоставляет один <CODE>resultSet</CODE> -объект для каждого набора.<br>
+Предположим, Ваша хранимая процедура выполняет такие операторы SQL:</p>
+<PRE><A NAME="1030913"></a>
+select name from customers where id = 6767<br>select * from orders where id = 6767</PRE>
+<p><A NAME="1030914"></a>
+Вы можете использовать несколько <CODE>resultSet</CODE> -объектов, генерируемых 
+этими операторами, таким образом:</p>
+</P>
+<PRE><A NAME="1030915"></a>// Этот оператор нужен для DB2, ODBC и Sybase. <br>
+poolobj.storedProcArgs("GetCustOrderInfo","IN");</PRE><PRE><A NAME="1065990"></a>
+spobj = connobj.storedProc("GetCustOrderInfo",6767);</PRE><PRE><A NAME="1069506"></a>
+if ( spobj &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1030916"></a>&nbsp;&nbsp;&nbsp;
+resobj1 = spobj.resultSet();
+
+<br>&nbsp;&nbsp;&nbsp;// Перед тем как продолжить, убедитесь, что результирующий набор существует.<br>
+&nbsp;&nbsp;&nbsp;if ( resobj1 &amp;&amp; (connobj.majorErrorCode() == 0) ) {</PRE><PRE><A NAME="1065979"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Первый результирующий набор возвращает только один ряд. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Убедитесь, что ряд содержит данные.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;rowexists = resobj1.next();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( rowexists )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write("&lt;P&gt;Customer " + resobj1.name + <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+" has the following orders:&lt;/P&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resobj1.close();</PRE>
+<PRE><A NAME="1065955"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Второй результирующий набор возвращает один ряд для каждого заказа,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// помещённого пользователем. Убедитесь, что ряды содержат данные.
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resobj2 = spobj.resultSet();<br>&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;var i = 0;</PRE><PRE><A NAME="1065959"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if ( resobj2 &amp;&amp; (connobj.majorErrorCode() == 0) ) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;write("\nOrder# Quantity Total&lt;/P&gt;");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;while(resobj2.next()) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;write(resobj2.orderno + " " + resobj2.quantity <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ " " + resobj2.Totalamount + "&lt;/P&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i++;<br>&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resobj2.close();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write("Customer has " + i + " orders.&lt;/P&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else write("Customer has
+no orders.&lt;/P&gt;");<br>&nbsp;&nbsp;&nbsp;}<br>}</PRE><PRE><A NAME="1065956"></a>
+spobj.close();</PRE>
+<p><A NAME="1046820"></a>В качестве примера использования нескольких ref-курсоров Oracle 
+в хранимой процедуре см. описание класса <CODE>Resultset</CODE> в книге <I>
+<a TARGET="_top" href="../servref12/index.htm">Серверный
+JavaScript. Справочник</a></I>.</p>
+<H4><A NAME="Head3;"></A><A NAME="1039855"></a>Методы и Свойства Результирующего 
+Набора</H4>
+<hr>
+<p><A NAME="1039704"></a>
+В таблице дано резюме по методам и свойствам класса <CODE>Resultset</CODE>.</p>
+<A NAME="1074330"></a><h5><A NAME="1048319"></a>
+Таблица 9.4&nbsp;<CODE>Resultset</CODE> - методы и свойства</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1039672"></a>Метод или Свойство<TH VALIGN=baseline ALIGN=left><A NAME="1039675"></a>
+  Описание<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1039678"></a>
+<I><CODE>colName</CODE></I></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1039680"></a>
+  Свойства, соответствующие каждому столбцу результирующего набора. Имя каждого 
+  свойства это имя столбца в БД.</P><P><A NAME="1039681"></a>
+  Поскольку хранимые процедуры Informix и DB2 не возвращают именованных столбцов, 
+  эти свойства не создаются для хранимых процедур Informix или DB2.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1039684"></a>
+<CODE>columns</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1039686"></a>
+  Возвращает количество столбцов результирующего набора.</P><P><A NAME="1039687"></a>
+  Для Informix этот метод возвращает количество return-значений для одного ряда.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1039690"></a>
+<CODE>columnName</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1039692"></a>
+  Возвращает имя столбца в результирующем наборе.</P><P><A NAME="1039693"></a>
+  Поскольку хранимые процедуры Informix и DB2 не имеют ассоциированных имён 
+  столбцов, не используйте этот метод для хранимых процедур этих БД.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1039696"></a>
+<CODE>close</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1039698"></a>
+  Удаляет <CODE>Resultset</CODE> -объектobject.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1039701"></a>
+<CODE>next</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1039703"></a>
+  Делает следующий ряд результирующего набора текущим рядом. Возвращает <CODE>false</CODE>, 
+  если текущий ряд является последним рядом результирующего набора; иначе 
+  возвращает <CODE>true</CODE>.</P></TABLE>
+<p>
+<A NAME="1030984"></a> <CODE>resultSet</CODE> -объект является объектом &quot;только 
+для чтения&quot;/read-only, объектом последовательного стиля/sequential-style.
+Исходя из этого, класс не имеет методов <CODE>insertRow</CODE>, <CODE>deleteRow</CODE> 
+и
+<CODE>updateRow</CODE>, определённых для <CODE>Cursor</CODE> -объектов.</p>
+<H4><A NAME="Head3;"></A><A NAME="1046712"></a>Когда Можно Использовать 
+Результирующие Наборы</H4>
+<hr>
+<p><A NAME="1046713"></a>
+Объект <CODE>resultSet</CODE> не является бесконечно действующим. Вообще, когда 
+хранимая процедура стартует,
+не допускается никакое взаимодействие между клиентом БД и сервером БД, пока 
+хранимая процедура не завершит выполнение. Есть три ситуации, когда 
+результирующий набор является недействующим:</p>
+<OL><LI><A NAME="1046714"></a>Если Вы создаёте результирующий набор как часть 
+  транзакции, Вы обязаны закончить использование результирующего набора в 
+  течение выполнения этой транзакции. Если Вы подтвердили транзакцию или 
+  выполнили её откат,
+  Вы не сможете получать данные из результирующего набора и не сможете получить 
+  дополнительные результирующие наборы. Например,
+  следующий код не допускается:</LI><PRE><A NAME="1046715"></a>database.beginTransaction();<br>spobj = database.storedProc("getcusts");<br>
+resobj = spobj.resultSet();<br>database.commitTransaction();<br>// Неверно! Результирующий набор больше не действует!<br>
+col1 = resobj[0];</PRE><LI><A NAME="1047221"></a>
+  Для Sybase, ODBC и DB2 Вы обязаны запросить <CODE>resultSet</CODE> -объекты до 
+  вызова методов <CODE>returnValue</CODE> или <CODE>outParameters</CODE> объекта 
+  хранимой процедуры. Если Вы вызвали один из этих методов, Вы не сможете больше 
+  получать данные из результирующего набора и не сможете получить дополнительные 
+  результирующие наборы. См. о работе этих методов раздел <A HREF="#1030999">"Работа 
+  с Return-Значениями&quot;</A>.</LI><PRE><A NAME="1047227"></a>spobj = database.storedProc("getcusts");<br>
+resobj = spobj.resultSet();<br>retval = spobj.returnValue();<br>// Неверно! Результирующий набор больше не действует!<br>
+col1 = resobj[0];</PRE><LI><A NAME="1047228"></a>
+  Для Sybase Вы обязаны запросить <CODE>resultSet</CODE> -объекты до вызова 
+  методов <CODE>cursor</CODE> или <CODE>SQLTable</CODE> ассоциированного 
+  соединения. Как только Вы вызовете <CODE>cursor</CODE> или
+<CODE>SQLTable</CODE>, результирующий набор станет недоступен. Например, 
+  следующий код неверен:</LI><PRE><A NAME="1046724"></a>spobj = database.storedProc("getcusts");<br>resobj = spobj.resultSet();<br>
+curobj = database.cursor ("select * from orders");<br>// Неверно! Результирующий набор больше не доступен! <br>
+col1 = resobj[0];</PRE><LI><A NAME="1069628"></a>
+  Для ODBC соблюдаются несколько иные ограничения. Вы также обязаны работать с <CODE>resultSet</CODE> 
+  -объектами до вызова методов <CODE>cursor</CODE> или <CODE>SQLTable</CODE> 
+  ассоциированного соединения.
+  В ODBC, если Вы получаете курсор, выполняете доступ к результирующему набору, 
+  а затем используете курсор, 
+<CODE>Cursor</CODE> -объект становится недоступным. Например, следующий код 
+  неверен:</LI><PRE><A NAME="1069658"></a>spbobj = database.storedProc("getcusts");<br>resobj = spobj.resulSet();<br>
+curobj = database.cursor ("select * from orders");<br>col1 = resobj[0];
+// Неверно! Курсор больше не доступен.
+
+<br>curobj.next();</PRE></OL>
+<h2><A NAME="Head2;"></A><A NAME="1030999"></a>Работа с Return-Значениями</h2>
+<hr>
+<p><A NAME="1031000"></a>
+Этот этап относится к хранимым процедурам Sybase и Oracle. Для процедур Informix, ODBC 
+и DB2 метод <CODE>returnValue</CODE> всегда возвращает null.</p>
+<p><A NAME="1047973"></a>
+Если Ваша хранимая процедура возвращает значение (return value), Вы можете 
+получить к нему доступ с помощью метода <CODE>returnValue</CODE>.</p>
+<p><A NAME="1047780"></a>В DB2, ODBC и Sybase Вы обязаны использовать хранимые 
+процедуры и курсоры последовательно. Вы не можете их перемешивать. Исходя из 
+этого, Вы обязаны дать системе знать, что Вы закончили использование хранимой 
+процедуры, прежде чем сможете работать с курсором. Это выполняется через вызов 
+метода <CODE>returnValue</CODE> объекта хранимой процедуры. Этот метод выдаёт return-значение 
+хранимой процедуры (если она его имеет) и завершает выполнение хранимой 
+процедуры. Вы должны также закрыть все объекты, относящиеся к хранимым 
+процедурам, когда завершаете их использование.</p>
+<h6><b>ПРИМЕЧАНИЕ:</b></h6>
+<p> <A NAME="1069672"></a>Для DB2, ODBC и Sybase Вы обязаны запросить <CODE>resultSet</CODE> 
+-объекты до вызова метода <CODE>returnValue</CODE>. После того как Вы вызвали <CODE>returnValue</CODE>,
+Вы больше не сможете получить данные из результирующего набора и не сможете 
+получить какие-либо дополнительные результирующие наборы. Вы должны вызывать <CODE>returnValue</CODE> 
+после того, как обработали результирующий набор, но до запроса параметров вывода.</p>
+<h2><A NAME="Head2;"></A><A NAME="1038900"></a>
+Работа с Параметрами Вывода</h2><hr>
+<p><A NAME="1031010"></a>
+Этот этап касается хранимых процедур&nbsp; Sybase, Oracle, DB2 или ODBC. Для 
+процедур Informix методы, обсуждаемые здесь, не применяются.</p>
+<p><A NAME="1031011"></a>
+Чтобы определить количество параметров вывода процедуры (включая параметры и 
+вывода, и ввода/вывода), Вы используете метод <CODE>outParamCount</CODE>. Вы 
+можете работать с параметрами вывода хранимой процедуры, используя метод <CODE>outParameters</CODE> 
+объекта. Если <CODE>outParamCount</CODE> возвращает 0, хранимая процедура не 
+имеет параметров вывода. В этой ситуации не вызывайте
+<CODE>outParameters</CODE>.</p>
+<p><A NAME="1059879"></a>
+Например, предположим, Вы создали хранимую процедуру, которая находит фамилию 
+служащего по заданному ID. Если имеется фамилия служащего, ассоциированная с 
+данным ID, процедура возвращает 1,
+и её output-параметр содержит фамилию служащего. Иначе параметр вывода является 
+пустым. Следующий код выводит фамилию служащего или сообщение о том, что фамилия 
+не найдена:</p>
+<PRE><A NAME="1031021"></a>id = 100;<br>getNameProc = connobj.storedProc("getName", id);<br>
+returnValue = getNameProc.returnValue();<br>if (returnValue == 1)<br>&nbsp;&nbsp;&nbsp;
+write ("Name of employee is " + getNameProc.outParameters(0));<br>else<br>
+&nbsp;&nbsp;&nbsp;write ("No employee with id = " + id);</PRE>
+<p><A NAME="1031022"></a>
+Предположим, хранимая процедура имеет один параметр ввода, один параметр ввода/вывода 
+и один параметр вывода.
+Далее примем, что вызов хранимой процедуры отсылает значение параметра ввода и 
+параметра ввода/вывода, как показано здесь:</p>
+<PRE><A NAME="1031023"></a>spobj = connobj.storedProc("myinout", 34, 56);</PRE>
+<p><A NAME="1031024"></a>
+Метод <CODE>outParameters</CODE> возвращает любые параметры ввода/вывода до 
+того как возвратит первый параметр вывода.</p>
+<p><A NAME="1072011"></a>В предыдущем примере, если Вызывается
+<CODE>outParameters(1)</CODE>, возвращается значение, возвращаемое хранимой 
+процедурой. И наоборот,
+если вызывается <CODE>outParameters(0)</CODE>, метод возвращает 56. Это 
+значение, переданное хранимой процедуре в позиции параметра ввода/вывода.</p>
+<h6><b>ПРИМЕЧАНИЕ</b>:</h6>
+<p> <A NAME="1050830"></a>
+Параметры вывода не могут быть null; однако Вы можете присвоить null-значение 
+параметра ввода или ввода/вывода.
+<A NAME="1038967"></a>В DB2, ODBC и Sybase Вы обязаны запрашивать <CODE>resultSet</CODE> 
+-объекты и использовать метод <CODE>returnValue</CODE> до того, как вызываете <CODE>outParameters</CODE>. 
+После того как Вы вызвали <CODE>returnValue </CODE>или&nbsp; <CODE>outParameters</CODE>, 
+Вы больше не сможете получить данные из результирующего набора и не сможете 
+получить какие-либо дополнительные результирующие наборы. Вы должны вызывать <CODE>outParameters</CODE> 
+после обработки результирующего набора и любых return-значений.</p>
+<h2><A NAME="Head2;"></A><A NAME="1040158"></a>Исключения Informix и Sybase</h2>
+<hr>
+<p><A NAME="1040175"></a>
+Хранимые процедуры
+Informix и Sybase могут возвращать коды ошибки, используя механизм исключений. 
+После того как Вы запустили процедуру на выполнение, Вы можете запрашивать эти 
+коды ошибок и сообщения об ошибках, используя методы <CODE>majorErrorCode</CODE> 
+и <CODE>majorErrorMessage</CODE> ассоциированного объекта <CODE>database</CODE> 
+или
+<CODE>Connection</CODE>.</p>
+<p><A NAME="1040178"></a>
+Например, у Вас имеется хранимая процедура Informix:</p>
+<PRE><A NAME="1040179"></a>create procedure usercheck (user varchar(20))<br>if user = 'LiveWire' then<br>
+raise exception -746, 0, 'User not Allowed';<br>endif<br>end procedure</PRE>
+<p><A NAME="1040185"></a>
+Если Вы запустите эту процедуру на выполнение, Вы сможете проверять, появилась 
+ли ошибка, а затем получить доступ к коду ошибки и сообщению о ней:</p>
+<PRE><A NAME="1040186"></a>spobj = connobj.storedProc("usercheck");</PRE><PRE><A NAME="1066190"></a>
+if ( connobj.majorErrorCode() ) {<br>&nbsp;&nbsp;&nbsp;write("The procedure returned this error
+code: " +<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connobj.majorErrorCode());<br>
+&nbsp;&nbsp;&nbsp;write("The procedure returned this error message: " +<br>&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;connobj.majorErrorMessage());<br>}</PRE>
+<h5><a href="contents.htm">Оглавление</a> | <a href="db1.htm">Назад</a>
+ | <a href="dbconfig.htm">Вперёд</a>
+ | <a href="bklast.htm">Индекс</a></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT></BODY></HTML>

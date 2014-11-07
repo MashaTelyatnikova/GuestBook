@@ -1,0 +1,240 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<TITLE>Предисловие.</TITLE></HEAD>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="#1021858">Назад</a>
+| <a href="intro.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5><HR><h1><a name="1003343"></a>Предисловие</h1>
+<p><A NAME="1016991"></a>В этой книге рассматривается создание приложений, 
+написанных на языке &quot;Серверный/Server-Side JavaScript&quot; (SSJS).
+JavaScript это разработанный корпорацией Netscape платформонезависимый 
+объектно-ориентированный язык скриптинга (сценариев) для клиентских и серверных приложений.</p>
+<p><A NAME="1025300"></a>В данной главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1024699"></a><A HREF="#1021858">Что Нового в Этом Релизе?</A></LI><LI><A NAME="1026013"></a>
+<A HREF="#1026696">Что Вы Уже Должны Знать</A></LI><LI><A NAME="1026215"></a>
+<A HREF="#1026242">Версии JavaScript</A></LI><LI><A NAME="1024703"></a>
+<A HREF="#1026096">Где Найти Информацию о JavaScript</A></LI><LI><A NAME="1024711"></a>
+<A HREF="#1021923">Обновление Предыдущей Версии</A></LI><LI><A NAME="1024715"></a>
+<A HREF="#1015502">Обратная Совместимость с Предыдущими Релизами</A></LI><LI><A NAME="1024719"></a>
+<A HREF="#1017750">Соглашения по Документам</A></LI></ul>
+<H2><A NAME="What's New in this Release"></A><A NAME="1021858"></a>Что Нового в Этом Релизе</H2><hr>
+<p><A NAME="1025893"></a>В релизах 3.<I>x</I> и 4.<I>x</I> версий сервера Netscape
+Enterprise Server служба LiveWire полностью интегрирована с сервером. Поскольку LiveWire database connectivity 
+теперь интегрирована как LiveWire Database Service - часть серверного JavaScript, 
+разработчикам не нужно устанавливать LiveWire как отдельный продукт. Просто включите поддержку JavaScript в
+Administration Server, чтобы сделать доступными необходимые компоненты.</p>
+<BLOCKQUOTE>
+<p><B>ПРИМЕЧАНИЕ:</B></p>
+<p><A NAME="1026832"></a>Отличие между SSJS в Netscape Enterprise Server
+(NES) 3.x и в NES 4.x состоит в том, что NES 4.x использует теперь JavaScript Runtime 
+от Mozilla.org, которая поддерживает
+JavaScript 1.4. Предыдущие версии SSJS поддерживали JavaScript 1.0, JavaScript 
+1.1 и JavaScript 1.2.</p></blockquote>
+<h4><A NAME="Head2;"></A><A NAME="1025904"></a>Поддержка JavaScript 1.4</h4><hr>
+<p><A NAME="1025709"></a>
+В JavaScript версии 1.4 появились новые возможности и различные усовершенствования, 
+которые обсуждаются в онлайновом учебнике Core JavaScript Reference v1.4:</p>
+<PRE><A NAME="1025711"></a><A HREF="http://developer.netscape.com/docs/manuals/js/core/jsref/index.htm" TARGET="_top">http://developer.netscape.com/docs/manuals/js/core/jsref/index.htm</A></PRE>
+<p>Также можно воспользоваться моим переводом на русский язык <b>
+<a href="../coreref15/index.htm">новой версии (Ядро JavaScript 1.5) этой книги</a></b>.</p>
+<p><A NAME="1025712"></a>
+В следующем списке резюмируются эти новые возможности:</p>
+<ul><LI><A NAME="1025713"></a>Обработка исключений.</LI><br>
+<A NAME="1025714"></a>Вы можете вызывать/throw и отлавливать/catch исключения, используя операторы <CODE>throw</CODE> и
+<CODE>try...catch</CODE>.<LI><A NAME="1025715"></a>
+Новые операторы <CODE>in</CODE> и <CODE>instanceof</CODE>.</LI><br>
+<A NAME="1025716"></a>Оператор <CODE>in</CODE> возвращает <CODE>true</CODE>, 
+если специфицированное свойство имеется в специфицированном объекте. Оператор <CODE>instanceof</CODE> 
+возвращает <CODE>true</CODE>, если специфицированный объект имеет 
+специфицированный тип.<LI><A NAME="1025717"></a>
+Изменения в LiveConnect.</LI><br>
+<A NAME="1025718"></a>Некоторые изменения в LiveConnect улучшили способ взаимодействия кодов Java и JavaScript:<ul>
+<LI><A NAME="1025719"></a>Методы класса <CODE>java.lang.Object
+</CODE>наследуются в
+<CODE>JavaArray</CODE>. Дополнительно метод <CODE>JavaArrary.toString</CODE> 
+теперь вызывает метод<CODE> java.lang.Object.toString</CODE>.</LI><LI><A NAME="1025720"></a>
+Вы можете передавать объект <CODE>JavaClass</CODE> в Java-метод, который требует 
+аргумента типа <CODE>java.lang.Class</CODE>, вместо создания оболочки вокруг 
+экземпляра класса
+<CODE>java.lang.Class</CODE>.</LI><LI><A NAME="1025721"></a>
+Вы не можете конструировать экземпляр <CODE>JSException</CODE> с детальным 
+сообщением.</LI><LI><A NAME="1025722"></a>Три первоначальных public-конструктора 
+для Java-класса
+<CODE>netscape.javascript.JSException</CODE>, поддерживавшего эту возможность, 
+не рекомендуются/deprecated.</LI><LI><A NAME="1025723"></a>Вы не можете 
+использовать операцию <CODE>==</CODE> для сравнения двух экземпляров
+<CODE>JSObject</CODE>. Используйте <CODE>JSObject.equals</CODE>.</LI></ul>
+<LI><A NAME="1025724"></a>Изменения в методе <CODE>eval</CODE>:</LI><ul><LI><A NAME="1025725"></a>
+Метод верхнего уровня <CODE>eval</CODE> не может вызываться неявно.
+В предыдущих версиях лишь рекомендовалось, чтобы этот метод не вызывался неявно; начиная с
+JavaScript 1.4, неявный вызов <CODE>eval</CODE> может привести к ошибке времени 
+выполнения. Это изменение повысит производительность.</LI><LI><A NAME="1025726"></a>
+Метод <CODE>eval</CODE> больше не доступен как метод класса <CODE>Object</CODE>; 
+вместо него используйте функцию верхнего уровня <CODE>eval</CODE>.</LI></ul>
+<LI><A NAME="1025727"></a>Изменения в объекте Function:</LI><ul><LI><A NAME="1025728"></a>
+Вы больше не должны специфицировать имя функции при использовании массива
+<CODE>arguments</CODE>; массив <CODE>arguments</CODE> это переменная, он больше 
+не является свойством <CODE>Function</CODE> -объектов. Это изменение улучшит 
+производительность.</LI><LI><A NAME="1025729"></a>Не рекомендуется 
+использовать свойство <CODE>Function.arity</CODE>. Оно заменено свойством <CODE>Function.length</CODE>.</LI></ul></ul>
+<h4><A NAME="Head2;"></A><A NAME="1025731"></a>Изменения в JavaScript Application Manager</h4><hr>
+<p><A NAME="1025732"></a>Функциональность менеджера JavaScript Application Manager не изменилась в Enterprise Server 4.0
+по сравнению с Enterprise Server 3.x. Однако он теперь использует ту же новую 
+схему цветов, что и
+Server Manager в Enteprise Server 4.0, и имеет некоторые изменения внешнего вида.</p>
+<h5><A NAME="1025736"></a>Рисунок 0.1&nbsp; JavaScript Application Manager в Enteprise Server 4.0.</h5>
+<A NAME="1025740"></a>
+<IMG SRC="graphics/Appmgr4.gif" width="722" height="500"><P><A NAME="1025742"></a>
+<A NAME="1025743"></a>JavaScript Application Manager теперь имеет три вкладки:</P>
+<ul><LI><A NAME="1025744"></a>Applications</LI><br>
+<A NAME="1025745"></a>Слева - список установленных приложений и кнопки Start, Stop, Restart, Run, Debug, Modify и Remove. Правая панель содержит 
+информацию о приложении, выбранном в списке приложений. Если Вы щёлкните мышью 
+кнопку Modify, в правой панели отобразятся поля, которые дают Вам возможность 
+модифицировать выбранное приложение.<LI><A NAME="1025746"></a>Add Application<br>
+<A NAME="1025747"></a>Добавить новое приложение.<LI><A NAME="1025748"></a>Preferences<br>
+<A NAME="1025749"></a>Специфицировать значения по умолчанию при добавлении нового приложения.</ul>
+<p><A NAME="1026623"></a>Хотя названия и внешний вид вкладок и кнопок в JavaScript Application
+Manager в Enterprise Server 4.0 слегка отличается от Enterprise Server 3.6, их функциональность не изменилась.</p>
+<H2><A NAME="What You Should Already Know"></A><A NAME="1026696"></a>Что Вы Уже Должны Знать</H2><hr>
+<p><A NAME="1026087"></a>Предполагается, что Вы уже имеете следующие базовые знания:</p>
+<ul><LI><A NAME="1026088"></a>
+Общее представление об Internet и World Wide Web (WWW).</LI><LI><A NAME="1026089"></a>
+Общее представление о клиентском JavaScript. Эта книга не дублирует информацию 
+ядра/core языка или клиентского языка/client-side.</LI><LI><A NAME="1026090"></a>
+Хорошие рабочие знания Hypertext Markup Language (HTML). Опыт работы с формами и Common
+Gateway Interface (CGI) также пригодится.</LI><LI><A NAME="1026091"></a>
+Некоторый опыт программирования на Pascal, C, Perl, Visual Basic или 
+аналогичном языке.</LI><LI><A NAME="1026092"></a>Если Вы будете использовать 
+службу LiveWire Database Service - знакомство с реляционными базами данных и 
+рабочие знания Structured Query Language (SQL).</LI></ul>
+<H2><A NAME="JavaScript Versions"></A><A NAME="1026242"></a>Версии JavaScript</H2><hr><p><A NAME="1026267"></a>
+Каждая версия Netscape Enterprise Server поддерживает свою версию JavaScript. 
+Чтобы помочь Вам при создании скриптов, совместимых с несколькими версиями Enterprise Server, 
+в этом учебнике используются сокращённые обозначения версий сервера, в которых каждая возможность реализована.</p>
+<A NAME="1026285"></a><h5><A NAME="1026270"></a>Версии JavaScript и Netscape Enterprise Server</h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1026274"></a>
+Версия JavaScript<TH VALIGN=baseline ALIGN=left><A NAME="1026276"></a>Версии Enterprise Server<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1026278"></a>
+JavaScript 1.2</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1026280"></a>
+Netscape Enterprise Server 3.6 (NES 3.6)</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1026282"></a>
+JavaScript 1.4</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1026284"></a>Netscape Enterprise Server 4.0 (NES 4.0)</P></TABLE>
+<H2><A NAME="Where to Find JavaScript Information"></A><A NAME="1026096"></a>
+Где Найти Информацию о JavaScript</H2><hr>
+<p><A NAME="1026097"></a>Поскольку JavaScript может применяться на разных 
+уровнях, документация по нему разделена на несколько книг.
+Набор онлайновых книг по JavaScript включает:</p>
+<p><A NAME="1026433"></a>Документацию по JavaScript, состоящую из следующих книг:</p>
+<ul><LI><A NAME="1026437"></a> <I>Серверный JavaScript. Руководство.</I> (эта 
+книга) предоставляет информацию о языке JavaScript и его объектах. Эта книга 
+содержит информацию о ядре языка (версии 1.4) и о серверном JavaScript. Работа 
+некоторых возможностей ядра на клиенте отличается от их работы на сервере;
+эти отличия обсуждаются в данной книге.</LI><LI><A NAME="1026443"></a>
+<I><a TARGET="_top" href="../servref12/default.htm">Серверный JavaScript. 
+Справочник.</a></I> предоставляет справочный материал по языку JavaScript, 
+включая ядро и серверный JavaScript.</LI></ul><p><A NAME="1027046"></a>
+Если Вы новичок в JavaScript, начните с <A HREF="intro.htm#1009367">Главы 1, "JavaScript. 
+Обзор.&quot;</A>. После того как Вы будете иметь твёрдое понимание основ, можете 
+воспользоваться книгой <I><a TARGET="_top" href="../servref12/default.htm">
+Серверный JavaScript, Справочник.</a></I> для получения долее детальной информации об объектах и операторах.</p>
+<p><A NAME="1026409"></a>Используйте материал этой книги для знакомства с ядром и серверным JavaScript. 
+Пользуйтесь книгами <I><a TARGET="_top" href="../clientguide13/index.htm">
+Клиентский JavaScript. Руководство.</a></I> и <I>
+<a TARGET="_top" href="../clientref13/index.htm">Клиентский JavaScript. 
+Справочник.</a></I> для получения информации о создании сценариев на HTML-страницах.</p>
+<p><A NAME="1026159"></a><EM><A HREF="http://home.netscape.com/eng/server/webserver/4.0/relnotes/relnotes.htm"
+TARGET="_blank">Enterprise Server 4.x Release Notes</A></EM> содержат информацию 
+о Enterprise Server 4.<I>x</I>, в том числе - касающуюся серверного JavaScript для Enterprise Server 4.x.</p>
+<p><A NAME="1026165"></a>Книга <EM> <A HREF="http://developer.netscape.com/library/documentation/enterprise/bookshelf/index.htm"
+TARGET="_blank">Netscape Enterprise Server Programmer's Guide</A></EM> содержит 
+резюме по разным интерфейсам программирования, доступным в версиях 4.<I>x</I> Netscape web-серверов. 
+Используйте это учебник в качестве карты или отправной точки при изучении 
+документации Enterprise Server для разработчиков.</p>
+<p><A NAME="1026166"></a>Помимо этого, другие книги Netscape обсуждают отдельные 
+аспекты JavaScript, особенно относящиеся к их области действия. Эти книги 
+упоминаются в тексте данной книги там, где это возможно.</p>
+<p><A NAME="1026167"></a>Сайт Netscape содержит большое количество информации, 
+которая может понадобиться при создании приложений JavaScript. Вот некоторые 
+URL, представляющие особый интерес:</p>
+<ul><LI><A NAME="1026174"></a><CODE><A HREF="http://help.netscape.com/products/tools/livewire"
+TARGET="_blank">http://help.netscape.com/products/tools/livewire</CODE></A></LI><br>
+<A NAME="1026175"></a>Страница технической поддержки Netscape службы LiveWire
+Database Service. Содержит много ссылок на информацию по использованию LiveWire в приложениях
+JavaScript.<LI><A NAME="1026178"></a>
+<CODE><A HREF="http://developer.netscape.com/one/javascript/ssjs/index.html"
+TARGET="_blank">http://developer.netscape.com/one/javascript/ssjs/index.html</A></CODE></LI><br>
+<A NAME="1026179"></a>Страница технической поддержки Netscape с информацией о JavaScript.
+Для быстрого перехода на эту страницу щёлкните ссылку DevEdge в Netscape Enterprise Server Application Manager.<LI><A NAME="1026182"></a>
+<CODE><A HREF="http://developer.netscape.com/news/viewsource/index.html"
+TARGET="_blank">http://developer.netscape.com/news/viewsource/index.html</CODE></A></LI><br>
+<A NAME="1026183"></a>Это View Source Magazine, онлайновый магазин для разработчиков.
+  Он обновляется каждую неделю и часто содержит статьи, представляющие интерес для разработчиков JavaScript.</ul>
+<H2><A NAME="Upgrading from an Earlier Release"></a><A NAME="1021923"></a>
+Обновление Предыдущей Версии</H2><hr>
+<p><A NAME="1015476"></a>Если у вас имеется установленная версия предыдущего 
+релиза Netscape web-сервера, Вы должны перенести установки сервера при 
+инсталяции Enterprise Server 4.<I>x</I>. См. <I>Enterprise Server 4.0 Installation and Migration Guide</I>.</p>
+<p><A NAME="1015483"></a>Если Вы ранее создавали приложения JavaScript, используя Серверный
+JavaScript 3.<I>x</I>, Вы должны знать об изменениях, выполняемых при обновлении 
+до версии 4.<I>x</I> и переносе старых установок сервера:</p>
+<ul><LI><A NAME="1015484"></a>
+Если предыдущий сервер имел включённую службу LiveWire, сервер 3.<I>x</I> 
+будет иметь включённый JavaScript. Требование (или отсутствие) Application Manager'ом 
+пароля также сохраняется. См. также раздел <A HREF="getstart.htm#1011926">"Информация 
+Конфигурации"</A> в <A HREF="getstart.htm#1013897">Главе 2, "Введение."</A>.</LI><LI><A NAME="1025509"></a>
+Обновление установок сервера не переносит ваших приложений, а также не 
+рекомпилирует их для использования с сервером 4.<I>x</I>. Вы обязаны вручную 
+рекомпилировать пользовательские приложения перед тем как использовать их с 
+сервером 4.<I>x</I>, как указано в разделе
+<A HREF="#1015502">"Обратная Совместимость с Предыдущими Релизами"</A>. Вы 
+должны знать, что старые приложения могут перестать работать с их 
+оригинальными версиями Enterprise Server после рекомпиляции. Если Вы хотите 
+использовать приложения с обоими серверами, Вы должны скопировать приложение, 
+а не перемещать его.</LI><LI><A NAME="1015910"></a>Об изменениях, которые, 
+возможно, понадобиться сделать в коде при обновлении, см. следующий раздел.</LI></ul>
+<H2><A NAME="Backward Compatibility with Earlier Releases"></A><A NAME="1015502"></a>
+Обратная Совместимость с Предыдущими Релизами</H2><hr>
+<p><A NAME="1022738"></a>
+Вы также должны знать об изменениях в поведении приложений серверного JavaScript по сравнению с
+Netscape Enterprise Server 3.x:</p><ul><LI><A NAME="1022740"></a>
+Вы обязаны рекомпилировать все ваши существующие приложения JavaScript. об 
+использовании компилятора см. <A HREF="appdev.htm#1046520">"Компиляция 
+Приложений"</A>. После рекомпиляции приложений они больше не будут работать 
+под старыми инсталяциями SSJS.</LI></ul>
+<H2><A NAME="Document Conventions"></A><A NAME="1017750"></a>Соглашения по Документам</H2><hr>
+<p><A NAME="1017751"></a>Приложения JavaScript работают на многих операционных системах; данная информация применима 
+ко всем версиям. Пути файлов и директорий даны в формате Windows (с обратной наклонной чертой в 
+качестве разделителя имён директорий).
+Для Unix-версий пути директорий - те же,&nbsp; за исключением того, что в 
+качестве разделителей используются слэши вместо backslash.</p>
+<p><A NAME="1017754"></a>В этой книге используются uniform resource locators (URLs) в форме:</p>
+<PRE><A NAME="1017755"></a>http://<I><CODE>server.domain</CODE></I>/<I><CODE>path</CODE></I>/<I><CODE>file</CODE></I>.html</PRE>
+<p><A NAME="1017756"></a>В этих URL <I>server</I> это имя сервера, на котором запускается Ваше приложение, 
+как, например, <CODE>research1</CODE> или <CODE>www</CODE>; <I>domain</I> это 
+имя домена Internet, такое как <CODE>netscape.com</CODE> или <CODE>uiuc.edu</CODE>; <I>path</I> это 
+структура директорий на сервере; а <I><CODE>file</CODE></I><CODE>.html</CODE> 
+это имя файла. В целом элементы, выделенные <i>italic</i> в URL, являются 
+заглушками, а элементы с нормальным моноширинным шрифтом являются литералами. 
+Если на Вашем сервере имеется Secure Sockets Layer (SSL), Вы должны использовать <CODE>https</CODE> 
+вместо <CODE>http</CODE> в URL.</p>
+<p><A NAME="1017757"></a>В книге использованы следующие соглашения по шрифтам:</p>
+<ul><LI><A NAME="1017758"></a><code>Моноширинный шрифт</code> используется в 
+примерах кода, API и элементах языка (таких как имена функций и классов), 
+именах файлов, путях, именах директорий, тэгах HTML и в любом тексте, который должен выводиться на экран монитора.
+(<I><CODE>Моноширинный italic</CODE></I>&nbsp; используется для заглушек, 
+вставленных в код.)</LI><LI><A NAME="1017759"></a><I>Italic-шрифт </I>
+используется в названиях книг, при выделении текста, в переменных и заглушках 
+и в словах, используемых в литеральном смысле.</LI><LI><A NAME="1017760"></a>
+<B>Жирный шрифт </B>используется в терминах словаря.</LI></ul><A NAME="1015552"></a>
+<h5><a href="contents.htm">Оглавление</a> | <a href="#1021858">Назад</a>
+| <a href="intro.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5><hr>
+<p align="right"><font size="-2"><i>Дата последнего обновления: 29 сентября 1999 
+г.</i></font> </p>
+<p><font face="PrimaSans BT, Verdana, Sans-Serif" size="-2">© Copyright © 1999 
+Sun Microsystems, Inc. Некоторая часть Copyright © 1999 Netscape Communications 
+Corp. Все Права Зарезервированы.</font></p>
+</BODY>
+</HTML>

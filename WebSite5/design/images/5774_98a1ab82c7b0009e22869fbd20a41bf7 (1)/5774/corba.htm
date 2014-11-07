@@ -1,0 +1,371 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<title>Доступ к Сервису CORBA.</title></head>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="lc.htm">Назад</a>
+| <a href="glossary.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5><HR><h1>Глава 22<br>
+<A NAME="1008301"></A>Доступ к Сервису CORBA</h1>
+<p><A NAME="1008338"></A>
+В этой главе рассматривается использование LiveConnect для доступа к 
+распределённым объектам CORBA. С помощью LiveConnect Вы можете получить доступ к Java; 
+через Java - соединяться с CORBA-объектами, используя Netscape Internet Service Broker for Java.</p>
+<p><A NAME="1010301"></A>В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1010316"></A>
+<A HREF="#1008340">О Сервисе CORBA</A></LI><LI><A NAME="1010320"></A>
+<A HREF="#1008378">Flexi, Образец Приложения</A></LI><LI><A NAME="1010518"></A>
+<a href="#1008541">Альтернативные Публикации</a></LI></ul>
+<h2><A NAME="About CORBA Services"></A><A NAME="1008340"></A>О Сервисе CORBA</h2>
+<HR><p><A NAME="1008342"></A>
+Netscape Internet Service Broker for Java (ISB for Java) это брокер запроса 
+объектов фирмы Netscape. ISB for Java устанавливает соединения внутри себя и с 
+другими брокерами запроса объектов/object request brokers (ORB) путём 
+использования протокола Internet InterORB Protocol (IIOP).</p>
+<p><A NAME="1008346"></A>ISB for Java даёт Вашим приложениям JavaScript доступ к распределённой объектной 
+модели CORBA, опубликованной в ORB, работающем на основе IIOP (включая сам ISB for Java). 
+Эти объекты могут быть частью распределённого приложения. Чтобы получить доступ 
+к такому распределённому объекту, Вы обязаны иметь Java-stub/основу, и этот stub-класс 
+обязан быть в пути Вашей <CODE>CLASSPATH</CODE>. В свою очередь, Вы можете 
+использовать Java и LiveConnect для экспонирования частей Вашего серверного 
+приложения JavaScript как распределённых объектов CORBA.</p>
+<p>
+<A NAME="1008348"></A>
+За пределами данного учебника остаётся описание создания CORBA-исполняемых 
+распределённых объектов&nbsp; с использованием ISB for Java, а также то, как 
+делать Java-стабы для таких объектов. Об этом см. учебник <A HREF="http://developer.netscape.com/docs/manuals/enterprise/javapg/" TARGET="_blank">Netscape Internet Service Broker for Java Programmer's Guide</A>.</p>
+<p>
+<A NAME="1010707"></A>
+Приложения серверного JavaScript могут получать доступ к распределённому объекту 
+в зависимости от того как он опубликован. Простейшей альтернативой является 
+создание и запуск распределённого объекта как отдельного процесса, что показано 
+на следующем рисунке.</p>
+<h6><A NAME="1010715"></A>
+Рисунок 22.1&nbsp;&nbsp;&nbsp;Приложение JavaScript CORBA-клиент</h6>
+<P>
+<IMG SRC="graphics/corba1.gif" width="473" height="314"></P>
+<p>
+<A NAME="1010716"></A>
+Как видно на рисунке, среды запуска Java и JavaScript находятся вместе на одном web-сервере. 
+Они взаимодействуют путём использования LiveConnect стандартным способом, 
+описанным ранее в этой главе. Методы, вызываемые в оболочке стаба в JavaScript, 
+дают в результате вызов методов объекта Java-стаба в Java. Стаб использует Java ORB 
+для взаимодействия с удалённым сервисом. В данной архитектуре серверный процесс 
+объекта может проходить только на машине, которая имеет ORB, и может быть 
+написан на любом языке.</p>
+<p>
+<A NAME="1008368"></A>
+Приложение-образец <CODE>flexi</CODE> иллюстрирует это. В нём <CODE>FlexiServer</CODE> 
+это отдельное приложение Java, содержащее реализации нескольких распределённых 
+объектов. Этот пример обсуждается в разделе <A HREF="#1008378">"Приложение-Образец Flexi"</A>.</p>
+<p>
+<A NAME="1008375"></A>
+После того как поработаете с <CODE>flexi</CODE>, прочтите в разделе <A HREF="#1008541">"Альтернативные 
+Публикации"</A> обсуждение более сложных альтернатив публикации.</p>
+<H2>
+<A NAME="Flexi Sample Application"></A><A NAME="1008378"></A>Приложение-Образец Flexi</H2>
+<HR><p><A NAME="1008379"></A>
+Приложение <CODE>flexi</CODE> иллюстрирует использование серверного JavaScript 
+для доступа к удалённому сервису, запущенному на ORB с включённым протоколом IIOP, 
+а также показывает удалённый сервис, написанный целиком на Java с использованием ISB for Java. 
+И исходные файлы, и исполняемые файлы приложения <CODE>flexi</CODE> установлены 
+в директории <CODE>$NSHOME\js\samples\flexi</CODE>.</p>
+<p>
+<A NAME="1008380"></A>
+A flexible spending account (FSA)/гибко расходуемый счёт это счёт, на котором 
+служащие могут хранить доллары предоплаты, используемые для медицинских расходов. 
+Служащие обычно подписываются на этот план через администратора плана и выбирают 
+сумму в долларах, которую они хотят хранить на своих счетах. Если служащий 
+осуществляет затраты на медицинские цели, он отправляет запрос, который, если 
+одобрен, вызывает снятие суммы со счёта и перевод её служащему.</p>
+<p>
+<A NAME="1008381"></A>
+Приложение <CODE>flexi</CODE> предоставляет поддержку обслуживания
+FSA. В этом приложении администратор имеет следующие 
+опции:</p>
+<ul><LI><A NAME="1008382"></A>Создание нового счёта с указанным балансом.</LI><LI><A NAME="1008383"></A>
+Выбор существующего счёта по фамилии служащего.</LI><LI><A NAME="1008384"></A>
+Хранение дополнительных вложений на выбранном счёте.</LI><LI><A NAME="1008385"></A>
+Закрытие счёта.</LI><LI><A NAME="1008386"></A>Принятие или отказ в выполнении 
+запроса, отправленного служащим.</LI></ul>
+<p>
+<A NAME="1008387"></A>Для служащего имеются следующие опции:</p>
+<ul><LI><A NAME="1008388"></A>
+Просмотр статуса счёта, включая статус любого отклонённого запроса.</LI><LI><A NAME="1008389"></A>
+Отправка нового запроса путём заполнения формы.</LI></ul>
+<h4><A NAME="Head2;"></A><A NAME="1008390"></A>CORBA. Клиентский и Серверный Процессы</h4><HR><p>
+<A NAME="1008394"></A><A HREF="#1008399">Рисунок 22.2</A> показывает две основные части <CODE>flexi</CODE>. 
+Они реализуют клиента и сервис CORBA.</p>
+<h6><A NAME="1008399"></A>Рисунок 22.2 &nbsp;&nbsp;Приложение-Образец <CODE>flexi</CODE></h6>
+<P><IMG SRC="graphics/flexi.gif" width="404" height="341"></P><p><A NAME="1008400"></A>
+Клиент CORBA это приложение на серверном JavaScript, известное как <CODE>flexi</CODE>. 
+Это приложение реализует пользовательские интерфейсы администратора и служащего, 
+описанные ранее. Оно соединяется с объектом FSA-Admin (описанном далее) в 
+отдельном процессе или даже на отдельном компьютере. Приложение затем использует 
+этот и другие объекты, возвращаемые из FSA-Admin, для выполнения большинства своих операций.</p>
+<p><A NAME="1008401"></A>Сервер CORBA это отдельное Java-приложение, работающее из оболочки/shell. Оно 
+содержит реализации всех интерфейсов, определённых в IDL-файле <CODE>Flexi.idl</CODE>. 
+Это приложение под названием <CODE>FlexiServer</CODE> реализует основную 
+функциональность системы FSA. После старта это приложение создаёт экземпляр 
+объекта, реализующий интерфейс <CODE>::FSA::Admin</CODE>, и регистрирует его под 
+именем "FSA-Admin." Клиенты этого сервиса (такие как приложение <CODE>flexi</CODE> 
+на JavaScript) получают доступ к этому объекту, разрешая сначала своё имя. 
+Клиенты используют этот объект для создания других объектов и для получения 
+удалённых ссылок на них.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1008403"></A>Старт FlexiServer</h4>
+<HR><p>
+<A NAME="1008404"></A>
+<CODE>FlexiServer</CODE> это отдельное приложение Java. Оно может работать 
+только на машине, имеющей JDK 1.0.2. В Enterprise Server 3.01 и в FastTrack Server 
+3.01 Вы можете также запускать его на машине с JDK 1.1.2. Прежде чем запустить <CODE>FlexiServer</CODE>, 
+Вы должны убедиться, что среда работы корректна.</p>
+<p>
+<A NAME="1008405"></A>
+Из оболочки, где Вы запускаете <CODE>FlexiServer</CODE>, убедитесь, что Ваша 
+переменная окружения <CODE>PATH</CODE> содержит <CODE>$JDK\bin</CODE> и что <CODE>CLASSPATH</CODE> 
+включает следующее:</p>
+<PRE><A NAME="1008406"></A>...<br>$NSHOME\js\samples\flexi<br>$NSHOME\wai\java\nisb.zip<br>$JDK\lib\classes.zip</PRE>
+<p><A NAME="1008407"></A>
+Здесь <CODE>$JDK</CODE> это директория, в которой установлен JDK, а <CODE>$NSHOME</CODE> 
+это директория, в которой установлен Ваш web-сервер.</p>
+<p>
+<A NAME="1008408"></A>
+Если среда корректна, Вы можете стартовать <CODE>FlexiServer</CODE> так:</p>
+<PRE><A NAME="1008409"></A>cd $NSHOME\js\samples\flexi\impl<br>java FlexiServer</PRE>
+<p><A NAME="1008410"></A>
+Вы должны увидеть такое сообщение:</p>
+<PRE><A NAME="1008411"></A>Started FSA Admin: Admin[Server,oid=PersistentId[repId=IDL:Flexi/Admin:1.0,objectName=FSA-Admin]]</PRE>
+<p><A NAME="1008412"></A>
+С этого момента <CODE>FlexiServer</CODE> стартовал как сервис CORBA и 
+зарегистрировал в ORB объект с интерфейсом <CODE>::FSA::Admin</CODE> и именем FSA-Admin. <CODE>FlexiServer</CODE> 
+работает в фоновом режиме, ожидая запросов на обслуживание.</p>
+<h4>
+<A NAME="Head2;"></A><A NAME="1008413"></A>Старт Flexi</h4>
+<HR><p><A NAME="1008414"></A>
+Вы обязаны стартовать <CODE>FlexiServer</CODE> до старта <CODE>flexi</CODE>, 
+поскольку стартовая страница <CODE>flexi</CODE> пытается соединиться с <CODE>FlexiServer</CODE>.</p>
+<p>
+<A NAME="1008415"></A>
+Добавьте <CODE>$NSHOME\js\samples\flexi</CODE> в <CODE>CLASSPATH</CODE> Вашего web-сервера. 
+О том, как это сделать, см. "Установка LiveConnect".</p>
+<p>
+<A NAME="1008416"></A>
+Используя Application Manager, установите приложение <CODE>flexi</CODE> JavaScript, 
+как описано в разделе "Установка Нового Приложения". Параметры, устанавливаемые 
+Вами для <CODE>flexi</CODE>, показаны в следующей таблице.</p>
+<A NAME="1010268"></A><h5>
+<A NAME="1008426"></A>
+Таблица 22.1&nbsp; Установки Приложения Flexi</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1008430"></A>
+  Установка<TH VALIGN=baseline ALIGN=left><A NAME="1008432"></A>Значение<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008434"></A>
+Name</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008436"></A>flexi</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008438"></A>
+Web File Path/Путь к web-файлу</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008440"></A>$NSHOME\js\samples\flexi\flexi.web</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008442"></A>
+Default Page/Страница по Умолчанию</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008444"></A>fsa.html</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008446"></A>
+Initial Page/Начальная Страница</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008448"></A>start.html</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008450"></A>
+  Client Object Maintenance/Обслуживание  Объекта сlient</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008452"></A>client-cookie</PRE></TABLE>
+<h4>
+<A NAME="Head2;"></A><A NAME="1008453"></A>Использование Flexi</h4>
+<HR><p><A NAME="1008454"></A>
+Чтобы стартовать <CODE>flexi</CODE>, Вы можете запустить его из Application Manager 
+или ввести следующий URL:</p>
+<PRE><A NAME="1008455"></A>http://<I>server-name</I>/flexi</PRE>
+<p><A NAME="1008456"></A>
+Страница по умолчанию позволяет пользователю идентифицировать себя как 
+администратора или как служащего. Чтобы быстрее прочувствовать то, как работает 
+это приложение, следуйте этому сценарию:</p>
+<OL><LI><A NAME="1008457"></A>
+Администратор создаёт для пользователя баланс.</LI><LI><A NAME="1008458"></A>
+Служащий выбирает счёт.</LI><LI><A NAME="1008459"></A>
+Служащий отправляет запрос.</LI><LI><A NAME="1008460"></A>
+Администратор выбирает счёт служащего.</LI><LI><A NAME="1008461"></A>
+Администратор принимает запрос, что уменьшает баланс счёта служащего, и 
+отправляет чек на запрошенную сумму.</LI><LI><A NAME="1008462"></A>Служащий 
+выбирает счёт.</LI><LI><A NAME="1008463"></A>Служащий просматривает статус 
+счёта.</LI><LI><A NAME="1008464"></A>Администратор выбирает счёт служащего.</LI><LI><A NAME="1008465"></A>
+Администратор удаляет запрос.</LI></OL>
+<p><A NAME="1008466"></A>Система может обрабатывать только один запрос служащего в единицу времени. После 
+удаления запроса может быть отправлен новый запрос.</p>
+<h4><A NAME="Head2;"></A><A NAME="1008467"></A>Исходные Файлы</h4><HR><p>
+<A NAME="1008496"></A>В таблице показаны первичные файлы и директории для <CODE>flexi</CODE>.</p>
+<A NAME="1010289"></A><h5><A NAME="1008477"></A>Таблица 22.2&nbsp; Файлы и Директории Приложения Flexi</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008481"></A>flexi.idl</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1008483"></A>
+Файл, определяющий интерфейс с удалённым сервисом, включая <CODE>Admin</CODE>, <CODE>Account</CODE>, <CODE>Claim</CODE>.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008485"></A>Flexi\</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1008487"></A>
+Директория, содержащая код, сгенерированный из <CODE>Flexi.idl</CODE> 
+программой <CODE>idl2java</CODE>. Эта директория содержит каркасы и стабы (каркасы\основы) интерфейсов.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008489"></A>impl\</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1008491"></A>
+Директория, содержащая Java-реализации всех интерфейсов, определённых во <CODE>Flexi.idl</CODE>. 
+Она также содержит класс <CODE>FlexiServer</CODE>, реализующий main-программу 
+приложения Java, которое работает как сервис.</P>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1008493"></A>*.html</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1008495"></A>
+Файлы, реализующие серверное приложение JavaScript. Сюда входит также web-файл приложения, <CODE>flexi.web</CODE>.</P></TABLE>
+<p><A NAME="1008497"></A>Просмотрите эти файлы, чтобы добиться полной ясности в вопросах работы 
+приложения. Здесь обсуждаются лишь некоторые детали.</p>
+<H4><A NAME="Head3;"></A><A NAME="1008498"></A>Установка FlexiServer как CORBA-Сервера</H4><HR><p>
+<A NAME="1008499"></A>Функция <CODE>main</CODE> отдельного Java-приложения 
+реализована в <CODE>flexi\impl\FlexiServer.java</CODE>. Его код таков:</p>
+<PRE><A NAME="1008500"></A>import org.omg.CORBA.*;</PRE><PRE><A NAME="1008501"></A>class FlexiServer
+{<br>&nbsp;&nbsp;&nbsp;public static void main(String[] args) {<br>
+&nbsp;&nbsp;&nbsp;try {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Инициализируются orb и boa.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;org.omg.CORBA.ORB orb = org.omg.CORBA.ORB.init();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;org.omg.CORBA.BOA boa = orb.BOA_init();</PRE><PRE><A NAME="1008502"></A>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Создаётся серверный объект.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Admin __admin = new Admin();</PRE><PRE><A NAME="1008503"></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Информирует boa, что серверный объект готов.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+boa.obj_is_ready(__admin);</PRE><PRE><A NAME="1008504"></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Регистрируется имя объекта с именем сервиса.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Сначала определяется хост имени сервиса, по умолчанию это &lt;localhost&gt;:80.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String _nameServiceHost = null;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (args.length &gt; 0)
+{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Принимается, что первый arg это имя хоста имени<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// сервиса. Ожидаемый формат: &lt;hostname&gt;:&lt;port&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+_nameServiceHost = args[0];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</PRE><PRE><A NAME="1008505"></A>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String _localHostName = null;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+try {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_localHostName=
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+java.net.InetAddress.getLocalHost().getHostName();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_nameServiceHost = _localHostName + ":80";<br>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+catch (java.net.UnknownHostException e) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;System.out.println("Couldn't determine local host; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can't register name.");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</PRE><PRE><A NAME="1008506"></A>&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;String _regURL = "http://" + _nameServiceHost + "/FSA-Admin";<br>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;System.out.println("Registering Admin object at URL: " + _regURL);
+</PRE><PRE><A NAME="1008507"></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Регистрируется серверный объект.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;netscape.WAI.Naming.register(_regURL, __admin);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Started FSA Admin: " + __admin);
+</PRE><PRE><A NAME="1008508"></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boa.impl_is_ready();<br>
+&nbsp;&nbsp;&nbsp;}</PRE><PRE><A NAME="1008509"></A>&nbsp;&nbsp;&nbsp;catch (org.omg.CORBA.SystemException e)
+{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.err.println(e);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1008510"></A>
+Этот код инициализирует ORB и создаёт экземпляр класса <CODE>Admin</CODE>. Затем 
+экземпляр регистрируется как распределённый объект с URL в форме <CODE>http://</CODE><I><CODE>host</CODE></I>
+<CODE>:</CODE><I><CODE>port</CODE></I><CODE>/FSA-Admin</CODE>. По умолчанию <I><CODE>host</CODE></I> 
+это имя хоста, на котором запущен <CODE>FlexiServer</CODE>, а <I><CODE>port</CODE></I> 
+равен 80. Вы можете поставить Ваши собственные значения для <I><CODE>host:port</CODE></I>&nbsp; 
+путём передачи их как аргументов для <CODE>FlexiServer</CODE> при его старте. 
+Чтобы использовать локальный хост, но другой номер порта, Вам нужно изменить 
+исходный код и перекомпилировать его. Если код имеет соответствующее имя, он 
+регистрирует объект, используя метод
+<CODE>register</CODE> объекта <CODE>netscape.WAI.Naming</CODE>. Дополнительно 
+см. книгу <A HREF="http://developer.netscape.com/docs/manuals/enterprise/javaref/title.htm" TARGET="_blank">
+Netscape Internet Service Broker for Java Reference Guide</A>.</p>
+<p><A NAME="1008516"></A>
+Наконец, код печатает сообщение на консоль и ожидает запросы от
+CORBA-клиентов. В данном случае единственным CORBA-клиентом, который знает о 
+нём, является приложения <CODE>flexi</CODE> на языке
+JavaScript.</p>
+<H4>
+<A NAME="Head3;"></A><A NAME="1008517"></A>Установка flexi как CORBA-Клиента</H4>
+<HR><p>
+<A NAME="1008518"></A>
+Файл <CODE>start.html</CODE> это начальная страница приложения JavaScript <CODE>flexi</CODE>. 
+Эта страница использует LiveConnect для инициализации ISB for Java и 
+установления соединения с FSA-Admin.</p>
+<PRE><A NAME="1008519"></A>&lt;server&gt;<br>// Инициализируется orb.<br>
+project.orb = Packages.org.omg.CORBA.ORB.init();</PRE><PRE><A NAME="1008520"></A>// Устанавливается соединение с сервисом "FSA-Admin".<br>// По умолчанию принимается, что name service запущен на текущем сервере.<br>
+nameHost = "http://" + server.hostname;<br>serviceName = "/FSA-Admin";<br>
+serviceURL = nameHost + serviceName;</PRE><PRE><A NAME="1008521"></A>// Разрешается имя и получается ссылка на стаб Admin.<br>project.fsa_admin = Packages.Flexi.AdminHelper.narrow(<br>
+netscape.WAI.Naming.resolve(serviceURL));</PRE><PRE><A NAME="1008522"></A>&lt;/server&gt;</PRE>
+<p>
+<A NAME="1008523"></A>
+Первый оператор инициализирует ISB for Java, вызывая static-метод <CODE>init</CODE> Java-класса <CODE>org.omg.CORBA.ORB</CODE>. 
+Он сохраняет возвращённый объект как свойство объекта <CODE>project</CODE>, так 
+что он доступен для всего приложения.</p>
+<p>
+<A NAME="1008524"></A>
+Второй набор операторов определяет URL, который использовался для регистрации 
+объекта <CODE>FSA-Admin</CODE>.
+Если Вы использовали при регистрации этого объекта другой URL (как описано в 
+последнем разделе), Вам нужно сделать соответствующие изменения в этих 
+операторах. URL, используемый в CORBA-сервере, обязан быть точно тем же, что и URL, 
+используемый в CORBA-клиенте.</p>
+<p><A NAME="1008525"></A>
+Код затем вызывает метод <CODE>resolve</CODE> объекта <CODE>netscape.WAI.Naming</CODE> 
+для установления соединения с объектом <CODE>Admin</CODE>, который был 
+зарегистрирован <CODE>FlexiServer</CODE> как
+FSA-Admin. Наконец, он вызывает метод <CODE>narrow</CODE> объекта <CODE>AdminHelper</CODE> 
+для приведения полученного объекта к соответствующему типу Java-объекта. Этот Java-метод 
+возвращает Java-объект, соответствующий распределённому объекту. Машина 
+выполнения JavaScript обёртывает этот Java-объект как JavaScript-объект и 
+сохраняет его как свойство объекта <CODE>project</CODE>. Теперь Вы можете 
+вызывать методы и получать доступ к свойствам этого возвращённого объекта, как и 
+любого другого Java-объекта. Другие страницы <CODE>flexi</CODE> работают через 
+этот объект.</p>
+<p><A NAME="1008527"></A>
+И ещё раз - о том, как работают CORBA-объекты, см. книгу&nbsp;
+<A HREF="http://developer.netscape.com/library/documentation/enterprise/javaref/title.htm" TARGET="_blank">Netscape Internet Service Broker for Java Reference Guide</A>.</p>
+<H4>
+<A NAME="Head3;"></A><A NAME="1008533"></A>Использование Объекта Admin для 
+Администрирования и Просмотра Новых Счетов</H4>
+<HR><p>
+<A NAME="1008534"></A>
+Код во <CODE>flexi</CODE> создаёт другие объекты, кроме объекта <CODE>Admin</CODE>, 
+и осуществляет к ним доступ во <CODE>FlexiServer</CODE>. Эти объекты создаются 
+путём вызовов метода объекта <CODE>Admin</CODE>. Например, если служащий 
+отправляет запрос, новый запрос создаётся в <CODE>account-empl.html</CODE> 
+следующим оператором:</p>
+<PRE><A NAME="1008535"></A>__claim = __account.submitClaim(<br>
+parseFloat(request.claimAmount),<br>&nbsp;&nbsp;&nbsp;request.serviceDate,<br>
+request.providerName,<br>&nbsp;&nbsp;&nbsp;request.details);</PRE>
+<p><A NAME="1008536"></A>
+Этот код вызывает метод <CODE>submitClaim</CODE> объекта <CODE>Account</CODE> 
+для создания нового запроса служащего. Реализация этого метода в файле <CODE>impl\Account.java</CODE> 
+создаёт новый <CODE>Claim</CODE>-объект, который регистрируется в ORB и 
+возвращается:</p>
+<PRE><A NAME="1008537"></A>public Flexi.Claim submitClaim(float amount, String serviceDate,<br>
+&nbsp;&nbsp;&nbsp;String providerName, String details)<br>{<br>
+Claim __clm = new Claim(this, amount, serviceDate, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+providerName, details);<br>&nbsp;&nbsp;&nbsp;org.omg.CORBA.ORB.init().BOA_init().obj_is_ready(__clm);<br>
+&nbsp;&nbsp;&nbsp;_current_clm = __clm;<br>
+System.out.println("***Created a new claim: " + __clm);<br>&nbsp;&nbsp;&nbsp;return __clm;<br>};</PRE>
+<H2>
+<A NAME="Deployment Alternatives"></A><A NAME="1008541"></A>Альтернативные 
+Публикации</H2>
+<HR><p><A NAME="1008542"></A>
+Имеются две альтернативы для публикации распределённых CORBA-объектов, 
+представляющие интерес при работе с серверным JavaScript:</p>
+<ul><LI><A NAME="1008543"></A>
+Объект может быть создан web-сервером (а не приложением JavaScript) и запущен 
+на web-сервере.</LI><LI><A NAME="1008544"></A>
+Объект может быть создан приложением JavaScript и запущен на web-сервере.</LI>
+</ul><p><A NAME="1008545"></A>
+В этих альтернативных вариантах CORBA-клиент и CORBA-сервер оба работают в одном 
+процессе web-сервера.</p>
+<p><A NAME="1008546"></A>С этой точки зрения, если CORBA-клиент не является приложением JavaScript, 
+первый вариант пригоден для тех же целей, что и в случае, когда CORBA-сервер запущен как отдельный процесс.</p>
+<p><A NAME="1008547"></A>Однако второй вариант, создающий распределённый объект в приложении JavaScript, 
+реально делает это приложение сервисом CORBA. <A HREF="#1008555">Рисунок 22.3</A> иллюстрирует эти альтернативы.</p>
+<h6><A NAME="1008555"></A>Рисунок 22.3&nbsp;&nbsp;&nbsp;Приложение JavaScript как CORBA-сервер</h6>
+<P><IMG SRC="graphics/corba2.gif" width="466" height="338"></P>
+<p><A NAME="1008556"></A>Ещё раз: среды выполнения Java и JavaScript находятся вместе на одном web-сервере.
+Они взаимодействуют через использование LiveConnect стандартным способом, 
+описанным ранее в этой главе.
+В это случае, однако, процессы Java и JavaScript действуют вместе как CORBA-сервис.
+Этот сервис затем взаимодействует с CORBA-клинтом через ISB for Java стандартным способом.
+Образец-приложение <CODE>bank</CODE> это пример приложения JavaScript, 
+реализующего CORBA-сервис.</p><p><A NAME="1008557"></A>
+В данном случае CORBA-клиент может находиться на любой машине, имеющей ORB с IIOP, 
+и может быть написан на любом языке. Интересно то, что CORBA-клиент может быть 
+клиентским приложением Java
+(и через LiveConnect на клиенте - клиентским приложением JavaScript).
+Это даёт совершенно другой способ взаимодействия клиентского приложения JavaScript 
+с серверным приложением JavaScript.</p>
+<h5><a href="contents.htm">Оглавление</a> | <a href="lc.htm">Назад</a>
+| <a href="glossary.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5><HR>
+<P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT>
+</BODY></HTML>

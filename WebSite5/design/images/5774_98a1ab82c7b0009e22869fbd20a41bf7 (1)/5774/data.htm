@@ -1,0 +1,184 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="css.css" type="text/css">
+<title>Глава 11. Конвертация Типов Данных.</title></head>
+<BODY>
+<h5><a href="contents.htm"><font size="-1">Оглавление</font></a><FONT SIZE=-1> |
+<a href="dbconfig.htm">Назад</a>
+| <a href="errors.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a><BR></h5><HR><h1>Глава 11<br>
+<A NAME="1008095"></A>Конвертация Типов Данных</h1><p><A NAME="1034435"></A>
+В этой главе рассматривается, как машина выполнения JavaScript на сервере 
+конвертирует более сложные типы данных, используемые в реляционных БД, и простые типы.</p>
+<p><A NAME="1037480"></A>В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1036620"></A>
+<a href="#1031271">О Конвертации Типов Данных</a></LI><LI><A NAME="1037805"></A>
+<A HREF="#1008099">Работа с Датами и с Базами Данных</A><LI><A NAME="1036624"></A>
+<a href="#1008109">Конвертация Типов Данных Базой Данных</a></LI></ul>
+<H2><A NAME="About Data Type Conversion"></A><A NAME="1031271"></A>О Конвертации Типов Данных</H2>
+<HR><p><A NAME="1037770"></A>
+В БД имеется богатый набор типов данных. Машина выполнения JavaScript на сервере 
+конвертирует эти типы данных в значения JavaScript, строки или числа. Число в JavaScript 
+хранится как значение двойной точности с плавающей точкой. Вообще машина 
+выполнения конвертирует символьные типы данных в строки, числовые типы данных - 
+в числа, а даты - в <CODE>Date</CODE> -объекты JavaScript. Она также 
+конвертирует null-значения в JavaScript null.</p>
+<h6>Примечание</h6>
+<p> <A NAME="1008098"></A>
+Поскольку JavaScript не поддерживает фиксированные или упакованные десятеричные 
+числа, возможна некоторая потеря точности при чтении и записи типов упакованных 
+десятеричных данных. Проверьте результаты до вставки их обратно в БД и используйте 
+соответствующие математические функции для коррекции потери точности.</p>
+<H2><A NAME="Working with Dates and Databases"></A>
+<A NAME="1008099"></A>Работа с Датами и Базами Данных</H2>
+<HR><p><A NAME="1008100"></A>
+Значения даты, запрошенные из базы данных, конвертируются в <CODE>Date</CODE> 
+-объекты JavaScript. Чтобы вставить значение даты в БД, используйте <CODE>Date</CODE> 
+-объект JavaScript так:</p>
+<PRE><A NAME="1008102"></A>cursorName.dateColumn = dateObj</PRE>
+<p><A NAME="1008103"></A>
+Здесь <CODE>cursorName</CODE> это курсор, <CODE>dateColumn</CODE> это столбец, 
+соответствующий дате, а <CODE>dateObj</CODE> это <CODE>Date</CODE> -объект JavaScript. 
+Вы создаёте <CODE>Date</CODE> -объект, используя оператор <CODE>new</CODE> и <CODE>Date</CODE> 
+-конструктор:</p>
+<PRE><A NAME="1008104"></A>dateObj = new Date(dateString)</PRE>
+<p><A NAME="1008105"></A>
+где <CODE>dateString</CODE> это строка, представляющая дату. Если <CODE>dateString</CODE> 
+- пустая строка, создаётся <CODE>Date</CODE> -объект для текущей даты. Например:</p>
+<PRE><A NAME="1008108"></A>custs.orderDate = new Date("Jan 27, 1997")</PRE>
+<h6>Примечание:</h6>
+<p> <A NAME="1031902"></A>
+Базы Данных
+DB2 имеют типы данных <CODE>time</CODE> и <CODE>timestamp</CODE>. Эти типы 
+конвертируются в тип <CODE>Date</CODE> в JavaScript.</p>
+<p><b><br>
+ПРЕДУПРЕЖДЕНИЕ!</b> <A NAME="1032417"></A>
+LiveWire Database Service не может обрабатывать даты после 5 февраля 2037 года.<A NAME="1037329"></A> 
+Дополнительно о работе с датами в JavaScript см.
+<a href="../coreguide15/obj.html#1008512">"Объект Date."</a></p>
+<H2>
+<A NAME="Data-Type Conversion by Database"></A><A NAME="1008109"></A>Конвертация 
+Типов Данных Базой Данных</H2>
+<HR><p><A NAME="1034201"></A>
+В следующей таблице показана конвертация, выполняемая машиной выполнения JavaScript 
+для баз данных DB2.</p>
+<A NAME="1037361"></A>
+<h5><A NAME="1034209"></A>
+Таблица 11.1 &nbsp;Конвертация Типов Данных DB2</h5>
+<TABLE BORDER="2" CELLPADDING=5 width="762">
+<TR><TH VALIGN=baseline ALIGN=left width="474"><A NAME="1034213"></A>Тип Данных DB2<TH VALIGN=baseline ALIGN=left width="254"><A NAME="1034215"></A>
+Тип Данных JavaScript<TR><TD VALIGN=baseline ALIGN=left width="474"><P><A NAME="1034217"></A>
+<CODE>char(n)</CODE>, <CODE>varchar(n)</CODE>, <CODE>long varchar, clob(n)</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="254"><P><A NAME="1034219"></A>
+<CODE>string</CODE></P><TR><TD VALIGN=baseline ALIGN=left width="474"><P><A NAME="1034221"></A>
+<CODE>integer, smallint</CODE></P><TD VALIGN=baseline ALIGN=left width="254"><P><A NAME="1034223"></A>
+<CODE>integer</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left width="474"><P><A NAME="1034225"></A>
+<CODE>decimal, double</CODE></P><TD VALIGN=baseline ALIGN=left width="254"><P><A NAME="1034227"></A>
+<CODE>double</CODE></P><TR><TD VALIGN=baseline ALIGN=left width="474"><P><A NAME="1034229"></A>
+<CODE>date, time, timestamp</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="254"><P><A NAME="1034231"></A>
+<CODE>Date</CODE></P><TR><TD VALIGN=baseline ALIGN=left width="474"><P><A NAME="1034233"></A>
+<CODE>blob</CODE></P><TD VALIGN=baseline ALIGN=left width="254"><P><A NAME="1034235"></A>
+<CODE>Blob</CODE></P></TABLE>
+<p><A NAME="1025402"></A>
+В следующей таблице дана конвертация БД Informix.</p>
+<A NAME="1037370"></A><h5><A NAME="1032457"></A>
+Таблица 11.2&nbsp; Конвертация Типов Данных Informix</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1008113"></A>Тип Данных Informix<TH VALIGN=baseline ALIGN=left><A NAME="1008115"></A>
+Тип Данных JavaScript<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1014148"></A>
+<CODE>char</CODE>, <CODE>nchar</CODE>, <CODE>text</CODE>, <CODE>varchar</CODE>, <CODE>nvarchar</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1014150"></A>
+<CODE>string</CODE></P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1014188"></A>
+<CODE>decimal(p,s)</CODE>, <CODE>double precision</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>money(p,s)</CODE>, <CODE>serial</CODE>, <CODE>smallfloat</CODE>, <CODE>smallint</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1014190"></A>
+<CODE>number</CODE></P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1014228"></A>
+<CODE>date</CODE>, <CODE>datetime<A HREF="#1033923"><SUP>1</SUP></A></CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1014230"></A>
+<CODE>Date</CODE></P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008117"></A>
+<CODE>byte</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1008119"></A>
+<CODE>Blob</CODE></P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008141"></A>
+<CODE>interval</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1008143"></A>
+Не поддерживается</P></TABLE>
+<TABLE><TR><TD><SUP>1</SUP><p><A NAME="1033923"></A>
+Тип даты Informix <CODE>datetime</CODE> имеет точность переменных, определяемых пользователем. Серверный 
+JavaScript выводит данные <CODE>datetime</CODE> в формате от YEAR до SECOND. 
+Если <CODE>datetime</CODE> -переменная была определена с другой точностью, 
+такой как от MONTH до DAY, она может быть отображена некорректно. В данном 
+случае дата не нарушится некорректным отображением.</TABLE><p>
+<A NAME="1034243"></A>
+ODBC транслирует типы данных продавца в типы данных ODBC. Например, в Microsoft SQL Server 
+тип данных <CODE>varchar</CODE> конвертируется в ODBC-тип <CODE>SQL_VARCHAR</CODE>. 
+Дополнительно см. документацию ODBC SDK.<br>
+В следующей таблице показана конвертация, выполняемая машиной JavaScript для баз 
+данных ODBC.</p>
+<A NAME="1037401"></A><h5><A NAME="1034253"></A>
+Таблица 11.3&nbsp; Конвертация Типов Данных ODBC</h5>
+<TABLE BORDER="2" CELLPADDING=5 width="762">
+<TR><TH VALIGN=baseline ALIGN=left width="538"><A NAME="1034257"></A>Тип Данных ODBC<TH VALIGN=baseline ALIGN=left width="190">
+<A NAME="1034259"></A>Тип Данных JavaScript<TR>
+<TD VALIGN=baseline ALIGN=left width="538"><P><A NAME="1034261"></A>
+<CODE>SQL_LONGVARCHAR</CODE>, <CODE>SQL_VARCHAR</CODE>, <CODE>SQL_CHAR</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="190"><P><A NAME="1034263"></A>
+<CODE>string</CODE></P><TR><TD VALIGN=baseline ALIGN=left width="538"><P><A NAME="1034265"></A>
+<CODE>SQL_SMALLINT</CODE>, <CODE>SQL_INTEGER</CODE>, <CODE>SQL_DOUBLE</CODE>, <CODE>SQL_FLOAT</CODE>, <CODE>SQL_REAL</CODE>, <CODE>SQL_BIGINT</CODE>, <CODE>SQL_NUMERIC</CODE>, <CODE>SQL_DECIMAL</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="190"><P><A NAME="1034267"></A>
+<CODE>number</CODE></P><TR><TD VALIGN=baseline ALIGN=left width="538"><P><A NAME="1034269"></A>
+<CODE>SQL_DATE</CODE>, <CODE>SQL_TIME</CODE>, <CODE>SQL_TIMESTAMP</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="190"><P><A NAME="1034271"></A>
+<CODE>Date</CODE></P><TR><TD VALIGN=baseline ALIGN=left width="538"><P><A NAME="1034273"></A>
+<CODE>SQL_BINARY</CODE>, <CODE>SQL_VARBINARY</CODE>, <CODE>SQL_LONGBINARY</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="190"><P><A NAME="1034275"></A>
+<CODE>Blob</CODE></P></TABLE>
+</P><p><A NAME="1033669"></A>
+В следующей таблице показана конвертация, выполняемая машиной выполнения 
+JavaScript для баз данных Oracle.</p>
+<A NAME="1037421"></A><h5><A NAME="1032625"></A>
+Таблица 11.4 &nbsp;Конвертация Типов Данных Oracle</h5>
+<p><TABLE width="90%" BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1008149"></A>
+Тип Данных Oracle<TH VALIGN=baseline ALIGN=left><A NAME="1008151"></A>Тип Данных JavaScript<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1013910"></A>
+<CODE>long</CODE>, <CODE>char(n),</CODE> <CODE>varchar2(n)</CODE>, <CODE>rowid</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1008159"></A>
+<CODE>string</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1014268"></A>
+<CODE>number(p,s)</CODE>, <CODE>number(p,0)</CODE>, <CODE>float(p)</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1014270"></A>
+<CODE>number</CODE></P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1014308"></A>
+<CODE>date</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1014310"></A>
+<CODE>Date</CODE></P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1008161"></A>
+<CODE>raw(n)</CODE>, <CODE>long raw</CODE></P><TD VALIGN=baseline ALIGN=left><P><A NAME="1008163"></A>
+<CODE>Blob</CODE></P></TABLE><p><A NAME="1025548"></A>
+В следующей таблице показана конвертация, выполняемая машиной выполнения 
+JavaScript для баз данных Sybase.</p>
+<A NAME="1037443"></A><h5><A NAME="1032483"></A>
+Таблица 11.5&nbsp; Конвертация Типов Данных Sybase</h5>
+<p><TABLE BORDER="2" CELLPADDING=5 width="762"><TR>
+<TH VALIGN=baseline ALIGN=left width="530"><A NAME="1025529"></A>
+Тип Данных Sybase<TH VALIGN=baseline ALIGN=left width="198"><A NAME="1025531"></A>Тип 
+Данных JavaScript<TR><TD VALIGN=baseline ALIGN=left width="530"><P><A NAME="1025533"></A>
+<CODE>char(n)</CODE>, <CODE>varchar(n)</CODE>, <CODE>nchar(n)</CODE>, <CODE>nvarchar(n)</CODE>, <CODE>text</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="198"><P><A NAME="1025535"></A>
+<CODE>string</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left width="530"><P><A NAME="1025537"></A>
+<CODE>bit</CODE>, <CODE>tinyint</CODE>, <CODE>smallint</CODE>, <CODE>int</CODE>, <CODE>float(p)</CODE>, <CODE>double precision</CODE>, <CODE>real</CODE>, <CODE>decimal(p,s)</CODE>, <CODE>numeric(p,s)</CODE>, <CODE>money</CODE>, <CODE>smallmoney</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="198"><P><A NAME="1025539"></A>
+<CODE>number<A HREF="#1033762"><SUP>1</SUP></A></CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left width="530"><P><A NAME="1025541"></A>
+<CODE>datetime</CODE>, <CODE>smalldatetime</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="198"><P><A NAME="1025543"></A>
+<CODE>Date</CODE></P>
+<TR><TD VALIGN=baseline ALIGN=left width="530"><P><A NAME="1025545"></A>
+<CODE>binary(n)</CODE>, <CODE>varbinary(n)</CODE>, <CODE>image</CODE></P>
+<TD VALIGN=baseline ALIGN=left width="198"><P><A NAME="1025547"></A>
+<CODE>Blob</CODE></P></TABLE>
+<TABLE><TR><TD><SUP>1</SUP>
+<A NAME="1033762"></A>
+<p>Sybase-клиент ограничивает числовые типы данных 33 цифрами. Если Вы 
+вставляете число JavaScript с большим количеством цифр в БД Sybase, Вы можете получить ошибку.</TABLE>
+<h5><font size="-1"><a href="contents.htm">Оглавление</a></font><FONT SIZE=-1> |
+<a href="dbconfig.htm">Назад</a>
+| <a href="errors.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></FONT></h5><HR>
+<P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT>
+</BODY></HTML>

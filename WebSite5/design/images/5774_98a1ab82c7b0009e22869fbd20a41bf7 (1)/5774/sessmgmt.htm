@@ -1,0 +1,1434 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="ru">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="http://cm/javascript/servguide14/css.css" type="text/css">
+<TITLE>Служба Session Management Service.</TITLE></HEAD>
+<BODY>
+<h5><a href="contents.htm">Оглавление</a> | <a href="jsserv.htm">Назад</a>
+| <a href="misc.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5>
+<HR><A NAME="1036379"></a><h1>Глава 6<BR><A NAME="1036383"></a>
+Служба
+Session Management Service</h1>
+<p><A NAME="1052043"></a>В этой главе рассматриваются объекты службы Session Management
+Service, доступные в серверном JavaScript и предназначенные для обеспечения 
+совместного использования данных несколькими клиентскими запросами к приложению, 
+несколькими пользователями одного приложения или даже несколькими приложениями 
+на сервере.</p>
+<p><A NAME="1064445"></a>Session Management Service это набор возможностей для 
+управления созданием и уничтожением различных предопределённых объектов в ходе 
+сессии сервера. Эти возможности предоставлены через объекты <CODE>request</CODE>, <CODE>client</CODE>,
+<CODE>project</CODE> и <CODE>server</CODE>.</p>
+<p><A NAME="1064446"></a>
+Помимо этого Вы можете конструировать экземпляры <CODE>Lock</CODE> для 
+управления доступом к совместно используемой информации. <CODE>Lock</CODE> 
+-экземпляры дают возможность точно управлять использованием информации, 
+устанавливая исключительный доступ к специфицированным объектам.</p>
+<p><A NAME="1063033"></a>
+В главе имеются следующие разделы:</p>
+<ul><LI><A NAME="1061405"></a>
+<A HREF="#1036423">Предопределённые Объекты. Обзор.</a><LI><A NAME="1061409"></a>
+<a href="#1036535">Объект request</a><LI><A NAME="1061413"></a>
+<a href="#1036712">Объект client</a><LI><A NAME="1061417"></a>
+<a href="#1050512">Объект project</a><LI><A NAME="1061421"></a>
+<a href="#1036812">Объект server</a><LI><A NAME="1061425"></a><A HREF="#1036896">
+Технология Обслуживания Объекта client</a><LI><A NAME="1061429"></a><A HREF="#1012796">
+Безопасное Совместное Использование Объектов с Блокировкой</a></LI></ul>
+<H2><A NAME="Overview of the Predefined Objects"></a><A NAME="1036423"></a>Предопределённые Объекты. Обзор.</H2><hr>
+<p><A NAME="1036424"></a>Предопределённые объекты <CODE>request</CODE>, <CODE>client</CODE>, <CODE>project</CODE> 
+и <CODE>server</CODE> содержат данные, существующие в течение различных периодов 
+времени и доступные различным клиентам и приложениям. Имеется единственный 
+объект <CODE>server</CODE>, используемый всеми запущенными на сервере приложениями. 
+Имеется отдельный объект <CODE>project</CODE> для каждого запущенного приложения. 
+Имеется один объект <CODE>client</CODE> для каждого браузера (клиент), 
+выполняющего доступ к данному отдельному приложению. 
+Наконец, имеется отдельный объект <CODE>request</CODE> для каждого клиентского 
+запроса с определённого клиента к определённому приложению. На 
+<A HREF="#1064133">Рисунке 6.1</a> показаны возможности относительной 
+доступности различных объектов.</p>
+<h6><A NAME="1064133"></a>Рисунок 6.1 &nbsp;&nbsp;Относительная доступность 
+объектов, обслуживающих сессию</h6>
+<p><IMG SRC="http://cm/javascript/servguide14/graphics/avail.gif" width="492" height="198"></P>
+<p><A NAME="1036475"></a>
+Машина выполнения JavaScript на сервере конструирует объекты обслуживания сессии в разные моменты времени.
+Эти объекты применяются для хранения различных данных. Вы можете определить 
+специфические для приложения свойства для любого из этих объектов.</p>
+<ul><LI><A NAME="1036478"></a><b>Объект<CODE> request</CODE></b><br>
+<A NAME="1036479"></a>Содержит данные, доступные только для текущего
+клиентского запроса. Ничто в этом объекте не применяется для совместного
+пользования. Объект<CODE> request</CODE> имеет предопределённые свойства, к
+которым Вы можете получить доступ.<br>
+<A NAME="1036480"></a>Объект <CODE>request</CODE> считается объектом только для 
+чтения. Машина выполнения сохраняет текущие значения всех элементов формы как 
+свойства объекта <CODE>request</CODE>.
+Вы можете использовать его для хранения, информации, специфичной для 
+отдельного запроса, но для этого более эффективным будет использование переменных JavaScript.<P></P><A NAME="1036482"></a>
+Машина выполнения конструирует объект <CODE>request</CODE> каждый раз, когда 
+сервер отвечает на клиентский запрос из web-браузера. Он уничтожает этот 
+объект в  конце выполнения клиентского запроса. Машина выполнения не 
+сохраняет данные объекта <CODE>request</CODE>.<br>
+<A NAME="1036486"></a>См. дополнительно <A HREF="#1036535">"Объект request&quot;</a>.<LI><A NAME="1036488"></a>
+<b>Объект<CODE> client</CODE></b><br>
+<A NAME="1036489"></a>Содержит данные, доступные только для отдельной пары 
+клиент/приложение. Если один клиент соединён с двумя разными приложениями одновременно,
+машина выполнения JavaScript конструирует отдельные объекты <CODE>client</CODE> 
+для каждой пары клиент/приложение. Все запросы от одного клиента к одному и 
+тому же приложению пользуются одним и тем же объектом <CODE>client</CODE>.
+Объект<CODE> client</CODE> не имеет предопределённых свойств.<br>
+<A NAME="1036490"></a>
+В общем, используйте объект <CODE>client</CODE> для тех данных, которые должны 
+использоваться несколькими запросами от того же самого клиента (пользователя), 
+но они не должны использоваться разными клиентами приложения. Например,
+Вы можете сохранять пользовательский ID потребителя как свойство объекта <CODE>client</CODE>.<br>
+<A NAME="1036492"></a>Машина выполнения физически конструирует объект <CODE>client</CODE> для 
+каждого клиентского запроса, но свойства сохраняются в течение времени 
+существования клиентского соединения с приложением.
+Следовательно, хотя физически объект <CODE>client</CODE> существует только для одного клиентского запроса,
+концептуально Вы можете представлять, что он конструируется при первом 
+соединении клиента с приложением и не разрушается, пока клиент не прервёт свой 
+доступ к приложению. Есть несколько подходов к работе со свойствами объекта <CODE>client</CODE> при множественных запросах.
+См. дополнительно раздел <A HREF="#1036896">"Технология Работы с Объектом client&quot;</a>.<br>
+<A NAME="1036496"></a>Машина выполнения разрушает объект <CODE>client</CODE>, 
+когда клиент заканчивает использование приложения. На практике машине JavaScript 
+непросто определить, когда объект <CODE>client</CODE> и его свойства 
+должны быть уничтожены. О том, как выполняется это определение, см. раздел <A HREF="#1063688">"Жизненный 
+Цикл Объекта client&quot;</a>. См. также <A HREF="#1036712">"Объект client&quot;</a>.<LI><A NAME="1036504"></a>
+<b>Объект<CODE> project</CODE></b><br>
+<A NAME="1036505"></a>Содержит данные, доступные всем клиентам, выполняющим 
+доступ к любой части приложения. Все клиенты, выполняющие доступ к одному и 
+тому же приложению, используют один объект
+<CODE>project</CODE>. Объект<CODE> project</CODE> не имеет предопределённых свойств.<br>
+<A NAME="1036506"></a>В общем, применяйте объект <CODE>project</CODE> для совместного использования 
+данных несколькими клиентами, работающими с одним приложением. Например, Вы 
+можете хранить следующий доступный ID потребителя как свойство объекта
+<CODE>project</CODE>. Когда объект <CODE>project</CODE> применяется для 
+совместного использования данных, Вы должны быть внимательны относительно 
+обеспечения одновременного доступа к этим данным; см.
+<A HREF="#1012796">"Безопасное Совместное Использование Объектов с Помощью 
+Блокировки&quot;</a>. Из-за ограничений, действующих для свойств объекта
+<CODE>client</CODE>, Вам иногда придётся использовать объект <CODE>project</CODE> 
+для хранения данных отдельного клиента.<br>
+<A NAME="1036508"></a>Машина выполнения конструирует объект
+<CODE>project</CODE> при старте приложения в Application Manager или при старте 
+сервера. Она разрушает объект при остановке приложения или сервера.<br>
+<A NAME="1036512"></a>Дополнительно см. <A HREF="#1050512">"Объект project&quot;</a>.<LI><A NAME="1036514"></a>
+<b>Объект<CODE> server</CODE></b><br>
+<A NAME="1036515"></a>Содержит данные, доступные всем клиентам и всем 
+приложениям данного сервера. Все приложения и все пары клиент/приложение 
+используют один объект <CODE>server</CODE>. Объект<CODE> server</CODE> имеет 
+предопределённые свойства.<br><A NAME="1036516"></a>
+Применяйте объект <CODE>server</CODE> для совместного использования данных 
+несколькими приложениями сервера. Например,
+Вы можете использовать объект <CODE>server</CODE> для отслеживания 
+использования всех приложений сервера.
+Когда объект <CODE>server</CODE> применяется для совместного использования 
+данных, Вы должны побеспокоиться об обеспечении одновременного доступа к этим 
+данным; см. <A HREF="#1012796">"Безопасное Совместное Использование Объектов с 
+Помощью Блокировки&quot;</a>.<br>
+<A NAME="1036518"></a>Машина выполнения конструирует объект <CODE>server</CODE> при старте сервера и 
+разрушает его при остановке сервера.<br>
+<A NAME="1036522"></a>См. дополнительно <A HREF="#1036812">"Объект server&quot;</a>.</ul>
+<p><A NAME="1036523"></a><A HREF="#1046897">Рисунок 6.2</a> может помочь представить, как все эти объекты 
+соответствуют URL страницы Вашего приложения.</p>
+<h6><A NAME="1046897"></a>Рисунок 6.2 &nbsp;&nbsp;Предопределённые объекты в URL</h6>
+<P><IMG SRC="http://cm/javascript/servguide14/graphics/url.gif" width="342" height="205"></P>
+<p><A NAME="1046898"></a>
+На этом рисунке Joe запрашивает URL <CODE>http://www.royalairways.com/videoapp/category.html</CODE>,
+соответствующий странице приложения <CODE>videoapp</CODE>. Когда машина 
+выполнения получает запрос, она использует уже существующий объект <CODE>server</CODE>, 
+соответствующий <CODE>www.royalairways.com</CODE> и уже существующий объект <CODE>project</CODE>, 
+соответствующий приложению <CODE>videoapp</CODE>. Машина создаёт объект <CODE>client</CODE>, 
+соответствующий комбинации Joe и приложения <CODE>videoapp</CODE>. Если Joe уже 
+получал доступ к другим страницам этого приложения, новый объект <CODE>client</CODE> 
+использует любые сохранённые свойства. Наконец, машина создаёт новый объект <CODE>request</CODE> 
+для конкретного запроса на страницу <CODE>category.html</CODE>.</p>
+<H2><A NAME="The request Object"></a><A NAME="1036535"></a>Объект request</H2><hr>
+<p><A NAME="1036537"></a>Объект <CODE>request</CODE> содержит данные, специфичные для текущего 
+клиентского запроса. Они имеет самое короткое время существования из всех 
+объектов. JavaScript конструирует новый объект <CODE>request</CODE> для каждого 
+получаемого клиентского запроса; например, объект создаётся, когда</p>
+<ul><LI><A NAME="1036538"></a>
+Пользователь вручную запрашивает URL путём его ввода или выбора закладки/bookmark.</LI><LI><A NAME="1036539"></a>
+Пользователь щёлкает гиперссылку или иным способом запрашивает документ, 
+относящийся к другой странице.</LI><LI><A NAME="1036540"></a>Клиентский JavaScript 
+устанавливает свойство <CODE>document.location</CODE> или переходит к 
+странице, используя метод <CODE>history</CODE>.</LI><LI><A NAME="1036543"></a>
+Серверный JavaScript вызывает функцию <CODE>redirect</CODE>.</LI></ul>
+<p><A NAME="1036544"></a>Машина выполнения JavaScript на сервере уничтожает объект <CODE>request</CODE> 
+по окончании ответа на запрос (обычно предоставляя запрошенную страницу). 
+Следовательно, типичный период существования объекта <CODE>request</CODE> - менее одной секунды.</p>
+<BLOCKQUOTE>
+<p><B>ПРИМЕЧАНИЕ:</B></p>
+<p><A NAME="1036548"></a>
+Вы не можете использовать объект <CODE>request</CODE> в начальной странице 
+приложения. Эта страница запускается, когда приложение стартует на сервере. В 
+этой точке нет объекта клиентского запроса, и поэтому нет доступного объекта <CODE>request</CODE>. 
+О начальных страницах см. раздел <A HREF="appdev.htm#1043531">"Установка 
+Нового Приложения&quot;</a>.</p></BLOCKQUOTE>
+<p><A NAME="1036554"></a>Резюме по объекту <CODE>request</CODE> см. а разделе
+<A HREF="#1036423">"Предопределённые Объекты. Обзор.&quot;</a>.</p>
+<h4><A NAME="Head2;"></a><A NAME="1036556"></a>Свойства</h4><hr>
+<p><A NAME="1036561"></a>В таблице перечислены предопределённые свойства объекта
+<CODE>request</CODE>. Некоторые из них соответствуют переменным окружения CGI. 
+Вы можете получить доступ к этим и другим переменным окружения CGI через 
+использование функции <CODE>ssjs_getCGIVariable</CODE>, описанной в разделе <A HREF="jsserv.htm#1037612">
+&quot;Доступ к Переменным CGI&quot;</a>.</p>
+<A NAME="1062774"></a><h5><A NAME="1036568"></a>
+Таблица 6.1&nbsp; Свойства объекта <CODE>request</CODE></h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><B><A NAME="1036574"></a>
+Свойство<TH VALIGN=baseline ALIGN=left><A NAME="1036576"></a>Описание<TH VALIGN=baseline ALIGN=left><A NAME="1036578"></a>
+Пример значения<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036581"></a>agent</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036583"></a>Имя и версия клиентского программного обеспечения. 
+Используйте это свойство для адресного применения расширенных возможностей 
+некоторых браузеров.</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036585"></a>Mozilla/1.1N (Windows; I; 32bit)</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036587"></a>auth_type</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1036589"></a>
+Тип авторизации, если запрос защищён авторизацией какого-либо типа. Netscape web-серверы 
+поддерживают базовую авторизацию доступа по HTTP. Соответствует переменной 
+окружения CGI <CODE>AUTH_TYPE</CODE>.</P>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036591"></a>basic</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036593"></a>auth_user</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036595"></a>Имя локального HTTP-пользователя web-браузера, если 
+авторизация доступа HTTP была активирована для данного URL. Заметьте, что это не 
+способ определения имени пользователя, получающего доступ к Вашей программе. 
+Соответствует переменной окружения CGI <CODE>REMOTE_USER</CODE>.</P>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036597"></a>vpg</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036600"></a>ip</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036602"></a>IP-адрес клиента. Может использоваться для авторизации 
+или отслеживания доступа.</P>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036604"></a>198.95.251.30</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036607"></a>method</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036609"></a>HTTP-метод, ассоциированный с запросом. Приложение 
+может использовать его для определения соответствующего ответа на запрос. 
+Соответствует переменной окружения CGI <CODE>REQUEST_METHOD</CODE>.</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036614"></a>GET <A HREF="#1036613"><SUP>1</SUP></a></PRE><TR><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036617"></a>protocol</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1036619"></a>
+  Уровень протокола HTTP, поддерживаемый клиентским программным обеспечением. 
+  Соответствует переменной окружения CGI
+<CODE>SERVER_PROTOCOL</CODE>.</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036621"></a>HTTP/1.0</PRE><TR><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036623"></a>query</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1056254"></a>
+Информация из запрашивающей HTML-страницы; это информация в URL, идущая после знака "?".
+Соответствует переменной окружения CGI <CODE>QUERY_STRING</CODE>.</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036627"></a>button1=on&amp;button2=off</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036629"></a>imageX</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036631"></a>Горизонтальная позиция курсора, когда пользователь 
+щёлкает на карте изображений/image map.
+Описано в разделе <A HREF="#1048800">"Работа с Картами Изображений&quot;</a>.</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036636"></a>45</PRE><TR><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036638"></a>imageY</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1036640"></a>
+Вертикальная позиция курсора, когда пользователь щёлкает на карте 
+изображений. Описано в разделе <A HREF="#1048800">"Работа с Картами 
+Изображений&quot;.</a></P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036645"></a>132</PRE><TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036647"></a>uri</PRE>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1036649"></a>Частичный URL запроса: с 
+вырезанными протоколом, именем хоста и, возможно имеющимся, номером порта.</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036651"></a>videoapp/add.html</PRE></TABLE>
+<p><SUP>1</SUP><FONT SIZE=2>
+<A NAME="1036613"></a>Для HTTP 1.0 <CODE>method</CODE> имеет одно из значений: <CODE>GET</CODE>, <CODE>POST</CODE> 
+или <CODE>HEAD</CODE>.</FONT>
+<A NAME="1056938"></a>Если Вы объявляете переменные верхнего уровня в серверном JavaScript, 
+они имеют тот же период существования, что и свойства объекта <CODE>request</CODE>. 
+Например, такое объявление существует только на протяжении текущего запроса:</P><PRE><A NAME="1056934"></a>var number = 42;</PRE>
+<p><A NAME="1036655"></a>
+Помимо предопределённых свойств, Вы можете иметь в клиентском коде информацию, 
+которая будет становиться свойствами объекта <CODE>request</CODE>. Это делается 
+через использование элементов формы и кодирование свойств в URL запроса, как 
+описано в разделе <A HREF="jsserv.htm#1019011">"Отправка Значений с Клиента на Сервер&quot;</a>.</p>
+<p><A NAME="1048615"></a>Хотя Вы можете создавать дополнительные свойства объекта
+<CODE>request</CODE> непосредственно операторами серверного JavaScript, 
+производительность будет выше, если использовать переменные JavaScript. 
+Создаваемые Вами свойства объекта <CODE>request</CODE> могут быть любого 
+допустимого в JavaScript типа, включая ссылки на другие объекты JavaScript.</p>
+<p><A NAME="1036659"></a>
+Помните, что период существования объекта <CODE>request</CODE> и, следовательно, 
+его свойств, это период действия запроса. Если Вы сохраняете ссылку на другой 
+объект в объекте <CODE>request</CODE>, то объект, на который ссылаются, 
+уничтожается вместе с объектом <CODE>request</CODE>, если только объект, на 
+который ссылаются, не имеет на себя другой действующей ссылки, прямой или косвенной, с объекта
+<CODE>server</CODE> или <CODE>project</CODE>.</p>
+<h4><A NAME="Head2;"></a><A NAME="1048800"></a>
+Работа с Картами Изображений/Image Maps</h4><hr>
+<p><A NAME="1048801"></a>
+Атрибут <CODE>ISMAP</CODE> тэга <CODE>IMG</CODE> указывает на серверную карту 
+изображений. Если пользователь щёлкает на карте, горизонтальная и вертикальная 
+позиции курсора высылаются на сервер.
+Свойства <CODE>imageX</CODE> и <CODE>imageY</CODE> возвращают эти координаты.
+Рассмотрим такой HTML:</p>
+<PRE><A NAME="1048804"></a>&lt;A HREF="mapchoice.html"&gt;<br>&lt;IMG SRC="images\map.gif" HEIGHT=599
+WIDTH=424 BORDER=0 <br>&nbsp;&nbsp;&nbsp;ISMAP ALT="SANTA CRUZ COUNTY"&gt;<br>&lt;/A&gt;</PRE>
+<p><A NAME="1048805"></a>Страница <CODE>mapchoice.html</CODE> получает свойства <CODE>request.imageX</CODE> 
+и <CODE>request.imageY</CODE> на основе позиции курсора в момент щелчка мышью.</p>
+<H2><A NAME="The client Object"></a><A NAME="1036712"></a>Объект client</H2><hr><p><A NAME="1036713"></a>
+Несколько браузеров-клиентов могут иметь одновременный доступ к приложению JavaScript. 
+Объект <CODE>client</CODE> предоставляет метод для работы отдельно с каждым 
+клиентом. Он также имеет технологию для отслеживания работы каждого 
+браузера-клиента с приложением при наличии нескольких запросов.</p>
+<p><A NAME="1036715"></a>Машина выполнения JavaScript на сервере конструирует 
+объект <CODE>client</CODE> для каждой пары клиент/приложение. Браузер-клиент, 
+соединённый с одним приложением, имеет другой объект
+<CODE>client</CODE> из того же самого браузера-клиента, соединённого с другим 
+приложением. Машина выполнения конструирует новый объект <CODE>client</CODE> 
+каждый раз, когда пользователь выполняет доступ к приложению; могут быть сотни и 
+тысячи объектов <CODE>client</CODE>, активных одновременно.</p>
+<BLOCKQUOTE>
+<p><B>ПРИМЕЧАНИЕ:</B></p>
+<p><A NAME="1036717"></a>
+Вы не можете использовать объект <CODE>client</CODE> на начальной странице 
+Вашего приложения. Эта страница начинает работу при старте приложения на 
+сервере. В этот момент клиентского запроса нет, и поэтому нет также и 
+доступного объекта <CODE>client</CODE>. Дополнительно см. раздел <A HREF="appdev.htm#1043531">"Установка 
+Нового Приложения&quot;</a>.</p></BLOCKQUOTE>
+<p><A NAME="1036721"></a>Машина выполнения конструирует и уничтожает объект <CODE>client </CODE>
+для каждого клиентского запроса. В то же время, при обработке запроса машина 
+выполнения сохраняет имена и значения свойств объекта <CODE>client</CODE>. Таким 
+способом машина выполнения может конструировать новый объект
+<CODE>client</CODE> из сохранённых данных, если тот же самый пользователь вновь 
+использует приложение, сделав следующий запрос. Таким образом, концептуально Вы 
+можете представлять объект <CODE>client</CODE> как объект, действующий в течение 
+сессии работы клиента с приложением.</p>
+<p><A NAME="1036722"></a>JavaScript не сохраняет объекты <CODE>client</CODE>, не имеющие значений свойств.
+Поэтому, если приложению не нужны объекты <CODE>client</CODE> и оно не 
+присваивает свойствам объекта
+<CODE>client</CODE> никаких значений, оно не выполняет никакой лишней работы.</p>
+<p><A NAME="1036723"></a>У Вас имеются несколько различных опций: как и где машине 
+выполнения сохранять свойства объекта
+<CODE>client</CODE>. Эти опции обсуждаются в разделе <A HREF="#1036896">"Технология 
+Обслуживания Объекта client&quot;</a>.</p>
+<p><A NAME="1036729"></a>
+Резюме по объекту <CODE>client</CODE> см. в разделе <A HREF="#1036423">"Предопределённые 
+Объекты. Обзор&quot;</a>.</p>
+<h4><A NAME="Head2;"></a><A NAME="1036731"></a>Свойства</h4><hr>
+<p><A NAME="1036733"></a>
+В объекте <CODE>client</CODE> отсутствуют значения предопределённых свойств, 
+поскольку он предназначен для хранения специфических для приложения данных. 
+Операторы JavaScript могут присваивать специфичные для приложения свойства и 
+значения объекту <CODE>client</CODE>. Хорошим примером свойства объекта <CODE>client</CODE> 
+является ID-номер потребителя. Когда пользователь в первый раз вызывает 
+приложение, оно обязано присвоить
+customer ID, как в следующем примере:</p>
+<PRE><A NAME="1036734"></a>client.custID = getNextCustID();</PRE>
+<p><A NAME="1036735"></a>
+Здесь определяемая в приложении функция <CODE>getNextCustID</CODE> используется 
+для вычисления customer ID.
+Машина выполнения затем присваивает этот ID свойству <CODE>custID </CODE>объекта<CODE> client</CODE>.</p>
+<p><A NAME="1059783"></a>После установки customer ID может оказаться неудобным 
+требовать от пользователя ввода ID на каждой странице приложения. 
+Однако без использования объекта <CODE>client</CODE> нет иной возможности 
+ассоциировать корректный customer ID с последующими запросами клиента.</p>
+<p><A NAME="1059785"></a>Из-за использования такой техники для обслуживания свойств 
+объекта <CODE>client</CODE> при наличии нескольких клиентских запросов имеется 
+одно важное ограничение для значений свойств объекта <CODE>client</CODE>. Машина выполнения
+JavaScript не сервере конвертирует значения всех свойств объекта <CODE>client</CODE> в строки.</p>
+<p><A NAME="1036738"></a>Не присваивайте объект в качестве значения свойства объекта
+<CODE>client</CODE>. Если Вы это сделаете, машина выполнения конвертирует этот 
+объект в строку; после этого Вы не сможете больше работать с этим объектом. Если значение 
+клиентского свойства представляет другой тип данных, например, number, Вы 
+обязаны конвертировать строковое значение перед тем как его использовать.
+Например, Вы можете создать целочисленное свойство объекта <CODE>client</CODE>:</p>
+<PRE><A NAME="1036739"></a>client.totalNumber = 17;</PRE><p><A NAME="1036740"></a>
+Затем Вы можете использовать <CODE>parseInt</CODE> для инкремента значения <CODE>totalNumber</CODE>:</p>
+<PRE><A NAME="1036741"></a>client.totalNumber = parseInt(client.totalNumber) + 1;</PRE>
+<p><A NAME="1036743"></a>Аналогично Вы можете создать Булево свойство объекта <CODE>client</CODE>:</p>
+<PRE><A NAME="1036744"></a>client.bool = true;</PRE>
+<p><A NAME="1036745"></a>А затем проверить его:</p>
+<PRE><A NAME="1036746"></a>if (client.bool == "true")<br>&nbsp;&nbsp;&nbsp;write("It's true!");<br>else<br>
+&nbsp;&nbsp;&nbsp;write("It's false!");</PRE>
+<p><A NAME="1036747"></a>
+Заметьте, что условное выражения сравнивает <CODE>client.bool</CODE> со строкой <CODE>"true"</CODE>.
+Можно использовать эту технику для обработки Булева выражения. Например, для 
+отрицания Булева свойства используйте такой код:</p>
+<PRE><A NAME="1036749"></a>client.bool = (client.bool == "true") ? false : true;</PRE>
+<p><A NAME="1036750"></a>
+Хотя Вы можете работать непосредственно со свойствами объекта <CODE>client</CODE>, 
+Вы выполняете таким образом лишнюю работу. Если Вы повторно используете значение 
+свойства объекта <CODE>client</CODE>, предусмотрите использование переменных 
+верхнего уровня JavaScript.
+Перед использованием свойства объекта <CODE>client</CODE>, присвойте его 
+переменной. Когда Вы закончите работу с этой переменной, присвойте результат 
+обратно соответствующему свойству объекта <CODE>client</CODE>.
+Эта техника несколько повысит производительность среды.</p>
+<p><A NAME="1036751"></a>
+Как отмечено ранее, Вы не можете сохранять ссылки на другие объекты в объекте <CODE>client</CODE>. 
+Вы можете, однако, сохранять ссылки на объекты в объектах <CODE>project</CODE> 
+или <CODE>server</CODE>. Если у вас имеется свойство, ассоциированное с 
+клиентом, принимающее значения объекта, создайте массив, индексированный по 
+клиентским ID, и храните ссылку на массив в объекте <CODE>project</CODE> или <CODE>server</CODE>.
+Вы можете использовать этот массив для хранения значений объекта, 
+ассоциированного с клиентом. Рассмотрим следующий код:</p>
+<PRE><A NAME="1056978"></a>if client.id == null<br>&nbsp;&nbsp;&nbsp;client.id = ssjs_generateClientID();<br>
+project.clientDates[client.id] = new Date();</PRE>
+<p><A NAME="1056977"></a>
+Здесь использована функция <CODE>ssjs_generateClientID</CODE>, описанная далее, 
+для создания уникального ID для данного объекта <CODE>client</CODE>. Она 
+использует этот ID как индекс массива <CODE>clientDates</CODE> в объекте <CODE>project</CODE> 
+и сохраняет новый объект <CODE>Date</CODE> в этом массиве, ассоциированном с 
+текущим объектом <CODE>client</CODE>.</p>
+<h4><A NAME="Head2;"></a><A NAME="1046600"></a>
+Уникальная Ссылка на Объект client</h4><hr>
+<p><A NAME="1051062"></a>Для некоторых приложений может понадобиться сохранять 
+информацию, специфическую для пары клиент/приложение, в объектах <CODE>project</CODE> или
+<CODE>server</CODE>. Два обычных примера - сохранение соединения с БД между клиентскими запросами
+(описано в <A HREF="db1.htm#1023351">Главе 8, "Соединение с Базой Данных"</a>) 
+или хранение специального объекта, имеющего такой же период существования, что и 
+предопределённый объект <CODE>client</CODE>, и содержащего значения объектов (описано 
+в разделе <A HREF="#1051458">"Создание Специального Объекта client&quot;</a>).</p>
+<p><A NAME="1051109"></a>В этих случаях Вам необходим способ уникально обратиться к паре клиент/приложение.
+JavaScript имеет для этого две функции, <CODE>ssjs_getClientID</CODE> и
+<CODE>ssjs_generateClientID</CODE>. Они не принимают аргументов; обе возвращают 
+уникальную строку, которую вы можете использовать для идентификации пары.</p>
+<p><A NAME="1051328"></a>При каждом вызове
+<CODE>ssjs_generateClientID</CODE> машина выполнения возвращает новый 
+идентификатор. Исходя из этого,
+если Вы используете эту функцию и Вам нужен идентификатор, существующий дольше, 
+чем отдельный клиентский запрос, Вам нужно сохранить этот идентификатор, 
+возможно, как свойство объекта <CODE>client</CODE>. Пример использования этой 
+функции см. в разделе <A HREF="db1.htm#1044823">"Совместное Использование 
+Массива Пула Соединений&quot;</a>.</p>
+<p><A NAME="1051758"></a>Если Вы используете эту функцию и сохраняете ID в объекте <CODE>client</CODE>,
+нужно проявлять осторожность, чтобы хакер не смог получить доступ к этому ID и, 
+как следствие, к закрытой информации.</p>
+<p><A NAME="1051391"></a>Альтернативой может стать использование функции <CODE>ssjs_getClientID</CODE>.
+Если Вы применяете одну из этих серверных технологий для объекта <CODE>client</CODE>, машина JavaScript
+генерирует и использует идентификатор для доступа к информации определённой пары 
+клиент/приложение. (О работе с объектом <CODE>client</CODE> см. раздел <A HREF="#1036896">"Технология 
+Работы с Объектом client&quot;</a>).</p>
+<p><A NAME="1051456"></a>При использовании этих технологий
+<CODE>ssjs_getClientID</CODE> возвращает идентификатор, используемый машиной 
+выполнения. Каждый раз при вызове этой функции из определённой пары 
+клиент/приложение Вы будете получать тот же самый идентификатор. Соответственно, 
+Вам нет необходимости сохранять идентификатор, возвращаемый функцией <CODE>ssjs_getClientID</CODE>. 
+Однако, если Вы используете другую технику, эта функция возвращает "undefined"; 
+тогда необходимо использовать функцию <CODE>ssjs_generateClientID</CODE>.</p>
+<p><A NAME="1057948"></a>
+Если Вам нужен идентификатор и Вы используете серверную технологию, возможно, 
+понадобится использовать функцию
+<CODE>ssjs_getClientID</CODE>. Тогда Вам не нужно будет самостоятельно 
+сохранять идентификатор и отслеживать его использование; машина выполнения 
+сделает это за Вас. При использовании клиентской техники, однако, Вы не сможете 
+применять функцию <CODE>ssjs_getClientID</CODE>; тогда Вы обязаны использовать функцию
+<CODE>ssjs_generateClientID</CODE>.</p>
+<h4><A NAME="Head2;"></a><A NAME="1051458"></a>
+Создание Специального Объекта client</h4><hr>
+<p><A NAME="1050527"></a>Как уже было сказано ранее, свойства предопределённого 
+объекта <CODE>client</CODE> могут иметь только строковые значения. Это 
+ограничение может представлять проблему для работы некоторых приложений. 
+Например, Вашему приложению нужен объект, который существует столько же, сколько 
+предопределённый объект <CODE>client</CODE>, но который может принимать в 
+качестве значений свойств объекты или другие типы данных. В этом случае Вы 
+можете создать Ваш собственный объект и сохранить его как свойство объекта <CODE>client</CODE>.</p>
+<p><A NAME="1050616"></a>В этом разделе приведён пример создания такого объекта. 
+Можете включить этот код как файл JavaScript в Ваше приложение.
+Затем в начале страницы, на которой нужно использовать этот объект, введите 
+следующий оператор:</p>
+<PRE><A NAME="1050528"></a>var customClient = getCustomClient()</PRE>
+<p><A NAME="1050629"></a>
+(Разумеется, можно использовать другое имя переменной.) Если это первая 
+страница, запрашивающая данный объект, метод
+<CODE>getCustomClient</CODE> создаёт новый объект. На других страницах он будет 
+возвращать уже существующий объект.</p>
+<p><A NAME="1050669"></a>Этот код сохраняет массив всех специальных объектов <CODE>client</CODE>, 
+определённых в приложении как значения свойства <CODE>customClients</CODE> предопределённого объекта
+<CODE>project</CODE>. Он сохраняет индекс в этом массиве и строковое значение свойства
+<CODE>customClientID</CODE> предопределённого объекта <CODE>client</CODE>. Кроме 
+того, этот код использует блокировку/lock, хранимую в свойстве <CODE>customClientLock</CODE> 
+объекта <CODE>project</CODE>, чтобы гарантировать надёжность доступа к этому 
+массиву. О блокировании см. раздел <A HREF="#1012796">"Безопасное Совместное 
+Использование Объектов с Блокировкой&quot;</a>.</p>
+<p><A NAME="1050724"></a>Переменная <CODE>timeout</CODE> в функции
+<CODE>getCustomClient</CODE> жёстко кодирует период окончания действия этого 
+объекта. Если Вам нужен другой период окончания действия, специфицируйте другое 
+значение для этой переменной. Независимо от используемого периода действия,
+Вы должны вызывать метод <CODE>expiration</CODE> предопределённого объекта <CODE>client</CODE> 
+для установки его срока окончания действия в то же значение, какое 
+специфицировано Вами для специального объекта. О работе этого метода см. раздел <A HREF="#1063688">"Период 
+Существования Объекта client&quot;</a>.</p><p><A NAME="1050530"></a>
+Для удаления всех закончивших работу специальных объектов приложения вызовите следующую функцию:</p>
+<PRE><A NAME="1050531"></a>expireCustomClients()</PRE><p><A NAME="1050532"></a>
+Это всё, что нужно сделать! Если Вы используете этот код, предопределённые 
+объекты <CODE>client</CODE> и
+<CODE>project</CODE> имеют следующие дополнительные свойства, которые Вы не должны изменять:</p>
+<ul><LI><A NAME="1050777"></a><CODE>client.customClientID</CODE></LI><LI><A NAME="1050817"></a>
+<CODE>project.customClients</CODE></LI><LI><A NAME="1050818"></a><CODE>project.customClientLock</CODE></LI></ul>
+<p><A NAME="1050794"></a>Вы можете специализировать класс путём изменения его методов
+<CODE>onInit</CODE> и <CODE>onDestroy</CODE>. Как показано здесь, эти методы - это просто основа.
+Вы можете добавить код для изменения действий при создании и уничтожении объекта.</p>
+<p><A NAME="1050542"></a>Вот этот код:</p>
+<PRE><A NAME="1050543"></a>// Эта функция создаёт новый специальный объект client или запрашивает существующий.
+
+function getCustomClient()<br>{<br>&nbsp;&nbsp;&nbsp;// ==========&gt; Измените жёстко кодированный период ожидания &lt;==========
+<br>&nbsp;&nbsp;&nbsp;// Примечание: Не забудьте установить окончание обслуживания client-статуса<br>&nbsp;&nbsp;&nbsp;// в то же самое значение, что и использованное ниже в вызове<br>&nbsp;&nbsp;&nbsp;// client.expiration. Это даст возможность индексу отключать все предопределённые<br>&nbsp;&nbsp;&nbsp;// объекты client в то же время, которое содержится в объекте project.</PRE>
+<PRE>&nbsp;&nbsp;&nbsp;var timeout = 600;<br>
+&nbsp;&nbsp;&nbsp;var customClient = null;<br>&nbsp;&nbsp;&nbsp;var deathRow = null;<br>
+&nbsp;&nbsp;&nbsp;var newObjectWasCreated = false;</PRE><PRE><A NAME="1050544"></a>
+&nbsp;&nbsp;&nbsp;var customClientLock = getCustomClientLock();<br>
+&nbsp;&nbsp;&nbsp;customClientLock.lock();<br>&nbsp;&nbsp;&nbsp;var customClientID = client.customClientID;<br>
+&nbsp;&nbsp;&nbsp;if ( customClientID == null ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;customClient = new CustomClient(timeout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newObjectWasCreated = true;<br>&nbsp;&nbsp;&nbsp;}</PRE>
+<PRE><A NAME="1060481"></a>&nbsp;&nbsp;&nbsp;else {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var
+customClients = getCustomClients();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+customClient = customClients[customClientID];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if ( customClient == null ) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;customClient =
+new CustomClient(timeout);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newObjectWasCreated = true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else  {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var now = (new Date()).getTime();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( customClient.expiration &lt;= now ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete customClients[customClientID];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deathRow = customClient;</PRE>
+<PRE><A NAME="1050545"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+customClient = new CustomClient(timeout);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;newObjectWasCreated = true;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;customClient.expiration = (new Date()).getTime() + <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timeout*1000;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;if ( newObjectWasCreated )<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;customClient.onInit();<br>&nbsp;&nbsp;&nbsp;customClientLock.unlock();</PRE>
+<PRE><A NAME="1050546"></a>&nbsp;&nbsp;&nbsp;if ( deathRow != null )<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;deathRow.onDestroy();<br>&nbsp;&nbsp;&nbsp;return customClient;<br>}</PRE>
+<PRE><A NAME="1050547"></a>// Функция для удаления старых специальных объектов client.
+
+<br>function expireCustomClients()<br>
+{<br>&nbsp;&nbsp;&nbsp;var customClients = getCustomClients();<br>
+&nbsp;&nbsp;&nbsp;var now = (new Date()).getTime();<br>&nbsp;&nbsp;&nbsp;for ( var i in customClients ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var clientObj = customClients[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( clientObj.expiration &lt;= now ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var customClientLock = getCustomClientLock();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;customClientLock.lock();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( clientObj.expiration &lt;= now ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete customClients[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clientObj = null;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;customClientLock.unlock()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( clientObj != null )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clientObj.onDestroy();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;}</PRE>
+<PRE><A NAME="1050548"></a>// Не вызывайте эту функцию явно. <br>// Она используется методами getCustomClient и expireCustomClients.
+
+<br>function getCustomClientLock()<br>{<br>&nbsp;&nbsp;&nbsp;
+if ( project.customClientLock == null ) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.lock()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( project.customClientLock == null )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.customClientLock = new Lock()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.unlock()<br>&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;return project.customClientLock<br>}</PRE>
+<PRE><A NAME="1050549"></a>// Не вызывайте эту функцию явно. <br>// Она используется методами getCustomClient и expireCustomClients.
+
+<br>function getCustomClients()<br>{<br>&nbsp;&nbsp;&nbsp;
+if ( project.customClients == null ) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.lock()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( project.customClients == null )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.customClients = new Object()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.unlock()<br>&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;return project.customClients<br>}</PRE>
+<PRE><A NAME="1050550"></a>// Конструктор класса CustomClient. Не вызывайте его явно.<br>// Используйте вместо него функцию getCustomClient.
+
+<br>function CustomClient(seconds)<br>{<br>
+&nbsp;&nbsp;&nbsp;var customClients = getCustomClients();<br>
+&nbsp;&nbsp;&nbsp;var customClientID = ssjs_generateClientID();</PRE>
+<PRE><A NAME="1050551"></a>&nbsp;&nbsp;&nbsp;this.onInit = CustomClientMethod_onInit;<br>
+&nbsp;&nbsp;&nbsp;this.onDestroy = CustomClientMethod_onDestroy;<br>
+&nbsp;&nbsp;&nbsp;this.expiration = (new Date()).getTime() + seconds*1000;></PRE>
+<PRE><A NAME="1050552"></a>&nbsp;&nbsp;&nbsp;client.customClientID = customClientID;</PRE>
+<PRE><A NAME="1050553"></a>&nbsp;&nbsp;&nbsp;customClients[customClientID] = this;<br>}</PRE>
+<PRE><A NAME="1050554"></a>// Если нужно специализировать, переопределите следующие две функции.<br>
+function CustomClientMethod_onInit()<br>{<br>&nbsp;&nbsp;&nbsp;// ==========&gt; Добавьте код инициализации Вашего объекта &lt;==========
+
+<br>&nbsp;&nbsp;&nbsp;// Этот метод вызывается при блокировке.<br>}</PRE><PRE><A NAME="1050555"></a>function CustomClientMethod_onDestroy()<br>{<br>
+&nbsp;&nbsp;&nbsp;// ==========&gt; Добавьте код очистки Вашего объекта &lt;==========<br>
+&nbsp;&nbsp;&nbsp;// Этот метод не вызывается из блокировки.<br>}</PRE>
+<H2><A NAME="The project Object"></a><A NAME="1050512"></a>Объект project</H2><hr><p><A NAME="1036784"></a>
+Объект <CODE>project</CODE> содержит глобальные данные приложения и 
+предоставляет метод для совместного использования информации клиентами, 
+выполняющими доступ к приложению. JavaScript конструирует новый объект
+<CODE>project</CODE>, когда приложение стартует при использовании Application Manager. 
+Каждый клиент, получающий доступ к приложению, использует один и тот же объект <CODE>project</CODE>. 
+Резюме по объекту <CODE>project</CODE> см. в разделе <A HREF="#1036423">"Предопределённые Объекты. Обзор.&quot;</a>.</p>
+<p><A NAME="1036788"></a>В отличие от предыдущих релизов, в этом релизе машина 
+выполнения JavaScript не создаёт и не уничтожает объект <CODE>project</CODE> для 
+каждого запроса. Если Вы остановили работу приложения,
+объект <CODE>project</CODE> этого приложения уничтожается. Новый объект <CODE>project</CODE> 
+создаётся для приложения, когда оно стартует снова. Типичный период 
+существования объекта <CODE>project</CODE> - дни или недели.</p>
+<p><A NAME="1036790"></a>JavaScript конструирует набор объектов <CODE>project</CODE> 
+для каждого Netscape HTTP-процесса, запущенного на сервере. JavaScript 
+конструирует объект <CODE>project</CODE> для каждого приложения, запущенного на 
+каждом отдельном сервере. Например, если один сервер запущен на порте 80, а 
+другой - на порте 142 на той же самой машине, JavaScript конструирует отдельный набор объектов
+<CODE>project</CODE> для каждого процесса.</p>
+<h4><A NAME="Head2;"></a><A NAME="1036792"></a>Свойства</h4><hr>
+<p><A NAME="1036793"></a>У объекта <CODE>project</CODE> нет предопределённых 
+свойств, поскольку он предназначен для содержания специфических для приложений 
+данных, доступных для многих клиентов. Вы можете создавать свойства любого 
+верного типа JavaScript, включая ссылки на другие JavaScript-объекты.
+Если Вы храните ссылку на другой объект в объекте <CODE>project</CODE>, машина 
+выполнения не уничтожает объект, на который ссылаются, по окончании клиентского 
+запроса, в котором объект создаётся. Объект доступен и в течение последующих запросов.</p>
+<p><A NAME="1036794"></a>Хороший пример свойства объекта <CODE>project</CODE> - 
+следующий доступный ID потребителя. Приложение может использовать это свойство 
+для отслеживания последующих присваиваемых IDs. Любому клиенту, получающему 
+доступ к приложению и не имеющему ID потребителя, присваивается этот ID, и его 
+значение будет увеличиваться для каждого первоначального доступа.</p>
+<p><A NAME="1049811"></a>Помните, что объект <CODE>project</CODE> существует только 
+в течение периода работы приложения на сервере. Когда приложение останавливается, 
+объект <CODE>project</CODE> уничтожается вместе со всеми значениями его свойств. 
+Поэтому, если у Вас имеются данные приложения, которые нужно сохранять постоянно, 
+их необходимо сохранять в БД
+(см. <A HREF="partlw.htm#996796">Часть 3, "LiveWire Database Service"</a>) или в 
+файле на сервере (см. <A HREF="misc.htm#1017481">"Служба Файловой Системы&quot;</a>).</p>
+<h4><A NAME="Head2;"></a><A NAME="1036804"></a>Совместное Использование Объекта project</h4><hr>
+<p><A NAME="1036805"></a>
+Для каждого приложения имеется только один объект <CODE>project</CODE>. Таким 
+образом, код, исполняемый в любом запросе к данному приложению, может получить 
+доступ к тому же объекту <CODE>project</CODE>. Поскольку сервер является многопоточным,
+могут иметься несколько активных запросов в данный момент времени, либо от 
+одного и того же клиента, либо от разных клиентов.</p>
+<p><A NAME="1036806"></a>Для поддержания целостности данных Вы обязаны 
+гарантировать исключительный доступ к свойству объекта <CODE>project</CODE> при 
+изменении значения свойства. Неявной блокировки, как это было в предыдущих 
+релизах, больше нет; Вы обязаны запрашивать исключительный доступ. Легче всего 
+сделать это через использование методов <CODE>lock</CODE> и <CODE>unlock</CODE> 
+объекта <CODE>project</CODE>. См. раздел <A HREF="#1012796">"Безопасное 
+Совместное Использование Объектов с Помощью Блокировки."</a>.</p>
+<H2><A NAME="The server Object"></a><A NAME="1036812"></a>Объект server</H2><hr><p><A NAME="1036813"></a>
+Объект <CODE>server</CODE> содержит глобальные данные для всего сервера в целом 
+и предоставляет метод для обеспечения совместного использования информации 
+разными приложениями, работающими на сервере. Объект <CODE>server</CODE> также 
+автоматически инициализируется информацией о сервере. Резюме по объекту
+<CODE>server</CODE> см. в разделе <A HREF="#1036423">"Предопределённые Объекты. Обзор."</a>.</p>
+<p><A NAME="1036817"></a>Машина выполнения JavaScript конструирует новый объект <CODE>server</CODE>, 
+когда сервер стартует, и уничтожает объект <CODE>server</CODE>, когда сервер 
+останавливается. Каждое приложение, запущенное на сервере, использует один и тот 
+же объект <CODE>server</CODE>.</p>
+<p><A NAME="1036819"></a>JavaScript конструирует объект <CODE>server</CODE> для 
+каждого Netscape HTTPD-процесса (на сервере), запущенного на машине. Например, 
+может иметься серверный процесс на порте
+80 и другой - на порте 8080. Это совершенно отдельные серверные процессы, и JavaScript конструирует объект
+<CODE>server</CODE> для каждого из них.</p>
+<h4><A NAME="Head2;"></a><A NAME="1036822"></a>Свойства</h4><hr>
+<p><A NAME="1036877"></a>В следующей таблице описаны свойства объекта <CODE>server</CODE>.</p>
+<A NAME="1062788"></a><h5><A NAME="1036832"></a>
+Таблица 6.2 &nbsp;Свойства объекта <CODE>server</CODE></h5>
+<TABLE BORDER="2" CELLPADDING=5><TR><TH VALIGN=baseline ALIGN=left><A NAME="1036838"></a>
+Свойство<TH VALIGN=baseline ALIGN=left><A NAME="1036840"></a>Описание<TH VALIGN=baseline ALIGN=left><A NAME="1036842"></a>
+Пример<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036845"></a>hostname</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036847"></a>Полное имя хоста сервера, включая номер порта</P>
+<TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036849"></a>www.netscape.com:85</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036852"></a>host</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036854"></a>Имя сервера, субдомена и домена</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036856"></a>www.netscape.com</PRE>
+<TR><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036859"></a>protocol</PRE><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036861"></a>Используемый протокол соединения</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036863"></a>http:</PRE><TR><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036866"></a>port</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1036868"></a>
+Используемый номер порта сервера; по умолчанию 80 для HTTP</P><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036870"></a>85</PRE><TR><TD VALIGN=baseline ALIGN=left>
+<PRE><A NAME="1036872"></a>jsVersion</PRE><TD VALIGN=baseline ALIGN=left><P><A NAME="1036874"></a>
+Версия сервера и платформа</P><TD VALIGN=baseline ALIGN=left><PRE><A NAME="1036876"></a>3.0 WindowsNT</PRE></TABLE>
+<p><A NAME="1036878"></a>Например, Вы можете использовать свойство <CODE>jsVersion</CODE> 
+для обусловливания возможностей на базе серверной платформы (или версии), на 
+которой приложение работает, как показано здесь:</p>
+<PRE><A NAME="1036879"></a>if (server.jsVersion == "3.0 WindowsNT")<br>&nbsp;&nbsp;&nbsp;write ("Application
+is running on a Windows NT server.");</PRE>
+<p><A NAME="1036880"></a>
+Помимо этих автоматически инициализируемых свойств, Вы можете создавать свойства 
+для хранения данных, совместно используемых многими приложениями. Свойства могут 
+иметь любой допустимый в JavaScript тип, включая ссылки на другие JavaScript-объекты. 
+Если Вы сохраняете ссылку на другой объект в объекте <CODE>server</CODE>,
+машина выполнения не разрушает объект, на который ссылаются, по окончании 
+запроса, в ходе которого он (объект <CODE>server</CODE>) был создан. Объект остаётся 
+доступным для последующих запросов.</p>
+<p><A NAME="1036881"></a>
+Как и случае с объектом <CODE>project</CODE>, объект <CODE>server</CODE> имеет 
+ограниченный период существования. Когда
+web-сервер останавливается, объект <CODE>server</CODE> разрушается вместе со 
+всеми значениями свойств. Поэтому, если у Вас имеются данные приложения, которые 
+нужно сохранять постоянно, их необходимо сохранять в БД (см. <A HREF="partlw.htm#996796">Часть 3, "LiveWire Database Service"</a>) или в 
+файле на сервере (см. <A HREF="misc.htm#1017481">"Служба Файловой Системы&quot;</a>).</p>
+<h4><A NAME="Head2;"></a><A NAME="1036888"></a>Совместное Использование Объекта server</h4><hr>
+<p><A NAME="1036889"></a>Для всего сервера имеется один объект <CODE>server</CODE>. Таким образом, код, 
+выполняемый в любом запросе, в любом приложении, может иметь доступ к одному и 
+тому же объекту <CODE>server</CODE>. Поскольку сервер является многопоточным, 
+могут иметься несколько запросов в данный момент времени.  Для поддержания целостности данных Вы обязаны 
+гарантировать исключительный доступ к объекту <CODE>server</CODE> при внесении изменений.</p>
+<p><A NAME="1036890"></a>Также Вы обязаны гарантировать, что имеется исключительный доступ к свойству объекта
+<CODE>server</CODE>, когда изменяется значение этого свойства. Неявной 
+блокировки, как это было в предыдущих релизах, теперь нет; Вы обязаны 
+запрашивать исключительный доступ. Легче всего сделать это через использование 
+методов <CODE>lock</CODE> и <CODE>unlock</CODE> 
+объекта <CODE>server</CODE>. См. раздел <A HREF="#1012796">"Безопасное 
+Совместное Использование Объектов с Помощью Блокировки&quot;</a>.</p>
+<H2><A NAME="Techniques for Maintaining the client Object"></a><A NAME="1036896"></a>
+Технология Обслуживания Объекта client</H2><hr>
+<p><A NAME="1053177"></a>
+Объект <CODE>client</CODE> ассоциирован как с определённым приложением, так и с 
+определённым клиентом. Как было сказано в разделе <A HREF="#1036712">"Объект client&quot;</a>, 
+машина выполнения создаёт новый объект
+<CODE>client</CODE> всякий раз при поступлении нового запроса от клиента к 
+серверу. Однако целью является сохранение свойств объекта <CODE>client</CODE> от 
+одного запроса до следующего. Для этого машине выполнения нужно сохранить 
+свойства объекта <CODE>client</CODE> между запросами.</p>
+<p><A NAME="1036901"></a>Есть два основных подхода при работе со свойствами объекта
+<CODE>client</CODE>: можно работать с ними на стороне клиента или на сервере. 
+Эти два вида клиентской техники либо сохраняют имена свойств и их значения 
+непосредственно в куках на клиенте, либо в URLs на генерируемой HTML-странице. 
+Все три вида серверной техники сохраняют имена свойств и их значения в структуре 
+данных в памяти сервера, но различаются по используемой для индексирования 
+структуры этих данных схеме.</p>
+<p><A NAME="1036903"></a>Вид техники выбирается, когда Вы используете JavaScript Application Manager 
+для инсталяции или модификации приложения, как указано в разделе
+<A HREF="appdev.htm#1043531">"Установка Нового Приложения&quot;</a>. Это даёт Вам 
+(или менеджеру сайта) возможность изменять технику обслуживания без 
+перекомпилирования приложения. Однако поведение Вашего приложения может меняться 
+в зависимости от действующей техники обслуживания объекта
+<CODE>client</CODE>, как описано в следующих разделах. Обязательно объясните 
+Вашему менеджеру сайта, от какого вида техники зависит работа Вашего приложения. 
+Иначе менеджер может изменить эти установки и нарушить работу Вашего приложения.</p>
+<p>
+<A NAME="1046049"></a>Поскольку некоторые виды этой техники  сохраняют 
+информацию в структуре данных на сервере или в куки-файле на клиенте, машина 
+выполнения JavaScript дополнительно должна определять, когда избавиться от этих 
+свойств. В разделе <A HREF="#1063688">"Период Существования Объекта client" </a>
+рассматривается, как машина выполнения определяет это, и описываются методы, 
+которые можно использовать для изменения этого поведения.</p>
+<h4><A NAME="Head2;"></a><A NAME="1036907"></a>Сравнение Видов Техники 
+Обслуживания Объекта client</h4><hr>
+<p><A NAME="1036909"></a>Каждый вид техники имеет свои преимущества и 
+недостатки, и то, что является недостатком в одной ситуации, может оказаться 
+преимуществом в другой. Вам необходимо выбрать вид техники, наиболее подходящей 
+для Вашего приложения. Виды техники описаны более детально в последующих 
+разделах; в этом разделе даётся общее сравнение.</p>
+<p><A NAME="1036913"></a>
+В таблице выполнено общее сравнение клиентской и серверной техники.</p>
+<A NAME="1062798"></a><h5><A NAME="1036920"></a>Таблица 6.3&nbsp; Сравнение 
+клиентской и серверной техники обслуживания</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1036926"></a><TH VALIGN=baseline ALIGN=left><B><A NAME="1036928"></a>
+Серверная<TH VALIGN=baseline ALIGN=left><A NAME="1036930"></a>Клиентская<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1036932"></a>
+1.</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1036934"></a>
+Не ограничивается количество хранимых свойств или занимаемое ими пространство.</P><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036936"></a>Ограничения на свойства.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1042185"></a>
+2.</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1042187"></a>
+Занимает дополнительную память сервера в промежутке между клиентскими 
+запросами.</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1042189"></a>
+Не использует дополнительную память сервера в промежутке между клиентскими запросами.</P>
+<TR><TD VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1><P><A NAME="1042206"></a>
+Эти различия относительны. Отсутствие ограничения на количество и размер 
+свойств может быть и недостатком, и преимуществом. Вообще нужно ограничивать 
+размер данных приложения, доступных через Internet, чтобы не перегрузить 
+память Вашего сервера. Иначе лучше использовать клиентскую технику. Однако, 
+если у вас приложение для Intranet (внутренней сети), где нужно хранить 
+большой объём данных, можно допустить это на сервере, так как количество клиентов ограничено.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1036950"></a>
+3.</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1036952"></a>
+Свойства хранятся в памяти сервера и теряются при рестарте сервера или приложения.</P>
+<TD VALIGN=baseline ALIGN=left><P><A NAME="1042212"></a>
+Свойства не хранятся в памяти сервера и не теряются при рестарте сервера.</P>
+<TR><TD VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1><P><A NAME="1036956"></a>
+Если свойства являются настройками пользователя, Вам может понадобиться 
+сохранить их между рестартами сервера; если они относятся к отдельной сессии, 
+может понадобиться, чтобы они были стёрты.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1036963"></a>
+4.</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1036965"></a>
+Не увеличивает или незначительно увеличивает сетевой трафик.</P><TD VALIGN=baseline ALIGN=left>
+<P><A NAME="1036967"></a>Увеличивает сетевой трафик.</P>
+<TR><TD VALIGN=baseline ALIGN=left COLSPAN=3 ROWSPAN=1><P><A NAME="1036969"></a>
+Клиентская техника пересылает имя и значение каждого свойства клиенту один или 
+более раз. Это значительно увеличивает сетевой трафик.</P><P><A NAME="1042226"></a>
+Поскольку все серверные виды техники хранят имена и значения свойств на 
+сервере, максимум, что они пересылают клиенту, это сгенерированное имя 
+клиента, используемое при идентификации доступа к структуре данных сервера.</P></TABLE><p><A NAME="1037522"></a>
+На <A HREF="#1037308">Рисунке 6.3</a> и на <A HREF="#1037502">Рисунке 6.4</a> 
+видно, какая информация хранится при использовании каждого вида техники, где она 
+хранится и передаётся ли по сети. На
+<A HREF="#1037308">Рисунке 6.3</a> дана информация для клиентской техники.</p>
+<h6><A NAME="1037308"></a>Рисунок 6.3 &nbsp;&nbsp;Клиентская техника</h6>
+<P><IMG SRC="http://cm/javascript/servguide14/graphics/csmaint.gif" width="413" height="287"></P>
+<P><br><A NAME="1055627"></a>На <A HREF="#1037502">Рисунке 6.4</a> дана информация для серверной техники.</P>
+<h6><A NAME="1037502"></a>Рисунок 6.4 &nbsp;&nbsp;Серверная техника</h6>
+<P><IMG SRC="http://cm/javascript/servguide14/graphics/ssmaint.gif" width="476" height="467"></P>
+<P><A NAME="1036974"></a>Имеются некоторые общие для видов (серверной и 
+клиентской) техники вопросы. Для 
+обоих типов техники, использующих куки, браузер обязан поддерживать протокол Netscape cookie protocol. 
+В обоих случаях, когда браузер на клиентской машине закрывается,
+информация сохраняется в cookie-файле на клиентской машине. В других случаях ограничений нет.</P>
+<p><A NAME="1044266"></a>Техника серверных кук создаёт единственную куку для 
+идентификации соответствующего объекта
+<CODE>client</CODE>. В противоположность этому, техника клиентских кук создаёт 
+отдельную куку для каждого свойства объекта <CODE>client</CODE>. На технику 
+клиентских кук, следовательно, скорее повлияет ограничение в 20 кук на приложение.</p>
+<p><A NAME="1044267"></a>В технике клиентских кук свойства объекта <CODE>client</CODE> высылаются 
+клиенту, когда высылается первая часть HTML-страницы. Если Вы изменяете позднее 
+значения свойств объекта <CODE>client</CODE> при выполнении действий на странице, 
+эти изменения не отсылаются клиенту и теряются. Это ограничение не действует для другой техники.</p>
+<p><A NAME="1036975"></a>Для обеих техник, использующих кодирование в URL, если Ваше приложение 
+конструирует URL на этапе выполнения или использует функцию <CODE>redirect</CODE>, 
+необходимо либо вручную присоединять свойства объекта <CODE>client</CODE>, 
+которые должны быть сохранены, либо использовать <CODE>addClient</CODE>, чтобы 
+машина выполнения присоединила эти свойства.
+Хотя присоединение свойств не является обязательным для других техник, Вам может 
+понадобиться сделать это, чтобы изменение техники  не нарушило работу Вашего приложения.</p>
+<p><A NAME="1036976"></a>Кроме того, при использовании техник кодирования URL, как только браузер 
+перейдёт на страницу за пределами приложения или даже отправит форму приложению 
+с использованием метода <CODE>GET</CODE>, все свойства объекта
+<CODE>client</CODE> будут утеряны. Свойства не теряются в такой ситуации для других видов техники.
+Ваш выбор техники частично определяется тем, должны ли существовать свойства 
+объекта <CODE>client</CODE> в такой ситуации.</p>
+<p><A NAME="1033314"></a>Ваш выбор используемой техники опирается на требования 
+Вашего приложения. Техника клиентских кук не использует дополнительной памяти 
+сервера (как при серверной технике) и высылает информацию только один раз для страницы
+(в противоположность клиентской технике кодирования URL). Эти факты могут 
+сделать использование техники клиентских кук предпочтительным для больших Internet-приложений. 
+Однако в некоторых случаях другая техника может оказаться более подходящей. 
+Например, серверный IP-адрес работает быстрее, не увеличивая сетевого трафика. 
+Можно использовать это для приложений Вашей Intranet, для которых скорость работы является критичной.</p>
+<h2><A NAME="Head2;"></a><A NAME="1016678"></a>Клиентская Техника</h2><hr>
+<p><A NAME="1012809"></a>Есть два вида клиентской техники:</p>
+<ul><LI><A NAME="1012811"></a>Клиентские куки</LI><LI><A NAME="1012814"></a>Клиентское кодирование URL</LI></ul>
+<p><A NAME="1037721"></a>Сравнение этих видов техники см. в разделе <A HREF="#1036907">"Сравнение Видов 
+Техники Обслуживания Объекта сlient&quot;</a>.</p>
+<p><A NAME="1048523"></a>Когда приложение использует клиентские виды техники, 
+машина выполнения кодирует свойства объекта <CODE>client</CODE> в ответ на 
+клиентский запрос в шапке/header ответа (для клиентской куки) или в URLs в теле 
+ответа (для клиентского кодирования URL).</p>
+<p><A NAME="1038657"></a>Поскольку реальные имена и значения свойств пересылаются 
+между клиентом и сервером, рестарт сервера не вызывает потери клиентской 
+информации. Однако отправка этой информации вызывает увеличение сетевого трафика.</p>
+<H4><A NAME="Head3;"></a><A NAME="1012816"></a>
+Использование Клиентской Куки/Cookie</H4><hr>
+<p><A NAME="1018015"></a>В технике клиентских кук машина выполнения JavaScript 
+на сервере использует протокол Netscape cookie protocol для передачи клиенту свойств объекта
+<CODE>client</CODE> и их значений. Она создаёт по одной куке для каждого 
+свойства объекта <CODE>client</CODE>. Свойства высылаются клиенту один раз в шапке/header ответа 
+генерируемой HTML-страницы. Netscape cookie protocol описан в книге
+<I><a TARGET="_top" href="../clientguide13/index.htm">Клиентский JavaScript.</a></I>
+<a href="http://developer.netscape.com/docs/manuals/js/client/jsguide/index.htm"><i>Руководство</i></a>.</p>
+<p><A NAME="1042464"></a>Для исключения конфликтов с другими куками, которые Вы 
+можете создать в Вашем приложении, машина выполнения создаёт имя куки, добавляя
+<CODE>NETSCAPE_LIVEWIRE.</CODE> перед началом имени свойства объекта <CODE>client</CODE>. 
+Например, если <CODE>client</CODE> имеет свойство <CODE>custID</CODE>, машина выполнения 
+создаёт куку под названием <CODE>NETSCAPE_LIVEWIRE.custID</CODE>. Когда 
+информация куки высылается клиенту,
+машина выполнения делает всё необходимое кодирование специальных символов в 
+значении свойства, как описано в книге
+<I><a TARGET="_top" href="../clientguide13/index.htm">Клиентский JavaScript.</a></I>
+<a href="http://developer.netscape.com/docs/manuals/js/client/jsguide/index.htm">
+<i>Руководство</i></a>.</p><p><A NAME="1042896"></a>
+Иногда Вашему приложению может понадобиться взаимодействие операторов JavaScript 
+на сервере и на стороне клиента. Поскольку это вид техники высылает клиенту 
+свойства объекта <CODE>client</CODE> как куки, Вы можете использовать это как 
+способ облегчить это взаимодействие. См. дополнительно <A HREF="jsserv.htm#1035757">"Взаимодействие 
+Между Сервером и Клиентом&quot;</a>.</p>
+<p><A NAME="1042897"></a>При использовании этой техники машина выполнения сохраняет 
+свойства объекта <CODE>client</CODE>, когда она в первый раз очищает внутренний 
+буфер, содержащий сгенерированную HTML-страницу. Исходя из этого,
+для того чтобы предотвратить потерю любой информации, Вы должны как можно раньше 
+присвоить значения всем свойствам объекта <CODE>client</CODE> в скриптах на 
+каждой странице. В особенности Вы должны гарантировать, что свойства объекта <CODE>client</CODE> 
+будут высылаться <i>перед тем как</i> (1) машина выполнения сгенерирует 64KB 
+содержимого HTML-страницы (она автоматически очищает буфер вывода в этой точке), (2) 
+Вы вызовете функцию <CODE>flush</CODE> для очистки буфера вывода или (3) Вы 
+вызовете функцию <CODE>redirect</CODE> для изменения клиентских запросов. 
+Дополнительно см. разделы <A HREF="jsserv.htm#1035796">"Очистка Буфера Вывода"</a> и
+<A HREF="jsserv.htm#1024580">"Процессинг Времени Выполнения на Сервере&quot;</a>.</p>
+<p><A NAME="1029945"></a>По умолчанию, когда Вы используете технику клиентских кук, машина выполнения не 
+устанавливает явно время окончания срока действия кук. В этом случае куки 
+заканчивают работать, когда пользователь закрывает браузер. (Это поведение по 
+умолчанию для всех кук.) Как указано в разделе <A HREF="#1063688">"Период 
+Существования Объекта client&quot;</a>, Вы можете использовать метод <CODE>expiration</CODE> 
+объекта <CODE>client</CODE> для изменения срока окончания действия. Если Вы 
+используете <CODE>client.expiration</CODE>, машина выполнения устанавливает 
+соответствующий срок окончания работы куки в cookie-файле.</p>
+<p><A NAME="1042559"></a>При использовании техники клиентских кук метод <CODE>client.destroy</CODE> 
+уничтожает все значения свойств объекта <CODE>client</CODE>, но не влияет на то, 
+что хранится в cookie-файле на клиентской машине. Не используйте для удаления 
+кук из cookie-файла или памяти браузера метод
+<CODE>client.destroy</CODE>; вместо него используйте <CODE>client.expiration</CODE> с аргументом 0&nbsp;секунд.</p>
+<p><A NAME="1042563"></a>В целом Netscape-куки имеют нижеследующие ограничения. Эти 
+ограничения применяются тогда, когда Вы используете куки для хранения свойств объекта <CODE>client</CODE>:</p>
+<ul><LI><A NAME="1042723"></a>4KB для каждой куки (включая имя и значение куки). Если одна кука больше 4KB, её 
+вхождение усекается до 4KB. Это может дать неверное значение свойства объекта <CODE>client</CODE>.</LI><LI><A NAME="1042670"></a>20 
+кук на приложение. Если Вы создаёте более 20 для одного приложения, самая 
+старая кука (созданная первой) уничтожается. Поскольку техника клиентских кук 
+создаёт отдельную куку для каждого свойства объекта <CODE>client</CODE>, объект
+<CODE>client</CODE> может хранить максимум 20 свойств. Если Вы хотите 
+использовать в Вашем приложении также и другие куки, общее их количество всё 
+равно ограничено числом 20.</LI><LI><A NAME="1058340"></a>
+300 кук в cookie-файле. Если Вы создадите более 300 кук, самые старые куки (созданные первыми)
+уничтожаются.</LI></ul><H4><A NAME="Head3;"></a><A NAME="1058342"></a>
+Использование Клиентского Кодирования URL</H4><hr>
+<p><A NAME="1058343"></a>При использовании техники клиентского кодирования URL 
+машина выполнения на сервере пересылает клиенту свойства и значения объекта <CODE>client</CODE>, 
+присоединяя их к каждому URL в генерируемой HTML-странице. Соответственно 
+свойства и их значения пересылаются столько раз, сколько имеется гиперссылок на 
+генерируемой HTML-странице, что приводит к значительному увеличению сетевого трафика.</p>
+<p><A NAME="1012838"></a>Размер строки URL ограничен 4KB. Следовательно, когда Вы используете клиентское 
+кодирование URL, общий размер имён свойств и их значений не может превышать 4KB. 
+Любая информация свыше лимита 4KB будет усекаться.</p>
+<p><A NAME="1018057"></a>Если Вы генерируете URLs динамически или используете функцию
+<CODE>redirect</CODE>, Вы можете добавлять свойства объекта <CODE>client</CODE> 
+или другие свойства к URL. Когда Вы вызываете <CODE>redirect</CODE> или генерируете URL, компилятор не 
+присоединяет автоматически свойства объекта <CODE>client</CODE>. Если 
+присоединение необходимо, используйте функцию <CODE>addClient</CODE>. См. раздел
+<A HREF="#1063729">"Присоединение Свойств Объекта client к URL Вручную&quot;</a>.</p>
+<p><A NAME="1030087"></a>В технике клиентского кодирования URL значения свойств добавляются к URL по мере 
+обработки этих URL. Нужно следить, чтобы Ваши URL имели одинаковые свойства и значения. Например, 
+рассмотрим код:</p><PRE><A NAME="1030184"></a>&lt;SERVER&gt;<br>...<br>client.numwrites = 2;<br>write (addClient(<br>
+&nbsp;&nbsp;&nbsp;"&lt;A HREF='page2.htm'&gt;Some link&lt;/A&gt;"));<br>client.numwrites = 3;<br>
+write (addClient(<br>&nbsp;&nbsp;&nbsp;"&lt;A HREF='page3.htm'&gt;Another link&lt;/A&gt;"));<br>...<br>
+&lt;/SERVER&gt;</PRE>
+<p><A NAME="1030083"></a>Когда машина выполнения обрабатывает первый оператор
+<CODE>write</CODE>, она использует 2 как значение свойства <CODE>numwrites</CODE>, 
+а при обработке второго оператора <CODE>write</CODE> она использует в качестве значения 3.</p>
+<p><A NAME="1030225"></a>Итак, если Вы используете метод <CODE>client.</CODE><CODE>destroy</CODE> в 
+середине страницы, только ссылки, шедшие на странице до вызова этого метода 
+получат значения, присоединённые к URL. Те же, которые идут после вызова этого 
+метода, не имеют присоединённых значений. Следовательно, значения свойств 
+объекта <CODE>client</CODE> передаются на некоторые страницы, но не на все. Это может быть нежелательно.</p>
+<p><A NAME="1056423"></a>Если страница имеет ссылку на URL за пределами Вашего 
+приложения, Вам не понадобится присоединять клиентский статус. Тогда не 
+используйте статическую строку в качестве значения <CODE>HREF</CODE>.
+Вместо этого вычисляйте значение. Это предотвратит автоматическое присоединение 
+машиной выполнения клиентского статуса к URL. Например, у вас имеется ссылка:</p>
+<PRE><A NAME="1056437"></a>&lt;A HREF="mailto:me@royalairways.com"&gt;</PRE>
+<p><A NAME="1012843"></a>
+Машина выполнения присоединяет свойства объекта <CODE>client</CODE>. Чтобы этого 
+не происходило, используйте очень похожую ссылку:</p>
+<PRE><A NAME="1056451"></a>&lt;A HREF=`"mailto:me@royalairways.com"`&gt;</PRE>
+<p><A NAME="1056449"></a>
+При этой технике объект <CODE>client</CODE> не перестаёт действовать, 
+поскольку существует только в URL-строке, находящейся на клиенте. Следовательно, 
+метод <CODE>client.expiration</CODE> не производит никаких действий.</p>
+<p><A NAME="1012846"></a>При клиентском кодировании URL Вы теряете все свойства 
+объекта <CODE>client</CODE>, когда отправляете форму, используя метод <CODE>GET</CODE>, 
+и когда выполняете доступ к другому приложению. Ещё раз - Вам может быть нужно 
+или не нужно терять эти свойства, в зависимости от потребностей Вашего приложения.</p>
+<p><A NAME="1059820"></a>В отличие от техники клиентских кук, клиентское кодирование URL не требует ни 
+поддержки web-браузером протокола Netscape cookie, ни записи информации на клиентской машине.</p>
+<h2><A NAME="Head2;"></a><A NAME="1059826"></a>Серверная Техника</h2><hr>
+<p><A NAME="1012858"></a>Есть три вида серверной техники:</p>
+<ul><LI><A NAME="1012860"></a>
+IP-адреса</LI><LI><A NAME="1012862"></a>Серверные куки</LI><LI><A NAME="1012865"></a>
+Серверное кодирование URL</LI></ul>
+<p><A NAME="1037712"></a>Сравнение разных видов техники см. в разделе <A HREF="#1036907">"Сравнение 
+Видов Техники Обслуживания Объекта сlient&quot;</a>.</p>
+<p><A NAME="1028861"></a>При любом виде техники машина выполнения на сервере 
+сохраняет свойства объекта <CODE>client</CODE> и их значения в структуре данных 
+в памяти сервера. Единая структура данных, сохраняемая в период между 
+клиентскими запросами, используется для всех приложений, работающих на сервере. 
+Виды техники различаются только в индексе, используемом для доступа к информации 
+в этой структуре данных, гарантируя, что каждая пара клиент/приложение получает 
+соответствующие свойства и значения для объекта <CODE>client</CODE>.</p>
+<p><A NAME="1042996"></a>Ни одна из этих техник не записывает информацию на жёсткий диск сервера.
+Только техника серверных кук позволяет записывать информацию на диск клиентской 
+машины при окончании работы браузера.</p>
+<p><A NAME="1030263"></a>Поскольку эти виды техники сохраняют информацию 
+объектов <CODE>client</CODE> в памяти сервера в промежутке между клиентскими 
+запросами, нет или почти нет увеличения сетевого трафика. Имена и значения 
+свойств никогда не пересылаются клиенту. Кроме того нет ограничения на 
+количество свойств объекта <CODE>client</CODE> и на размер свойства.</p>
+<p><A NAME="1043009"></a>Недостатком является, разумеется, то, что эти виды техники 
+используют память сервера в промежутке между клиентскими запросами. Для 
+приложений, используемых большим количеством потребителей, это может иметь 
+важное значение. Конечно, это можно также рассматривать и как преимущество, так 
+как Вы можете сохранять столько информации, сколько необходимо.</p>
+<H4><A NAME="Head3;"></a><A NAME="1012871"></a>Использование IP-Адреса</H4><hr><p>
+<A NAME="1030401"></a>Техника с использованием IP-адреса индексирует структуру 
+данных на основе IP-адресов приложения и клиента. Эта простая техника является 
+также и самой быстрой, поскольку вообще не требует отправки информации клиенту. 
+Так как индекс базируется на IP-адресах приложения и клиента,
+эта техника создаёт отдельный индекс для каждой пары приложение/клиент, работающей на сервере.</p>
+<p><A NAME="1063630"></a>Эта техника хорошо работает, когда все клиенты имеют 
+фиксированные IP-адреса. Она работает ненадёжно, если клиент не имеет 
+гарантированно фиксированного IP-адреса, например, если клиент использует 
+протокол Dynamic Host Configuration Protocol (DHCP) или провайдера Internet, 
+который динамически размещает IP-адреса. Эта техника также не работает у 
+клиентов, использующих прокси-сервер, поскольку все пользователи прокси сообщают 
+один и тот же IP-адрес. Поэтому данная техника используется в основном только для приложений 
+Intranet.</p>
+<H4><A NAME="Head3;"></a><A NAME="1063635"></a>Использование Серверных Кук</H4><hr><p>
+<A NAME="1063636"></a>Техника серверных кук использует длинное уникальное имя, 
+генерируемое машиной выполнения для индексации структуры данных на сервере. 
+Машина выполнения использует протокол Netscape cookie для хранения генерируемого 
+имени как куки/cookie на клиенте. Она не сохраняет имена и значения свойств как 
+куки. Поэтому данная техника создаёт одну куку, в то время как клиентская 
+техника кук создаёт отдельную куку для каждого свойства объекта <CODE>client</CODE>.</p>
+<p><A NAME="1043088"></a>Сгенерированное имя отсылается клиенту только один раз в 
+шапке/header HTML-страницы. Вы можете получить доступ к этому имени через 
+функцию <CODE>ssjs_getClientID</CODE>, описанную в разделе
+<A HREF="#1046600">"Уникальное Обращение к Объекту client&quot;</a>. Эта техника 
+использует тот же самый cookie-файл, что и техника клиентских кук; эти виды 
+техники отличаются тем, что информация сохраняется в cookie-файле. Протокол Netscape cookie protocol описан в книге
+<I><a href="../clientguide13/index.htm">Клиентский JavaScript.
+Руководство</a></I>.</p><p><A NAME="1044290"></a>Итак, поскольку клиенту отсылается только генерируемое 
+имя, а не реальные имена и значения свойств, не имеет значения, где на Вашей 
+странице изменяются свойства объекта <CODE>client</CODE>. Это контрастирует с техникой клиентских кук.</p>
+<p><A NAME="1043122"></a>По умолчанию машина выполнения устанавливает период 
+действия серверной структуры данных в 10 минут и не устанавливает срок действия 
+кук, отправляемых клиенту. Как указано в разделе <A HREF="#1063688">"Период 
+Существования Объекта client&quot;</a>, Вы можете использовать метод <CODE>expiratio</CODE> 
+объекта <CODE>client</CODE> для изменения срока действия и для установки периода 
+действия куки.</p><p><A NAME="1043126"></a>При использовании серверной куки метод <CODE>client.destroy</CODE> 
+уничтожает все значения свойств объекта <CODE>client</CODE>.</p><p><A NAME="1056585"></a>
+В общем, Netscape-куки имеют ограничения, перечисленные в разделе <A HREF="#1012816">"Использование 
+Клиентских Кук&quot;</a>. Если Вы используете серверные куки, эти ограничения вряд ли 
+будут достигнуты, так как создаётся только одна кука (содержащая индекс).</p>
+<p><A NAME="1056619"></a>Это быстрая техника, не имеющая встроенных ограничений 
+на количество и размер свойств и их значений. Вы больше ограничены тем, сколько 
+пространства будете использовать на Вашем сервере для хранения этой информации.</p>
+<H4><A NAME="Head3;"></a><A NAME="1012877"></a>Использование Серверной Кодировки URL</H4><hr>
+<p><A NAME="1030590"></a>Техника серверного кодирования URL использует длинное 
+уникальное имя, генерируемое машиной выполнения для индексации структуры данных 
+на сервере. В этом случае, вместо того чтобы сделать это генерируемое имя 
+клиентской кукой, сервер присоединяет имя к каждому URL на генерируемой HTML-странице. 
+Следовательно, имя высылается столько раз, сколько имеется ссылок на 
+генерируемой HTML-странице. (Имена и значения свойств не присоединяются к URLs, только генерируемое имя.)
+Ещё раз: Вы можете получить доступ к этому генерируемому имени с помощью функции <CODE>ssjs_getClientID</CODE>, 
+описанной в разделе <A HREF="#1046600">"Уникальное Обращение к Объекту client&quot;</a>.</p>
+<p><A NAME="1056634"></a>Если Вы генерируете URLs динамически или используете функцию <CODE>redirect</CODE>, 
+Вы можете добавлять свойства к
+URL. Поэтому, когда Вы вызываете <CODE>redirect</CODE> или генерируете URL, 
+компилятор не присоединяет индекс автоматически. Если Вы хотите оставить индекс 
+для свойств объекта <CODE>client</CODE>, используйте функцию <CODE>addClient</CODE>. 
+См. также <A HREF="#1063729">"Присоединение Свойств Объекта client к URL Вручную&quot;</a>.</p>
+<p><A NAME="1056643"></a>Если Ваша страница имеет ссылку на URL вне Вашего приложения, Вам может и не 
+понадобиться присоединение клиентского индекса. Тогда не используйте статическую 
+строку как значение атрибута <CODE>HREF</CODE>. Вместо этого вычисляйте это 
+значение. Это предотвратит автоматическое присоединение машиной выполнения 
+клиентского индекса к URL. Например, у Вас имеется ссылка:</p>
+<PRE><A NAME="1056644"></a>&lt;A HREF="mailto:me@royalairways.com"&gt;</PRE><p><A NAME="1057899"></a>
+В это случае машина выполнения присоединит индекс объекта <CODE>client</CODE>. 
+Чтобы этого не происходило, используйте очень похожую ссылку:</p>
+<PRE><A NAME="1057900"></a>&lt;A HREF=`"mailto:me@royalairways.com"`&gt;</PRE><p><A NAME="1063680"></a>
+При серверном кодировании URL вы теряете идентификатор объекта <CODE>client</CODE> (и, 
+соответственно, свойства и их значения)
+при отправке формы с методом <CODE>GET</CODE>. Вы можете терять или не терять 
+эти свойств, в зависимости от потребностей Вашего приложения.</p>
+<h4><A NAME="Head2;"></a><A NAME="1063688"></a>
+Период Существования Объекта client</h4><hr>
+<p><A NAME="1063689"></a>После того как клиент получил доступ к приложению, не 
+гарантируется, будет он далее запрашивать продолжение обработки или продолжит 
+выполнение до логического конца. В связи с этим объект <CODE>client</CODE> не 
+имеет встроенного механизма окончания строка действия. Этот механизм позволяет
+JavaScript периодически "зачищать" старые объекты <CODE>client</CODE>, которые 
+больше не нужны. Каждый раз, при получении сервером запроса на страницу 
+приложения, JavaScript восстанавливает период существования объекта <CODE>client</CODE>.</p>
+<H4><A NAME="Head3;"></a><A NAME="1045970"></a>
+Вызов Окончания Действия Свойств Объекта client</H4><hr>
+<p><A NAME="1062815"></a>По умолчанию поведение механизма срока действия 
+значений варьируется и зависит от вида используемой техники работы с объектом <CODE>client</CODE>, 
+как видно из таблицы.</p>
+<A NAME="1062872"></a><h5><A NAME="1062875"></a>
+Таблица 6.4 &nbsp;Срок действия по умолчанию свойств объекта <CODE>client</CODE> 
+на основе вида используемой техники</h5>
+<TABLE BORDER="2" CELLPADDING=5>
+<TR><TH VALIGN=baseline ALIGN=left><A NAME="1062931"></a>
+Для данного вида техники...<TH VALIGN=baseline ALIGN=left><A NAME="1062933"></a>
+Свойства Объекта client...<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1062936"></a>
+клиентская кука</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1062938"></a>
+Перестают действовать, когда браузер закрывается.</P><TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1062941"></a>
+клиентское кодирование URL</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1062943"></a>
+Никогда не перестают действовать.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1062946"></a>
+серверная кука</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1062948"></a>
+Удаляются из структуры данных на сервере через 10&nbsp;минут. Кука на клиенте 
+перестаёт действовать при выходе из браузера. Свойства объекта <CODE>client</CODE> 
+более не доступны, как только структура данных удаляется или браузер закрывается.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1062951"></a>
+серверное кодирование URL</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1062953"></a>
+Удаляются из структуры данных на сервере через 10&nbsp;минут.</P>
+<TR><TD VALIGN=baseline ALIGN=left><P><A NAME="1062956"></a>
+серверный IP-адрес</P><TD VALIGN=baseline ALIGN=left><P><A NAME="1062958"></a>
+Удаляются из структуры данных на сервере через 10&nbsp;минут.</P></TABLE>
+<p><A NAME="1046008"></a>Приложение может управлять периодом ожидания JavaScript 
+перед зачисткой свойств объекта <CODE>client</CODE>. Для изменения величины 
+этого периода используйте метод
+<CODE>expiration</CODE>, как в следующем примере:</p>
+<PRE><A NAME="1046010"></a>client.expiration(30);</PRE>
+<p><A NAME="1046011"></a>
+В ответ на это вызов машина выполнения зачищает свойства объекта <CODE>client</CODE> 
+по прошествии 30 секунд. Для серверной техники этот вызов заставит сервер удалить 
+свойства объекта из структур данных через 30 секунд. Для этих двух видов техники 
+такой вызов устанавливает окончание срока действия через 30 секунд.</p>
+<p><A NAME="1046012"></a>Если объект <CODE>client</CODE> перестаёт действовать, когда имеется активный 
+клиентский запрос с использованием этого объекта,
+машина выполнения ждёт окончания этого запроса, прежде чем уничтожить объект <CODE>client</CODE>.</p>
+<p><A NAME="1046013"></a>Вы обязаны вызывать <CODE>expiration</CODE> на каждой 
+странице, срок окончания действия которой хотите специфицировать. Страницы, не 
+специфицирующие срок действия, используют поведение по умолчанию.</p>
+<H4><A NAME="Head3;"></a><A NAME="1046014"></a>Уничтожение Объекта client</H4><hr>
+<p><A NAME="1046016"></a>Приложение может явно уничтожать объект <CODE>client</CODE> методом <CODE>destroy</CODE>:</p>
+<PRE><A NAME="1046017"></a>client.destroy();</PRE><p><A NAME="1046018"></a>
+Когда приложение вызывает <CODE>destroy</CODE>, JavaScript удаляет все свойства из объекта
+<CODE>client</CODE>.</p><p><A NAME="1046021"></a>Если Вы используете технику клиентских кук для работы с 
+объектом <CODE>client</CODE>, метод <CODE>destroy</CODE> уничтожает все значения 
+свойств объекта <CODE>client</CODE>, но не влияет на то, что хранится в 
+клиентском cookie-файле. Чтобы удалить и значения свойств из этого cookie-файла, 
+не используйте метод <CODE>destroy</CODE>; вместо него используйте <CODE>expiration</CODE> с аргументом 0 секунд.</p>
+<p><A NAME="1046023"></a>Если Вы используете технику клиентского кодирования URL для работы с объектом
+<CODE>client</CODE>, метод <CODE>destroy</CODE> удаляет все свойства объекта <CODE>client</CODE>.
+Ссылки на странице до вызова <CODE>destroy</CODE> оставляют свойства объекта <CODE>client</CODE> 
+в своих URL, а ссылки, расположенные после вызова метода, не имеют свойств. 
+Поскольку маловероятно, что Вам понадобится, чтобы&nbsp; только некоторые URL 
+страницы содержали свойства объекта <CODE>client</CODE>, Вы, вероятно, должны 
+будете вызывать
+<CODE>destroy</CODE> либо вверху, либо внизу страницы, когда используете работу 
+с клиентскими URL. См. также <A HREF="#1058342">"Использование Клиентского Кодирования URL&quot;</a>.</p>
+<h4><A NAME="Head2;"></a><A NAME="1063729"></a>Присоединение Свойств Объекта client к URL Вручную</h4>
+<hr><p><A NAME="1063732"></a>При использовании кодирования URL на клиенте или на 
+сервере для работы с объектом <CODE>client</CODE> машина выполнения обычно 
+должна сохранять соответствующую информацию (имена и значения свойств объекта <CODE>client</CODE> 
+или индекс серверной структуры данных) во всех
+URL, высылаемых клиенту, вне зависимости от того, являются ли эти URL как 
+статический HTML или были сгенерированы операторами серверного JavaScript.</p>
+<p><A NAME="1020204"></a>Машина выполнения автоматически присоединяет 
+соответствующую информацию к гиперссылкам HTML, находящимся вне тэгов <CODE>SERVER</CODE>. 
+Так, например, предположим, что Ваша HTML-страница содержит следующие операторы:</p>
+<PRE><A NAME="1020205"></a>&lt;HTML&gt;<br>For more information, contact<br>
+&lt;A HREF="http://royalairways.com/contact_info.html"&gt;<br>Royal Airways&lt;/a&gt;<br>...<br>
+&lt;/HTML&gt;</PRE><p><A NAME="1020206"></a>
+Если приложение использует кодирование URL для объекта <CODE>client</CODE>, 
+машина выполнения автоматически присоединит <CODE>client</CODE> -информацию в 
+конец URL. Вы не должны ничего делать специально для поддержки этого поведения.</p>
+<p><A NAME="1057241"></a>Однако ваше приложение может использовать функцию
+<CODE>write</CODE> для динамической генерации оператора HTML, содержащего URL. 
+Вы можете также использовать функцию <CODE>redirect</CODE> для старта нового 
+запроса. Когда Вы используете операторы серверного JavaScript
+для добавления URL к генерируемой HTML-странице, машина выполнения предполагает, 
+что Вы специфицировали полный URL для отправки в нужном Вам виде. Она не 
+присоединяет автоматически клиентскую информацию даже при использовании 
+кодирования URL для работы с объектом <CODE>client</CODE>. Если Вам нужно 
+присоединить клиентскую информацию,
+Вы обязаны сделать это сами.</p>
+<p><A NAME="1043271"></a>Вы используете функцию <CODE>addClient</CODE> для 
+добавления вручную соответствующей <CODE>client</CODE> -информации. Эта функция 
+принимает URL и возвращает новый URL
+с присоединённой информацией. Например, предположим, что контактный URL 
+варьируется в зависимости от значения свойства <CODE>client.contact</CODE>. 
+Вместо вышеприведённого HTML Вы можете ввести следующее:</p>
+<PRE><A NAME="1045776"></a>&lt;HTML&gt;<br>For more information, contact<br>&lt;server&gt;<br>
+if (client.contact == "VIP") {<br>&nbsp;&nbsp;&nbsp;write
+("&lt;A HREF='http://royalairways.com/vip_contact_info.html'&gt;");<br>
+&nbsp;&nbsp;&nbsp;write ("Royal Airways VIP Contact&lt;/a&gt;");<br>}<br>else {<br>
+&nbsp;&nbsp;&nbsp;write ("&lt;A HREF='http://royalairways.com/contact_info.html'&gt;");<br>
+&nbsp;&nbsp;&nbsp;write ("Royal Airways&lt;/a&gt;");<br>}<br>&lt;/server&gt;<br>...<br>&lt;/HTML&gt;</PRE>
+<p><A NAME="1045774"></a>Теперь машина выполнения не присоединяет свойства объекта <CODE>client</CODE> 
+к URL. Если Вы используете один из видов техники кодирования URL для работы с 
+объектом <CODE>client</CODE>, может возникнуть проблема. Тогда, если Вы хотите 
+отправить свойства объекта <CODE>client</CODE> с этим URL, используйте такой код:</p>
+<PRE><A NAME="1045881"></a>&lt;HTML&gt;<br>For more information, contact<br>&lt;server&gt;<br>
+if (client.contact == "VIP") {<br>&nbsp;&nbsp;&nbsp;write (addClient(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&lt;A HREF='http://royalairways.com/vip_contact_info.html'&gt;"));<br>
+&nbsp;&nbsp;&nbsp;write ("Royal Airways VIP Contact&lt;/a&gt;");<br>}<br>else {<br>
+&nbsp;&nbsp;&nbsp;write (addClient(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;"&lt;A HREF='http://royalairways.com/contact_info.html'&gt;"));<br>
+&nbsp;&nbsp;&nbsp;write ("Royal Airways&lt;/a&gt;");<br>}<br>&lt;/server&gt;<br>...<br>&lt;/HTML&gt;</PRE>
+<p><A NAME="1020216"></a>Также всякий раз, когда Вы применяете функцию <CODE>redirect</CODE> 
+для перенаправления клиентского запроса, Вы должны использовать <CODE>addClient</CODE> 
+для присоединения информации, как здесь:</p>
+<PRE><A NAME="1020217"></a>redirect(addClient("mypage.html"));</PRE>
+<p><A NAME="1056690"></a>
+В противоположность этому, если Ваша страница имеет ссылку на URL вне Вашего 
+приложения, Вам может <i>не</i> понадобиться присоединение клиентской информации. 
+Тогда не используйте статическую строку в значении атрибута <CODE>HREF</CODE>.
+Вместо этого вычисляйте значение. Это предотвратит автоматическое присоединение 
+машиной выполнения клиентского индекса или свойств к URL. Например, у вас имеется ссылка:</p>
+<PRE><A NAME="1056691"></a>&lt;A HREF="mailto:me@royalairways.com"&gt;</PRE>
+<p><A NAME="1056692"></a>В этом случае машина выполнения присоединяет клиентскую информацию. Чтобы этого 
+не было, используйте очень похожую ссылку:</p>
+<PRE><A NAME="1056693"></a>&lt;A HREF=`"mailto:me@royalairways.com"`&gt;</PRE>
+<p><A NAME="1020218"></a>Хотя приложение первоначально инсталировано для 
+использования техники без кодирования
+URL для работы с <CODE>client</CODE>, оно может быть позднее модифицировано для использования техники кодирования URL.
+Следовательно, если Ваше приложение генерирует динамические URL или использует <CODE>redirect</CODE>, 
+Вам всегда нужно будет использовать <CODE>addClient</CODE>.</p>
+<H2><A NAME="Sharing Objects Safely with Locking"></a>
+<A NAME="1012796"></a>Безопасное Совместное Использование Объектов с Блокировкой/Locking</H2><hr>
+<p><A NAME="1012271"></a>Рабочая среда для версии 3.<I>x</I> или 4.x Netscape-сервера является 
+многопоточной; то есть она обрабатывает более одного запроса в единицу времени. 
+Поскольку эти запросы могут требовать выполнения JavaScript, то более чем один 
+поток выполнения JavaScript может быть активным в одно и то же время.</p>
+<p><A NAME="1019325"></a>Если несколько потоков одновременно пытаются изменить 
+свойство одного и того же объекта JavaScript, они могут привести этот объект в 
+несоответствующее состояние. Участок кода, в котором необходимо выполнять один, 
+и только один, поток выполнения в единицу времени, называется <B>критическим разделом/сritical section</B>.</p>
+<p><A NAME="1019536"></a>Один объект <CODE>server</CODE> используется совместно 
+всеми клиентами и всеми приложениями, работающими на сервере. Один объект <CODE>project</CODE> 
+используется всеми клиентами, получающими доступ к одному приложению 
+на сервере. Кроме того, Ваше приложение может создавать другие объекты, которые 
+оно предоставляет в совместное пользование клиентским запросам, или оно даже может 
+ 
+совместно с другими приложениями использовать объекты. Для поддержания 
+целостности данных в этих совместно используемых объектах Вы обязаны получить 
+исключительный доступ к объекту, прежде чем изменять любое его свойство.</p>
+<BLOCKQUOTE>
+<p><A NAME="1019537"></a><b>Важно!</b></p>
+<p><A NAME="1019538"></a>
+В отличие от предыдущих релизов, неявная блокировка объектов <CODE>project</CODE> и <CODE>server</CODE> теперь отсутствует.</p>
+</BLOCKQUOTE><p><A NAME="1019528"></a>Чтобы лучше понять, что происходит, рассмотрим следующий 
+пример. Предположим, Вы создаёте совместно используемый объект <CODE>project.orders</CODE> 
+для отслеживания заказов пользователей. Вы обновляете
+<CODE>project.orders.count</CODE> каждый раз при получении нового заказа, используя следующий код:</p>
+<PRE><A NAME="1018183"></a>var x = project.orders.count; <br>x = x + 1; <br>project.orders.count = x;</PRE>
+<p><A NAME="1018178"></a>Предположим, что <CODE>project.orders.count</CODE> 
+первоначально установлено в 1 и что поступили два новых заказа в двух разных потоках. 
+Произойдёт следующее:</p>
+<OL><LI><A NAME="1018509"></a>
+Первый поток сохраняет <CODE>project.orders.count</CODE> в переменной <CODE>x</CODE>.</LI><LI><A NAME="1018511"></a>
+Прежде чем продолжить, второй поток запускается и сохраняет то же самое 
+значение в своей копии переменной <CODE>x</CODE>.</LI><LI><A NAME="1018512"></a>
+С этого момента оба потока имеют значение 1 в <CODE>x</CODE>.</LI><LI><A NAME="1018518"></a>
+Второй поток завершает своё выполнение и устанавливает <CODE>project.orders.count</CODE> 
+в 2.</LI><LI><A NAME="1018519"></a>Первый поток продолжает выполнение, не зная, что значение
+<CODE>project.orders.count</CODE> изменилось, и также устанавливает 2 в х.</LI></OL>
+<p><A NAME="1018523"></a>Итак, конечное значение <CODE>project.orders.count</CODE> 
+будет 2, хотя корректным должно быть 3.</p>
+<p><A NAME="1018176"></a>Чтобы избежать проблем такого рода, Вам нужно получить 
+исключительный доступ к свойствам совместно используемых объектов перед тем как 
+записывать в них. Для этих целей Вы можете конструировать Ваши собственные 
+экземпляры класса
+<CODE>Lock</CODE>, работающие с любым совместно используемым объектом. Кроме 
+того, объекты
+<CODE>server</CODE> и <CODE>project</CODE> имеют методы <CODE>lock</CODE> и <CODE>unlock</CODE>,
+которые Вы можете использовать для ограничения доступа к этим объектам.</p>
+<h4><A NAME="Head2;"></a><A NAME="1019260"></a>Использование Экземпляров Класса Lock</h4><hr>
+<p><A NAME="1038368"></a>Представьте lock (замок/блокировку) как именованный флаг, который Вы обязаны 
+устанавливать перед входом в критичный раздел. Если Вы запрашиваете именованный 
+флаг и кто-то уже имеет его, Вы будете ждать, пока этот второй не освободит флаг. 
+В процессе ожидания Вы не сможете изменять то, что не должны изменять. После 
+получения Вами флага кто-либо ещё будет ожидать и не сможет ничего изменить, 
+пока Вы не освободите флаг. Если возникнет ошибка или таймаут закончится до 
+того, как Вы получите флаг, Вы можете снова вернуться в режим ожидания, либо 
+делать что-нибудь другое, как, например, дать Вашим пользователям знать, что 
+приложение очень занято, чтобы выполнить данную операцию сейчас. Вы не должны 
+вмешиваться в процесс ожидания (изменяя совместно используемую информацию)! <A HREF="#1038414">
+Рисунок 6.5</a> иллюстрирует этот процесс.</p>
+<h6><A NAME="1038414"></a>
+Рисунок 6.5 &nbsp;&nbsp;Thread (поток) 2 ожидает, пока thread 1 имеет lock (замок)</h6>
+<P><IMG SRC="http://cm/javascript/servguide14/graphics/lock.gif" width="360" height="120"></P>
+<P><A NAME="1038415"></a>В терминах программирования замок/lock представлен 
+экземпляром класса <CODE>Lock</CODE>. Вы можете использовать экземпляр класса <CODE>Lock</CODE> 
+для получения исключительного доступа к любому совместно используемому объекту. 
+Обычно Вы создаёте экземпляры <CODE>Lock</CODE> на начальной странице Вашего 
+приложения (по причинам, которые будет изложены позднее).</P>
+<p><A NAME="1019543"></a>На других страницах, перед критичным для совместно используемого объекта разделом (например,
+перед разделом, который запрашивает и изменяет значение свойства), Вы вызываете 
+метод <CODE>lock</CODE> экземпляра <CODE>Lock</CODE>. Если этот метод возвращает <CODE>true</CODE>, 
+Вы получаете замок и можете продолжать. В конце критичного раздела Вы вызываете 
+метод <CODE>unlock Lock</CODE> -экземпляра.</p>
+<p><A NAME="1019691"></a>Когда клиентский запрос в одиночном потоке выполнения 
+вызывает метод <CODE>lock</CODE>, любой другой запрос, вызывающий метод <CODE>lock</CODE> 
+для того же <CODE>Lock</CODE> -экземпляра, ожидает, пока первый поток не вызовет метод <CODE>unlock</CODE>, 
+пока не закончится таймаут или пока не возникнет ошибка. Это верно независимо от 
+того, находится второй запрос в другом потоке для того же клиента или в потоке для другого клиента.</p>
+<p><A NAME="1038425"></a>
+Если все потоки вызывают метод <CODE>lock</CODE> перед попыткой изменения 
+совместно используемого объекта, то лишь один поток в единицу времени может войти в критичный раздел.</p>
+<BLOCKQUOTE>
+<p><A NAME="1019454"></a><b>Важно!</b></p>
+<p>
+<A NAME="1019455"></a>Использование замков находится всецело под управлением 
+разработчика и требует кооперации. Машина выполнения не заставляет Вас ни 
+вызывать <CODE>lock</CODE>, ни учитывать блокировку, полученную кем-либо 
+другим. Если Вы не спрашиваете, Вы можете изменять всё что захотите. Поэтому 
+очень важно выработать привычку всегда вызывать <CODE>lock</CODE> и <CODE>unlock</CODE> 
+при входе и выходе из критичного раздела кода и проверять return-значение 
+метода <CODE>lock</CODE>, чтобы гарантировать, что блокировка получена. Можно 
+представлять это в терминах флага: если Вы не запрашиваете флаг, вы не будете 
+находиться в режиме ожидания. Если Вы не находитесь в режиме ожидания, Вы 
+можете изменять то, что изменять нельзя.</p></BLOCKQUOTE>
+<p><A NAME="1019266"></a>Вы можете создать столько замков, сколько Вам необходимо. 
+Один и тот же замок может использоваться для управления доступом к нескольким 
+объектам, либо каждый объект (или даже каждое свойство) может иметь собственный замок.</p>
+<p><A NAME="1019267"></a>Замок/lock сам по себе является просто объектом JavaScript; 
+Вы можете сохранить ссылку на него в любом другом объекте JavaScript. Таким 
+образом, например, обычной практикой является конструирование экземпляра <CODE>Lock</CODE> 
+и сохранение его в объекте <CODE>project</CODE>.</p>
+<BLOCKQUOTE>
+<p><B>ПРИМЕЧАНИЕ:</B></p>
+<p><A NAME="1025572"></a>
+Поскольку использование замка блокирует доступ других пользователей к именованному флагу, 
+потенциально задерживая выполнение их задач, хорошей практикой станет 
+использование замков в течение возможно более короткого периода.</p></BLOCKQUOTE>
+<p><A NAME="1019268"></a>Следующий код показывает, как отследить заказы 
+потребителей в совместно используемом объекте <CODE>project.orders</CODE>, 
+рассмотренном ранее, и как обновлять
+<CODE>project.orders.count</CODE> каждый раз при получении нового заказа. 
+Включите в начальную страницу приложения такой код:</p>
+<PRE><A NAME="1019269"></a>// Создать новый Lock и сохранить в project.
+
+<br>project.ordersLock = new Lock(); <br>
+if (! project.ordersLock.isValid()) {
+
+<br>&nbsp;&nbsp;&nbsp;// Невозможно создать Lock. Перенаправить на страницу обработки ошибок.<br>
+&nbsp;&nbsp;&nbsp;redirect ("sysfailure.htm");<br>}</PRE>
+<p><A NAME="1022056"></a>
+Этот код создаёт экземпляр класса <CODE>Lock</CODE> и проверяет (вызовом метода <CODE>isValid</CODE>), 
+не возвращено ли что-нибудь неправильное при его создании. Очень редко Ваш 
+экземпляр <CODE>Lock</CODE> конструируется неправильно. Это случается только 
+тогда, когда машина выполнения запущена вне системных ресурсов при создании объекта.</p>
+<p><A NAME="1021560"></a>Вы обычно создаёте экземпляры <CODE>Lock</CODE> на 
+начальной странице, поэтому Вам не нужно получать замок перед созданием 
+экземпляров <CODE>Lock</CODE>. Начальная страница запускается только один раз - 
+при старте приложения на сервере. Поэтому Вам гарантируется, что создаётся только один экземпляр каждого замка.</p>
+<p><A NAME="1025611"></a>Если, однако, Ваше приложение создаёт замок на какой-либо иной странице, 
+множественные запросы могут вызывать эту страницу в это время. Один запрос может 
+проверять наличие замка и не обнаружить его, в то время как другой запрос 
+создаёт замок, а третий запрос создаёт второй замок. Тем временем первый запрос 
+вызывает метод <CODE>lock</CODE> своего объекта. Затем второй запрос вызывает 
+метод <CODE>lock</CODE> <i>своего</i> объекта. Оба запроса теперь &quot;думают&quot;, что они 
+имеют безопасный доступ к критичному разделу кода и продолжают свою работу, нарушая работу другого.</p>
+<p><A NAME="1038441"></a>После получения верного замка Ваше приложение может 
+продолжать работу. На странице, требующей доступа к критичному разделу, можете ввести такой код:</p>
+<PRE><A NAME="1038442"></a>// Начало критичного раздела -- получить замок.
+
+<br>if ( project.ordersLock.lock() )
+{</PRE><PRE><A NAME="1038443"></a>&nbsp;&nbsp;&nbsp;var x = project.orders.count; <br>
+&nbsp;&nbsp;&nbsp;x = x + 1; <br>&nbsp;&nbsp;&nbsp;project.orders.count = x;</PRE><PRE><A NAME="1038450"></a>
+&nbsp;&nbsp;&nbsp;// Конец критичного раздела -- освободить замок.
+
+<br>&nbsp;&nbsp;&nbsp;project.ordersLock.unlock();<br>
+}<br>else <br>&nbsp;&nbsp;&nbsp;redirect("combacklater.htm");</PRE>
+<p><A NAME="1038468"></a>
+Этот код запрашивает замок. Если замок получен (то есть, если метод <CODE>lock</CODE> возвратил
+<CODE>true</CODE>), выполняется вход в критичный раздел, вносятся изменения и, наконец, замок освобождается.
+Если метод <CODE>lock</CODE> возвращает <CODE>false</CODE>, то данный код не 
+получает замка. В этом случае приложение перенаправляет на страницу, которая 
+сообщает, что приложение в данный момент не может выполнить запрос.</p>
+<h4><A NAME="Head2;"></a><A NAME="1038451"></a>Специальные Замки/Locks для 
+Объектов project и server</h4><hr><p>
+<A NAME="1019355"></a>Каждый из объектов <CODE>project</CODE> и <CODE>server</CODE> 
+имеет методы <CODE>lock</CODE> и <CODE>unlock</CODE>. Вы можете использовать эти методы для 
+получения исключительного доступа к свойствам этих объектов.</p>
+<p><A NAME="1019620"></a>В этих методах ничего нового нет.
+Вам также необходима кооперация с другими участками кода. Вы можете представлять 
+эти методы как имеющие флаги: один флаг с именем "project", а другой - флаг с 
+именем "server." Если другой раздел кода не вызывает
+<CODE>project.lock</CODE>, первый может изменять любые свойства объекта <CODE>project</CODE>.</p>
+<p>
+<A NAME="1058070"></a>В отличие от метода <CODE>lock</CODE> класса <CODE>Lock</CODE>, 
+Вы не можете специфицировать таймаут для метода <CODE>lock</CODE> объектов <CODE>project</CODE> 
+и <CODE>server</CODE>. То есть, когда Вы вызываете <CODE>project.lock</CODE>, 
+система ожидает бесконечно долго освобождения замка. Если Вы хотите ожидать 
+только в течение определённого периода, используйте экземпляр класса <CODE>Lock</CODE>.</p>
+<p><A NAME="1019797"></a>В примере использованы методы
+<CODE>lock</CODE> и <CODE>unlock</CODE> для получения исключительного доступа к 
+объекту <CODE>project</CODE> для модификации свойства ID потребителя:</p>
+<PRE><A NAME="1019798"></a>project.lock()<br>
+project.next_id = 1 + project.next_id;<br>client.id = project.next_id;<br>project.unlock();</PRE>
+<h4><A NAME="Head2;"></a><A NAME="1040782"></a>Исключение Мёртвой Блокировки/Deadlock</h4><hr>
+<p><A NAME="1040783"></a>Вы используете замки для защиты критичных участков кода. На практике это 
+означает, что один запрос ожидает, пока другой выполняет критичный код. Вы 
+обязаны соблюдать осторожность при использовании замков для защиты критичных разделов.
+Если один запрос ожидает освобождения замка, полученного другим запросом, а этот 
+второй запрос ожидает освобождения замка, полученного первым запросом, ни один 
+из запросов не сможет продолжить работу. Эта ситуация называется
+<B>deadlock/тупик/мертвая блокировка</B>.</p>
+<p><A NAME="1040687"></a>Рассмотрим предыдущий пример обработки заказов потребителей.
+Предположим, что приложение разрешает два действия. В одном - пользователь 
+вводит нового потребителя; в другом - пользователь вводит новый заказ. Как часть 
+создания нового потребителя приложение также создаёт новый заказ потребителя. 
+Это действие выполняется на одной странице приложения, давая примерно такой код:</p>
+<PRE><A NAME="1038749"></a>// Создать нового потребителя (customer).
+
+<br>if ( project.customersLock.lock() ) {</PRE>
+<PRE><A NAME="1038750"></a>&nbsp;&nbsp;&nbsp;var id = project.customers.ID; <br>
+&nbsp;&nbsp;&nbsp;id = id + 1; <br>&nbsp;&nbsp;&nbsp;project.customers.ID = id;</PRE>
+<PRE><A NAME="1038776"></a>&nbsp;&nbsp;&nbsp;// Стартовать новый заказ (order) для этого нового потребителя.<br>
+&nbsp;&nbsp;&nbsp;if ( project.ordersLock.lock() ) {</PRE><PRE><A NAME="1038777"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var c = project.orders.count; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c = c + 1; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.orders.count = c; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.ordersLock.unlock();<br>&nbsp;&nbsp;&nbsp;}</PRE>
+<PRE><A NAME="1038781"></a>&nbsp;&nbsp;&nbsp;project.customersLock.unlock();<br>}</PRE>
+<p><A NAME="1038937"></a>
+Во втором типе действия пользователь вводит новый заказ потребителя. Как часть 
+процесса ввода нового заказа: если потребитель ещё не является 
+зарегистрированным потребителем, приложение создаёт нового потребителя. Это 
+действие выполняется на другой странице приложения, где может быть примерно 
+такой код:</p>
+<PRE><A NAME="1038938"></a>// Стартовать новый заказ.
+
+<br>if ( project.ordersLock.lock() ) {</PRE>
+<PRE><A NAME="1038829"></a>&nbsp;&nbsp;&nbsp;var c = project.orders.count; <br>&nbsp;&nbsp;&nbsp;c = c + 1; <br>
+&nbsp;&nbsp;&nbsp;project.orders.count = c; </PRE><PRE><A NAME="1038792"></a>
+&nbsp;&nbsp;&nbsp;if (<I>...код определения неизвестного потребителя...</I>) {</PRE>
+<PRE><A NAME="1038832"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Создать нового потребителя.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Этот внутренний замок может вызвать проблемы!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( project.customersLock.lock() ) {</PRE>
+<PRE><A NAME="1038825"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;var id = project.customers.ID; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id = id + 1; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.customers.ID = id;</PRE>
+<PRE><A NAME="1038794"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+project.customersLock.unlock();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;}</PRE>
+<PRE><A NAME="1038795"></a>&nbsp;&nbsp;&nbsp;project.ordersLock.unlock();<br>}</PRE>
+<p><A NAME="1038788"></a>
+Заметьте, что каждый из этих фрагментов кода пытается получить второй замок, уже 
+получив один. Это может вызвать проблемы. Предположим, что один поток начинает 
+создание нового потребителя; он получает замок
+<CODE>customersLock</CODE>. В это же самое время другой поток начинает создание 
+нового заказа; он получает замок <CODE>ordersLock</CODE>. Теперь первый поток 
+запрашивает замок <CODE>ordersLock</CODE>. Поскольку второй поток уже получил 
+этот замок, первый поток должен ждать. Предположим, однако, что второй поток 
+теперь запрашивает замок <CODE>customersLock</CODE>. Первый поток уже имеет этот 
+замок, поэтому второй поток должен ждать. Теперь потоки ждут друг друга. 
+Поскольку никто их них не специфицировал таймаут, оба они будут ждать бесконечно.</p>
+<p><A NAME="1038879"></a>В данном случае проблему можно легко устранить. 
+Поскольку значения ID потребителя и номер заказа не зависят один от другого, нет 
+никакого смысла вкладывать замки друг в друга. Вы можете избежать возможных тупиков, переписав оба фрагмента кода.
+Перепишите первый фрагмент так:</p><PRE><A NAME="1060502"></a>// Создать нового потребителя.
+
+<br>if ( project.customersLock.lock() ) {</PRE>
+<PRE><A NAME="1060503"></a>&nbsp;&nbsp;&nbsp;var id = project.customers.ID; <br>
+&nbsp;&nbsp;&nbsp;id = id + 1; <br>&nbsp;&nbsp;&nbsp;project.customers.ID = id;</PRE>
+<PRE><A NAME="1060499"></a>&nbsp;&nbsp;&nbsp;project.customersLock.unlock();<br>}</PRE>
+<PRE><A NAME="1038906"></a>// Стартовать новый заказ для этого нового потребителя.<br>
+if ( project.ordersLock.lock() ) {</PRE><PRE><A NAME="1038907"></a>
+&nbsp;&nbsp;&nbsp;var c = project.orders.count; <br>&nbsp;&nbsp;&nbsp;c = c + 1; <br>
+&nbsp;&nbsp;&nbsp;project.orders.count = c;</PRE><PRE><A NAME="1038908"></a>
+&nbsp;&nbsp;&nbsp;project.ordersLock.unlock();<br>}</PRE>
+<p><A NAME="1038895"></a>Второй фрагмент будет примерно таким:</p></P>
+<PRE><A NAME="1038911"></a>// Стартовать новый заказ.</PRE>
+<PRE><br>if ( project.ordersLock.lock() ) {</PRE>
+<PRE><A NAME="1038912"></a>&nbsp;&nbsp;&nbsp;var c = project.orders.count; <br>
+&nbsp;&nbsp;&nbsp;c = c + 1; <br>&nbsp;&nbsp;&nbsp;project.orders.count = c;</PRE>
+<PRE><A NAME="1038917"></a>&nbsp;&nbsp;&nbsp;project.ordersLock.unlock();<br>}</PRE>
+<PRE><A NAME="1038921"></a>if (<I>...код для определения неизвестного потребителя...</I>) {</PRE>
+<PRE><A NAME="1038922"></a>&nbsp;&nbsp;&nbsp;// Создать нового потребителя.<br>
+&nbsp;&nbsp;&nbsp;if ( project.customersLock.lock() ) {</PRE>
+<PRE><A NAME="1038923"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var id = project.customers.ID; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id = id + 1; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.customers.ID = id;</PRE>
+<PRE><A NAME="1038924"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.customersLock.unlock();<br>
+&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1039022"></a>
+Хотя это и надуманная ситуация, тупики это совершенно реальная проблема, и они 
+могут произойти во многих случаях. Для этого даже не понадобится более одного 
+замка или более одного запроса. Рассмотрим код, в котором две функции 
+запрашивают один и тот же замок:</p>
+<PRE><A NAME="1039066"></a>function fn1 () {<br>&nbsp;&nbsp;&nbsp;if ( project.lock() ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// <I>... какие-то действия ...<br>
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.unlock();<br>&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<PRE><A NAME="1039069"></a>function fn2 () {<br>&nbsp;&nbsp;&nbsp;if ( project.lock() ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// <I>... какие-то другие действия ...<br>
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.unlock();<br>&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1039067"></a>
+Сам по себе этот код не содержит проблем. Позднее слегка измените его, чтобы <CODE>fn1</CODE> 
+вызывала <CODE>fn2</CODE>, уже имея замок, как показано далее:</p>
+<PRE><A NAME="1039073"></a>function fn1 () {<br>&nbsp;&nbsp;&nbsp;if ( project.lock() ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// <I>... какие-то действия ...<br>
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn2();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;project.unlock();<br>
+&nbsp;&nbsp;&nbsp;}<br>}</PRE>
+<p><A NAME="1039071"></a>
+Вот вы и получили тупик/deadlock. Это, конечно, немного смешно, когда 
+единственный запрос ожидает от самого себя освобождения флага!</p>
+<h5><a href="contents.htm">Оглавление</a> | <a href="jsserv.htm">Назад</a>
+| <a href="misc.htm">Вперёд</a>
+| <a href="bklast.htm">Индекс</a></h5>
+<hr><P ALIGN=right><FONT SIZE=-2><I>Дата последнего обновления: 29 сентября 1999 г.</I></FONT><P><FONT FACE="PrimaSans BT, Verdana, Sans-Serif" SIZE=-2>
+&copy; Copyright © 1999 Sun Microsystems, Inc. Некоторая часть Copyright 
+© 1999 Netscape Communications Corp. Все Права Зарезервированы.</FONT>
+</BODY></HTML>
