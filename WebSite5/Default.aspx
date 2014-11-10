@@ -1,8 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
 <!DOCTYPE html>
 
-<HTML>
+<HTML >
 	<HEAD>
 		<META http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<TITLE>
@@ -10,8 +10,8 @@
 		</TITLE>
 		<LINK href="style.css" rel="stylesheet" type="text/css">
 		<LINK href="guest.css" rel="stylesheet" type="text/css">
-		<LINK href="media_queries.css" rel="stylesheet" type="text/css">
-		<SCRIPT src = "guestbook.js" language = "JavaScript" type = "text/javascript"></SCRIPT>
+		<LINK href="media-queries.css" rel="stylesheet" type="text/css">
+        <SCRIPT src = "guest.js" type = "text/javascript"></SCRIPT>
 		<!-- html5.js for IE less THan 9 -->
 		<!--[if lt IE 9]>
 		<SCRIPT src="http://html5shim.googlecode.com/svn/TRunk/html5.js"></SCRIPT>
@@ -94,6 +94,7 @@
 						</TD>
                         <TR>
                             <TD>
+                                <asp:Label ID="Label1" runat="server" Text="Колличество Посещений сайта = 0"></asp:Label>
                                 <asp:Table ID="table" runat="server" HorizontalAlign="left" CellPadding="1" CellSpacing="0">
                                     
                                 </asp:Table>
